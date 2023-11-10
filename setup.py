@@ -24,5 +24,8 @@ setup(name='pyflowlauncher',
       author_email='dev.garulf@gmail.com',
       license='MIT',
       packages=['pyflowlauncher'],
-      zip_safe=True
+      zip_safe=True,
+      package_data={
+            'pyflowlauncher': ['py.typed'],
+      }
       )
