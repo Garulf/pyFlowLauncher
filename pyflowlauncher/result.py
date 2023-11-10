@@ -10,9 +10,9 @@ if TYPE_CHECKING:
 
 class JsonRPCAction(TypedDict):
     """Flow Launcher JsonRPCAction"""
-    Method: str
-    Parameters: Iterable
-    DontHideAfterAction: NotRequired[bool]
+    method: str
+    parameters: Iterable
+    dontHideAfterAction: NotRequired[bool]
 
 
 class Glyph(TypedDict):
@@ -42,8 +42,7 @@ class Result:
                    *,
                    dont_hide_after_action: bool = False) -> None:
         self.JsonRPCAction = {
-            "Method": method.__name__,
-            "Parameters": parameters or [],
-            "DontHideAfterAction": dont_hide_after_action
+            "method": method.__name__,
+            "parameters": parameters or [],
+            "dontHideAfterAction": dont_hide_after_action
         }
-        self._method = method
