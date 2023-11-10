@@ -44,7 +44,7 @@ def test_add_action():
     )
     r.add_action(lambda: None, ["Test"], dont_hide_after_action=True)
     assert r.JsonRPCAction == {
-        "Method": "<lambda>",
-        "Parameters": ["Test"],
-        "DontHideAfterAction": True
+        "method": "<lambda>",
+        "parameters": ["Test"],
+        "dontHideAfterAction": True
     }
