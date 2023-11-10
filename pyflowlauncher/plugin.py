@@ -1,17 +1,16 @@
 from typing import Any, Dict, Iterable, Callable, Optional, TypedDict, Union
 from functools import wraps
 
-from .result import Result
+from .result import Result, JsonRPCAction
 from .jsonrpc import JsonRPCClient
 from .event import EventHandler
-from .api import JsonRPCRequest
 
 
 class ResultResponse(TypedDict):
     result: Iterable[Dict[str, Any]]
 
 
-Method = Callable[..., Union[ResultResponse, JsonRPCRequest]]
+Method = Callable[..., Union[ResultResponse, JsonRPCAction]]
 
 
 def send_results(results: Iterable[Result]) -> ResultResponse:
