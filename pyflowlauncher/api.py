@@ -55,3 +55,31 @@ def stop_loading_bar() -> JsonRPCAction:
 
 def reload_plugins() -> JsonRPCAction:
     """Reload the plugins in Flow Launcher."""
+    return _send_action("ReloadPlugins")
+
+
+def copy_to_clipboard(text: str, direct_copy: bool = False,
+                      show_default_notification=True) -> JsonRPCAction:
+    """Copy text to the clipboard."""
+    return _send_action("CopyToClipboard",
+                        text,
+                        direct_copy,
+                        show_default_notification
+                        )
+
+
+def open_directory(
+        directory_path: str,
+        filename_or_filepath: Optional[str] = None) -> JsonRPCAction:
+    """Open a directory."""
+    return _send_action("OpenDirectory", directory_path, filename_or_filepath)
+
+
+def open_url(url: str, in_private: bool = False) -> JsonRPCAction:
+    """Open a URL."""
+    return _send_action("OpenUrl", url, in_private)
+
+
+def open_uri(uri: str) -> JsonRPCAction:
+    """Open a URI."""
+    return _send_action("OpenAppUri", uri)
