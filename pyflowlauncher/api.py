@@ -58,19 +58,12 @@ def reload_plugins() -> JsonRPCAction:
     return _send_action("ReloadPlugins")
 
 
-def copy_to_clipboard(text: str, direct_copy: bool = False,
-                      show_default_notification=True) -> JsonRPCAction:
+def copy_to_clipboard(text: str, direct_copy: bool = False, show_default_notification=True) -> JsonRPCAction:
     """Copy text to the clipboard."""
-    return _send_action("CopyToClipboard",
-                        text,
-                        direct_copy,
-                        show_default_notification
-                        )
+    return _send_action("CopyToClipboard", text, direct_copy, show_default_notification)
 
 
-def open_directory(
-        directory_path: str,
-        filename_or_filepath: Optional[str] = None) -> JsonRPCAction:
+def open_directory(directory_path: str, filename_or_filepath: Optional[str] = None) -> JsonRPCAction:
     """Open a directory."""
     return _send_action("OpenDirectory", directory_path, filename_or_filepath)
 
