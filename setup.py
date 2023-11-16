@@ -27,5 +27,8 @@ setup(name='pyflowlauncher',
       zip_safe=True,
       package_data={
             'pyflowlauncher': ['py.typed'],
-      }
+      },
+      install_requires=[
+          'importlib-metadata; python_version < "3.8"',
+      ]
       )
