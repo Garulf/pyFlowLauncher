@@ -16,9 +16,9 @@ setup(name='pyflowlauncher',
           "Bug Tracker": f"{URL}/issues"
       },
       classifiers=[
-          "Programming Language :: Python :: 3",
           "License :: OSI Approved :: MIT License",
           "Operating System :: Microsoft :: Windows",
+          "Programming Language :: Python :: 3",
       ],
       author='William McAllister',
       author_email='dev.garulf@gmail.com',
@@ -26,7 +26,7 @@ setup(name='pyflowlauncher',
       packages=['pyflowlauncher'],
       zip_safe=True,
       package_data={
-            'pyflowlauncher': ['py.typed'],
+          'pyflowlauncher': ['py.typed'],
       },
       install_requires=[
           'importlib-metadata; python_version < "3.8"',
