@@ -1,0 +1,2 @@
+::: pyflowlauncher.result
+    handler: python
