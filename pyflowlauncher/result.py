@@ -55,3 +55,11 @@ class Result:
             "parameters": parameters or [],
             "dontHideAfterAction": dont_hide_after_action
         }
+
+
+class ResultResponse(TypedDict):
+    result: Iterable[Dict[str, Any]]
+
+
+def send_results(results: Iterable[Result]) -> ResultResponse:
+    return {'result': [result.as_dict() for result in results]}

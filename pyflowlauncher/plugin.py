@@ -1,24 +1,16 @@
 from typing import Any, Dict, Iterable, Callable, Optional, TypedDict, Union
 from functools import wraps
 
-from .result import Result, JsonRPCAction
 from pyflowlauncher.shared import PyFlowLauncherObject
+
+from .result import JsonRPCAction, ResultResponse
 from .jsonrpc import JsonRPCClient
 from .event import EventHandler
-
-
-class ResultResponse(TypedDict):
-    result: Iterable[Dict[str, Any]]
 
 
 Method = Callable[..., Union[ResultResponse, JsonRPCAction]]
 
 
-def send_results(results: Iterable[Result]) -> ResultResponse:
-    return {'result': [result.as_dict() for result in results]}
-
-
-class Plugin:
 class Plugin(PyFlowLauncherObject):
 
     def __init__(self, methods: Optional[list[Method]] = None) -> None:
