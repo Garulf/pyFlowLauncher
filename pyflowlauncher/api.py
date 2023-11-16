@@ -8,7 +8,7 @@ def _send_action(method: str, *parameters) -> JsonRPCAction:
     return {"method": f"{NAME_SPACE}.{method}", "parameters": parameters}
 
 
-def change_query(query, requery=False) -> JsonRPCAction:
+def change_query(query: str, requery: bool = False) -> JsonRPCAction:
     """Change the query in Flow Launcher."""
     return _send_action("ChangeQuery", query, requery)
 
@@ -33,7 +33,7 @@ def show_app() -> JsonRPCAction:
     return _send_action("ShowApp")
 
 
-def show_msg(title, sub_title, ico_path="") -> JsonRPCAction:
+def show_msg(title: str, sub_title: str, ico_path: str = "") -> JsonRPCAction:
     """Show a message in Flow Launcher."""
     return _send_action("ShowMsg", title, sub_title, ico_path)
 
