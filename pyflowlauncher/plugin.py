@@ -29,7 +29,9 @@ class Plugin(PyFlowLauncherObject):
         if methods:
             self.add_methods(methods)
 
-    def add_method(self, method: Method, *, name: Optional[str] = None) -> None:
+    def add_method(self, method: Method) -> None:
+        name = getattr(method, '__name__', method.__class__.__name__).lower()
+        self._logger.debug(f"Adding method: '{name}'")
         self._event_handler.add_method(method, name=name)
 
     def add_methods(self, methods: Iterable[Method]) -> None:
