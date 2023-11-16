@@ -1,7 +1,7 @@
-from typing import Any, Dict, Iterable, Callable, Optional, TypedDict, Union
+from typing import Any, Dict, Iterable, Callable, Optional, Union
 from functools import wraps
 
-from pyflowlauncher.shared import PyFlowLauncherObject
+from pyflowlauncher.shared import logger
 
 from .result import JsonRPCAction, ResultResponse
 from .jsonrpc import JsonRPCClient
@@ -11,10 +11,10 @@ from .event import EventHandler
 Method = Callable[..., Union[ResultResponse, JsonRPCAction]]
 
 
-class Plugin(PyFlowLauncherObject):
+class Plugin:
 
     def __init__(self, methods: Optional[list[Method]] = None) -> None:
-        self._logger.debug("Initializing Plugin")
+        self._logger = logger(self)
         self._client = JsonRPCClient()
         self._event_handler = EventHandler()
         self._settings: Dict[str, Any] = {}
