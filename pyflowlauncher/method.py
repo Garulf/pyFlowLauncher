@@ -1,8 +1,7 @@
 from typing import Any, Dict, Iterable, List, TypedDict
 from abc import ABC, abstractmethod
 
-
-from pyflowlauncher.result import Result, JsonRPCAction
+from .result import Result, JsonRPCAction, send_results
 from .shared import logger
 
 
@@ -20,7 +19,7 @@ class Method(ABC):
         self._results.append(result)
 
     def return_results(self) -> ResultResponse:
-        return {'result': [result.as_dict() for result in self._results]}
+        return send_results(self._results)
 
     @abstractmethod
     def __call__(self, *args, **kwargs) -> ResultResponse | JsonRPCAction:
