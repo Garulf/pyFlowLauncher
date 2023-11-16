@@ -9,6 +9,9 @@ log_level = os.environ.get("FLOW_LAUNCHER_API_LOG_LEVEL", "INFO")
 
 logger = logging.getLogger(__name__)
 
+
+__version__ = "0.1.0"
+
 __all__ = [
     "Plugin",
     "ResultResponse",
