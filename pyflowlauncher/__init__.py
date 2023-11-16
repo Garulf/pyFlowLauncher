@@ -1,6 +1,5 @@
 import os
 import logging
-import sys
 
 from .plugin import Plugin, ResultResponse
 from .result import Result, JsonRPCAction, send_results
