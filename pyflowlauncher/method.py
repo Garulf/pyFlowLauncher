@@ -3,16 +3,17 @@ from abc import ABC, abstractmethod
 
 
 from pyflowlauncher.result import Result, JsonRPCAction
-from .shared import PyFlowLauncherObject
+from .shared import logger
 
 
 class ResultResponse(TypedDict):
     result: Iterable[Dict[str, Any]]
 
 
-class Method(ABC, PyFlowLauncherObject):
+class Method(ABC):
 
     def __init__(self) -> None:
+        self._logger = logger(self)
         self._results: List[Result] = []
 
     def add_result(self, result: Result) -> None:
