@@ -2,8 +2,7 @@ import os
 import logging
 
 from .plugin import Plugin, ResultResponse, send_results
-from .result import Result
-from .jsonrpc import JsonRPCRequest
+from .result import Result, JsonRPCAction
 
 
 log_level = os.environ.get("FLOW_LAUNCHER_API_LOG_LEVEL", "INFO")
@@ -15,7 +14,7 @@ __all__ = [
     "ResultResponse",
     "send_results",
     "Result",
-    "JsonRPCRequest",
+    "JsonRPCAction",
 ]
 
 
