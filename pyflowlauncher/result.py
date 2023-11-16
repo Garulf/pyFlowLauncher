@@ -1,4 +1,5 @@
 from __future__ import annotations
+import sys
 from dataclasses import dataclass
 from pathlib import Path
 from typing import (
@@ -6,11 +7,14 @@ from typing import (
     Any,
     Iterable,
     Optional,
-    TypedDict,
     Union,
     Dict,
-    NotRequired
 )
+
+if sys.version_info < (3, 11):
+    from typing_extensions import TypedDict, NotRequired
+else:
+    from typing import TypedDict, NotRequired
 
 
 if TYPE_CHECKING:

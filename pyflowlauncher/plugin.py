@@ -1,4 +1,5 @@
-from typing import Any, Dict, Iterable, Callable, Optional, Union
+from __future__ import annotations
+from typing import Any, Iterable, Callable, Union
 from functools import wraps
 
 from pyflowlauncher.shared import logger
@@ -13,11 +14,11 @@ Method = Callable[..., Union[ResultResponse, JsonRPCAction]]
 
 class Plugin:
 
-    def __init__(self, methods: Optional[list[Method]] = None) -> None:
+    def __init__(self, methods: list[Method] | None = None) -> None:
         self._logger = logger(self)
         self._client = JsonRPCClient()
         self._event_handler = EventHandler()
-        self._settings: Dict[str, Any] = {}
+        self._settings: dict[str, Any] = {}
         if methods:
             self.add_methods(methods)
 
@@ -37,7 +38,7 @@ class Plugin:
         return wrapper
 
     @property
-    def settings(self) -> Dict:
+    def settings(self) -> dict:
         if self._settings is None:
             self._settings = {}
         self._settings = self._client.recieve().get('settings', {})

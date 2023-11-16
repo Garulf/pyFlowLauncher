@@ -19,7 +19,9 @@ setup(name='pyflowlauncher',
           "License :: OSI Approved :: MIT License",
           "Operating System :: Microsoft :: Windows",
           "Programming Language :: Python :: 3",
+          "Programming Language :: Python :: 3 :: Only",
       ],
+      python_requires='>=3.8',
       author='William McAllister',
       author_email='dev.garulf@gmail.com',
       license='MIT',
@@ -29,6 +31,6 @@ setup(name='pyflowlauncher',
           'pyflowlauncher': ['py.typed'],
       },
       install_requires=[
-          'importlib-metadata; python_version < "3.8"',
+          'typing_extensions; python_version < "3.11"'
       ]
       )

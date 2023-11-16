@@ -1,15 +1,18 @@
+from __future__ import annotations
 import json
 import sys
-from typing import Any, Dict, Mapping, TypedDict, NotRequired
+from typing import Any, Mapping
+
+if sys.version_info < (3, 11):
+    from typing_extensions import TypedDict, NotRequired
+else:
+    from typing import TypedDict, NotRequired
 
 
 class JsonRPCRequest(TypedDict):
     method: str
     parameters: list
-    settings: NotRequired[Dict[Any, Any]]
-
-
-Response = Dict[Any, Any]
+    settings: NotRequired[dict[Any, Any]]
 
 
 class JsonRPCClient:
