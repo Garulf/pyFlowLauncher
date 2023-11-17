@@ -5,3 +5,4 @@ mkdocs-material
 mkdocstrings
 mkdocstrings-python
 markdown-include
+tox
