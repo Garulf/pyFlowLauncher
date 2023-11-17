@@ -1,8 +1,3 @@
 flake8
 pytest
-mkdocs
-mkdocs-material
-mkdocstrings
-mkdocstrings-python
-markdown-include
 tox
