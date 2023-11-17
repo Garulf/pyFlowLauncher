@@ -1,5 +1,3 @@
-# Quickstart
-
 ## Installation
 
 Install via pip:
