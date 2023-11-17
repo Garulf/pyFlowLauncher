@@ -1,2 +1,2 @@
 # Home
-{!../readme.md!lines=2-100}
+{!../readme.md!lines=2-31}
