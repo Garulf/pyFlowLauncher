@@ -66,4 +66,5 @@ class ResultResponse(TypedDict):
 
 
 def send_results(results: Iterable[Result]) -> ResultResponse:
+    """Formats and returns results as a JsonRPCResponse"""
     return {'result': [result.as_dict() for result in results]}
