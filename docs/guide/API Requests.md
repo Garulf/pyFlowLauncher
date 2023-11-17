@@ -18,7 +18,7 @@ plugin = Plugin()
 
 
 @plugin.on_method
-def query(query: str) -> ResultResponse | JsonRPCAction:
+def query(query: str) -> ResultResponse:
     r = Result(
         Title="This is a title!",
         SubTitle="This is the subtitle!",
@@ -52,7 +52,7 @@ def example_method():
 
 
 @plugin.on_method
-def query(query: str) -> ResultResponse | JsonRPCAction:
+def query(query: str) -> ResultResponse:
     r = Result(
         Title="This is a title!",
         SubTitle="This is the subtitle!",
