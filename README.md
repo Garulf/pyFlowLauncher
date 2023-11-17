@@ -8,6 +8,8 @@ python -m pip install pyflowlauncher
 ## Usage
 
 #### Basic plugin
+
+A basic plugin using a function as the query method.
 ```
 from pyflowlauncher import Plugin, Result, send_results
 from pyflowlauncher.result import, ResultResponse
@@ -29,6 +31,7 @@ plugin.run()
 ```
 
 #### Advanced plugin
+A more advanced usage using a `Method` class as the query method.
 ```
 from pyflowlauncher import Plugin, Result, Method
 from pyflowlauncher.result import, ResultResponse
