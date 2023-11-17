@@ -1,4 +1,8 @@
 site_name: PyFlowLauncher
+repo_url: https://github.com/Garulf/pyFlowLauncher
+repo_name: PyFlowLauncher
+
+
 
 theme:
   name: "material"
@@ -31,3 +35,8 @@ plugins:
             group_by_category: true
             show_category_heading: true
             docstring_section_style: list
+
+
+markdown_extensions:
+    - markdown_include.include:
+        base_path: docs
