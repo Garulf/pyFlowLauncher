@@ -6,6 +6,8 @@ repo_name: PyFlowLauncher
 
 theme:
   name: "material"
+  features:
+    - content.code.copy
   palette: 
 
     # Palette toggle for dark mode
