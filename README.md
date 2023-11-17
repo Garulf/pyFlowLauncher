@@ -12,13 +12,13 @@ python -m pip install pyflowlauncher
 #### Basic plugin
 ```
 from pyflowlauncher import Plugin, Result, send_results
-from pyflowlauncher.result import JsonRPCAction, ResultResponse
+from pyflowlauncher.result import, ResultResponse
 
 plugin = Plugin()
 
 
 @plugin.on_method
-def query(query: str) -> ResultResponse | JsonRPCAction:
+def query(query: str) -> ResultResponse:
     r = Result(
         Title="This is a title!",
         SubTitle="This is the subtitle!",
