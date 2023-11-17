@@ -1,3 +1,3 @@
-## Plugin Reference
+# Plugin Reference
 
 ::: pyflowlauncher.plugin.Plugin
