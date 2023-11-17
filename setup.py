@@ -31,6 +31,6 @@ setup(name='pyflowlauncher',
           'pyflowlauncher': ['py.typed'],
       },
       install_requires=[
-          'typing_extensions; python_version < "3.11"'
+          'typing_extensions>=4.8.0; python_version < "3.11"'
       ]
       )
