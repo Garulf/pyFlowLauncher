@@ -1,8 +1,8 @@
-## Installation
+# Installation
 
 Install via pip:
 
-```
+```py
 python -m pip install pyflowlauncher
 ```
 
