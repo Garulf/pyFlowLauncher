@@ -51,7 +51,7 @@ class Query(Method):
             SubTitle="This is the subtitle!"
         )
         self.add_result(r)
-        return self.return_results
+        return self.return_results()
 
 plugin.add_method(Query())
 plugin.run()
