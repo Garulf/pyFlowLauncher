@@ -46,7 +46,7 @@ plugin = Plugin()
 
 
 @plugin._on_method
-def example_method():
+def example_method() -> JsonRPCAction:
     # Do stuff here
     return api.change_query("This is also a new query!")
 
