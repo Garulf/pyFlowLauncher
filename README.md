@@ -1,16 +1,18 @@
 ## Installation
 
 Install via pip:
+
 ```
 python -m pip install pyflowlauncher
 ```
 
 ## Usage
 
-#### Basic plugin
+### Basic plugin
 
 A basic plugin using a function as the query method.
-```
+
+```py
 from pyflowlauncher import Plugin, Result, send_results
 from pyflowlauncher.result import, ResultResponse
 
@@ -30,9 +32,11 @@ def query(query: str) -> ResultResponse:
 plugin.run()
 ```
 
-#### Advanced plugin
+### Advanced plugin
+
 A more advanced usage using a `Method` class as the query method.
-```
+
+```py
 from pyflowlauncher import Plugin, Result, Method
 from pyflowlauncher.result import, ResultResponse
 
