@@ -1,3 +1,4 @@
 flake8
 pytest
 tox
+mypy>=1.7.0
