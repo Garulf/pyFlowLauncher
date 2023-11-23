@@ -1,0 +1,60 @@
+name: Create Release
+
+on: 
+  workflow_dispatch:
+  push:
+    branches:
+      - master
+    paths: 
+      - pyproject.toml
+
+env:
+  DEFAULT_PYTHON: 3.11
+
+jobs:
+  build:
+    name: Build
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: ${{ env.DEFAULT_PYTHON }}
+
+    - name: Install dependencies and build
+      run: |
+        pip install -U pip
+        pip install setuptools twine wheel
+        python setup.py sdist bdist_wheel
+
+    - name: Verify README
+      # https://packaging.python.org/guides/making-a-pypi-friendly-readme/#validating-restructuredtext-markup
+      run: |
+        python -m twine check dist/*
+
+    - name: Upload builds
+      uses: actions/upload-artifact@v3
+      with:
+        name: dist
+        path: dist
+
+  pypi:
+    name: Publish to PyPI
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: pypi
+      url: https://pypi.org/p/pyflowlauncher
+    permissions:
+      id-token: write
+    steps:
+    - name: Download builds
+      uses: actions/download-artifact@v3
+
+    - name: Publish to PyPI
+      uses: pypa/gh-action-pypi-publish@release/v1
+      with:
+        repository-url: https://test.pypi.org/legacy/
