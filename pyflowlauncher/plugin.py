@@ -50,4 +50,7 @@ class Plugin:
         method = request.get('method')
         parameters = request.get('parameters', [])
         feedback = self._event_handler(method, *parameters)
+        # Inject settings if changed
+        if 'result' in feedback and self._settings is not None:
+            feedback['SettingsChange'] = self.settings
         self._client.send(feedback)

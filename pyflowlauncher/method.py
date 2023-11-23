@@ -1,13 +1,9 @@
 from __future__ import annotations
-from typing import Any, Iterable, TypedDict
+from typing import Any, Dict, Optional
 from abc import ABC, abstractmethod
 
-from .result import Result, JsonRPCAction, send_results
+from .result import Result, JsonRPCAction, ResultResponse, send_results
 from .shared import logger
-
-
-class ResultResponse(TypedDict):
-    result: Iterable[dict[str, Any]]
 
 
 class Method(ABC):
@@ -19,8 +15,8 @@ class Method(ABC):
     def add_result(self, result: Result) -> None:
         self._results.append(result)
 
-    def return_results(self) -> ResultResponse:
-        return send_results(self._results)
+    def return_results(self, settings: Optional[Dict[str, Any]] = None) -> ResultResponse:
+        return send_results(self._results, settings)
 
     @abstractmethod
     def __call__(self, *args, **kwargs) -> ResultResponse | JsonRPCAction:

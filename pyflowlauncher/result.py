@@ -9,6 +9,7 @@ from typing import (
     Optional,
     Union,
     Dict,
+    List
 )
 
 if sys.version_info < (3, 11):
@@ -62,9 +63,10 @@ class Result:
 
 
 class ResultResponse(TypedDict):
-    result: Iterable[Dict[str, Any]]
+    result: List[Dict[str, Any]]
+    SettingsChange: NotRequired[Optional[Dict[str, Any]]]
 
 
-def send_results(results: Iterable[Result]) -> ResultResponse:
+def send_results(results: Iterable[Result], settings: Optional[Dict[str, Any]] = None) -> ResultResponse:
     """Formats and returns results as a JsonRPCResponse"""
-    return {'result': [result.as_dict() for result in results]}
+    return {'result': [result.as_dict() for result in results], 'SettingsChange': settings}
