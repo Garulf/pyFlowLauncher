@@ -2,11 +2,6 @@ name: Release on PYPI
 
 on: 
   workflow_dispatch:
-    inputs:
-      test:
-        description: 'Use PYPI test server'
-        required: false
-        default: 'false'
   push:
     branches:
       - master
@@ -61,5 +56,3 @@ jobs:
 
     - name: Publish to PyPI
       uses: pypa/gh-action-pypi-publish@release/v1
-      with:
-        repository-url: "${{ inputs.test == 'true' && 'https://test.pypi.org/legacy/' || 'https://upload.pypi.org/legacy/' }}"
