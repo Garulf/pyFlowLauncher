@@ -16,4 +16,4 @@ jobs:
           git checkout -b main
           git add pyproject.toml
           git commit -m "Update version to ${tag_name}"
-          git push
+          git push --set-upstream origin main
