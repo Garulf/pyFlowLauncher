@@ -3,11 +3,15 @@ name: Test package
 on:
   workflow_dispatch:
   push:
-    paths-ignore:
-      - docs/**
+    paths:
+      - src/**
+      - tests/**
+      - tox.ini
   pull_request:
-    paths-ignore:
-      - docs/**
+    paths:
+      - src/**
+      - tests/**
+      - tox.ini
 
 jobs:
   build:
