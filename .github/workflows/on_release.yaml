@@ -1,0 +1,16 @@
+on:
+  release:
+    types: [published]
+
+jobs:
+  change_version:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Update version in pyproject.toml
+        run: |
+          tag_name=$(echo "${{ github.event.release.tag_name }}" | sed 's/^v//')
+          sed -i "s/version = .*/version = '${tag_name}'/" pyproject.toml
+          git add pyproject.toml
+          git commit -m "Update version to ${tag_name}"
+          git push
