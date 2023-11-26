@@ -1,9 +1,6 @@
 on:
   workflow_dispatch:
-  push:
-    branches: [ main ]
-    paths:
-      - pyproject.toml
+
 env:
   python: 3.11
 
