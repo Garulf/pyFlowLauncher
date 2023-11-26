@@ -2,6 +2,7 @@ name: Test package
 
 on:
   workflow_dispatch:
+  workflow_call: 
   push:
     paths:
       - src/**
