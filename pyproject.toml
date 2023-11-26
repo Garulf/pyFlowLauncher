@@ -40,8 +40,8 @@ serialize = [
 ]
 search = "version = '{current_version}'"
 replace = "version = '{new_version}'"
-tag = false
-allow_dirty = true
+tag = true
+allow_dirty = false
 
 [tool.bumpversion.parts.label]
 optional_value = "release"
