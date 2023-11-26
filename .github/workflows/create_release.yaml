@@ -7,7 +7,10 @@ env:
   python: 3.11
 
 jobs:
-  build:
+  test:
+    uses: ./.github/workflows/tests.yaml
+  release:
+    needs: test
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
@@ -19,7 +22,7 @@ jobs:
         run: |
           python -m pip install --upgrade pip
           python -m pip install --upgrade setuptools
-      - name: Get version using setuptools and save as variable use newer syntax
+      - name: Get version using setuptools
         id: get_version
         run: |
           echo ::set-output name=version::$(python setup.py --version)
@@ -28,5 +31,7 @@ jobs:
         with:
           tag: v${{ steps.get_version.outputs.version }}
           token: ${{ secrets.GITHUB_TOKEN }}
-
+  publish:
+    needs: release
+    uses: ./.github/workflows/pypi.yaml
 
