@@ -22,3 +22,34 @@ dependencies = [
 
 [tool.setuptools]
 packages = ["pyflowlauncher"]
+
+[tool.bumpversion]
+current_version = "0.0.1-beta"
+parse = """(?x)
+    (?P<major>[0-9]+)
+    \\.(?P<minor>[0-9]+)
+    \\.(?P<patch>[0-9]+)
+    (?:
+        -(?P<label>dev|rc|release)
+        (?:.(?P<label_n>[0-9]+))?
+    )?
+"""
+serialize = [
+    "{major}.{minor}.{patch}-{label}.{label_n}",
+    "{major}.{minor}.{patch}",
+]
+search = "version = '{current_version}'"
+replace = "version = '{new_version}'"
+tag = false
+allow_dirty = true
+
+[tool.bumpversion.parts.label]
+optional_value = "release"
+values =[
+	"dev",
+	"rc",
+	"release",
+]
+
+[[tool.bumpversion.files]]
+filename = "pyproject.toml"
