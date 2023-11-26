@@ -23,7 +23,7 @@ jobs:
       - name: Get version using setuptools and save as variable use newer syntax
         id: get_version
         run: |
-          echo ::set-output name=version::$(python -c "import setuptools; print(setuptools.__version__)")
+          echo ::set-output name=version::$(python setup.py --version)
       - name: Compare version with latest release tag
         run: |
             if [ "v${{ steps.get_version.outputs.version }}" != "${{ github.ref }}" ]; then
