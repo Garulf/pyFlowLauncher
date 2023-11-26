@@ -30,6 +30,7 @@ jobs:
         uses: ncipollo/release-action@v1
         with:
           tag: v${{ steps.get_version.outputs.version }}
+          prerelease: ${{ contains(steps.get_version.outputs.version, '-')}}
           token: ${{ secrets.GITHUB_TOKEN }}
   publish:
     needs: release
