@@ -32,6 +32,7 @@ jobs:
           tag: v${{ steps.get_version.outputs.version }}
           prerelease: ${{ contains(steps.get_version.outputs.version, '-')}}
           token: ${{ secrets.GITHUB_TOKEN }}
+          generateReleaseNotes: true
   publish:
     needs: release
     uses: ./.github/workflows/pypi.yaml
