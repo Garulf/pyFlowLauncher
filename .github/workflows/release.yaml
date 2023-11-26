@@ -24,12 +24,6 @@ jobs:
         id: get_version
         run: |
           echo ::set-output name=version::$(python setup.py --version)
-      - name: Compare version with latest release tag
-        run: |
-            if [ "v${{ steps.get_version.outputs.version }}" != "${{ github.ref }}" ]; then
-              echo "Version mismatch"
-              exit 1
-            fi
       - name: Create release
         uses: ncipollo/release-action@v1
         with:
