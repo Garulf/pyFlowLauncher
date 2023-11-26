@@ -2,3 +2,4 @@ flake8
 pytest
 tox
 mypy>=1.7.0
+bump-my-version>=0.12.0
