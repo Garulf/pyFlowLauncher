@@ -19,7 +19,7 @@ jobs:
       - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
-          pip -U setuptools
+          python -m pip install --upgrade setuptools
       - name: Get version using setuptools and save as variable use newer syntax
         id: get_version
         run: |
