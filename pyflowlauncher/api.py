@@ -1,4 +1,5 @@
 from typing import Optional
+
 from .result import JsonRPCAction
 
 NAME_SPACE = 'Flow.Launcher'

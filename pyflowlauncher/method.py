@@ -1,8 +1,9 @@
 from __future__ import annotations
-from typing import Any, Dict, Optional
-from abc import ABC, abstractmethod
 
-from .result import Result, JsonRPCAction, ResultResponse, send_results
+from abc import ABC, abstractmethod
+from typing import Any, Dict, Optional
+
+from .result import JsonRPCAction, Result, ResultResponse, send_results
 from .shared import logger
 
 

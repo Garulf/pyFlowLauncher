@@ -1,13 +1,13 @@
 from __future__ import annotations
-from typing import Any, Iterable, Callable, Union
+
 from functools import wraps
+from typing import Any, Callable, Iterable, Union
 
 from pyflowlauncher.shared import logger
 
-from .result import JsonRPCAction, ResultResponse
-from .jsonrpc import JsonRPCClient
 from .event import EventHandler
-
+from .jsonrpc import JsonRPCClient
+from .result import JsonRPCAction, ResultResponse
 
 Method = Callable[..., Union[ResultResponse, JsonRPCAction]]
 
