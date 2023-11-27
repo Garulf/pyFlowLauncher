@@ -42,6 +42,7 @@ search = "version = '{current_version}'"
 replace = "version = '{new_version}'"
 tag = true
 allow_dirty = false
+commit = true
 
 [tool.bumpversion.parts.label]
 optional_value = "release"
