@@ -2,6 +2,11 @@ name: Create Release
 
 on:
   workflow_dispatch:
+  push:
+    branches:
+      - main
+    tags:
+      - v*
 
 env:
   python: 3.11
