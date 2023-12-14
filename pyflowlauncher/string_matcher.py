@@ -24,7 +24,8 @@ class MatchData:
     score: int = 0
 
 
-def string_matcher(query: str, text: str, ignore_case: bool = True, query_search_precision: int = DEFAULT_QUERY_SEARCH_PRECISION) -> MatchData:
+def string_matcher(query: str, text: str, ignore_case: bool = True,
+                   query_search_precision: int = DEFAULT_QUERY_SEARCH_PRECISION) -> MatchData:
     """Compare query to text"""
     if not text or not query:
         return MatchData(False, query_search_precision)
@@ -54,13 +55,8 @@ def string_matcher(query: str, text: str, ignore_case: bool = True, query_search
     index_list: List[int] = []
     space_indices: List[int] = []
     for text_index in range(len(full_text_lower)):
-        if current_acronym_query_index >= len(query_lower) and acronyms_matched == len(query_lower):
-
-            if is_acronym_count(full_text_lower, text_index):
-                acronyms_total_count += 1
-                continue
-
-        if current_acronym_query_index >= len(query_lower) or current_acronym_query_index >= len(query_lower) and all_query_substrings_matched:
+        if (current_acronym_query_index >= len(query_lower) or
+                (current_acronym_query_index >= len(query_lower) and all_query_substrings_matched)):
             break
 
         if full_text_lower[text_index] == SPACE_CHAR and current_query_substring_char_index == 0:
@@ -75,7 +71,8 @@ def string_matcher(query: str, text: str, ignore_case: bool = True, query_search
         if is_acronym_count(text, text_index):
             acronyms_total_count += 1
 
-        if all_query_substrings_matched or full_text_lower[text_index] != current_query_substring[current_query_substring_char_index]:
+        if all_query_substrings_matched or (full_text_lower[text_index]
+                                            != current_query_substring[current_query_substring_char_index]):
             match_found_in_previous_loop = False
             continue
 
@@ -88,7 +85,8 @@ def string_matcher(query: str, text: str, ignore_case: bool = True, query_search
         elif not match_found_in_previous_loop:
             start_index_to_verify = text_index - current_query_substring_char_index
 
-            if all_previous_chars_matched(start_index_to_verify, current_query_substring_char_index, full_text_lower, current_query_substring):
+            if all_previous_chars_matched(start_index_to_verify, current_query_substring_char_index, full_text_lower,
+                                          current_query_substring):
                 match_found_in_previous_loop = True
                 first_match_index_in_word = start_index_to_verify if current_query_substring_index == 0 else first_match_index
 
@@ -133,7 +131,8 @@ def string_matcher(query: str, text: str, ignore_case: bool = True, query_search
     return MatchData(False, query_search_precision)
 
 
-def calculate_search_score(query: str, text: str, first_index: int, space_indices: List[int], match_length: int, all_substrings_contained_in_text: bool):
+def calculate_search_score(query: str, text: str, first_index: int, space_indices: List[int],
+                           match_length: int, all_substrings_contained_in_text: bool):
     score = 100 * (len(query) + 1) / ((1 + first_index) + (match_length + 1))
 
     if first_index == 0 and all_substrings_contained_in_text:
@@ -155,7 +154,9 @@ def calculate_search_score(query: str, text: str, first_index: int, space_indice
     return score
 
 
-def get_updated_index_list(start_index_to_verify: int, current_query_substring_char_index: int, first_matched_index_in_word: int, index_list: List[int]):
+def get_updated_index_list(start_index_to_verify: int,
+                           current_query_substring_char_index: int,
+                           first_matched_index_in_word: int, index_list: List[int]):
     updated_list: List[int] = []
 
     for idx, item in enumerate(index_list):
@@ -174,7 +175,9 @@ def all_query_substrings_matched_func(current_query_substring_index: int, query_
     return current_query_substring_index >= query_substrings_length
 
 
-def all_previous_chars_matched(start_index_to_verify: int, current_query_substring_char_index: int, full_text_lower: str, current_query_substring: str) -> bool:
+def all_previous_chars_matched(start_index_to_verify: int,
+                               current_query_substring_char_index: int,
+                               full_text_lower: str, current_query_substring: str) -> bool:
     all_match = True
     for i in range(current_query_substring_char_index):
         if full_text_lower[start_index_to_verify + i] != current_query_substring[i]:
