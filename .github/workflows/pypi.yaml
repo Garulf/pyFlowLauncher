@@ -3,11 +3,6 @@ name: Release on PYPI
 on: 
   workflow_dispatch:
   workflow_call: 
-  push:
-    branches:
-      - master
-    paths: 
-      - pyproject.toml
 
 env:
   DEFAULT_PYTHON: 3.11
