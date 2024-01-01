@@ -62,7 +62,7 @@ class Plugin:
     def plugin_root_dir(self) -> Path:
         """Return the root directory of the plugin."""
         return Path(sys.argv[0]).parent
-    
+
     def manifest(self) -> PluginManifestSchema:
         """Return the plugin manifest."""
         with open(self.plugin_root_dir() / MANIFEST_FILE, 'r', encoding='utf-8') as f:
