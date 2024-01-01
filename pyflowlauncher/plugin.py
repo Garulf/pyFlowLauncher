@@ -1,13 +1,17 @@
 from __future__ import annotations
 
+import sys
 from functools import wraps
 from typing import Any, Callable, Iterable, Union
+from pathlib import Path
+import json
 
 from pyflowlauncher.shared import logger
 
 from .event import EventHandler
 from .jsonrpc import JsonRPCClient
 from .result import JsonRPCAction, ResultResponse
+from .manifest import PluginManifestSchema, MANIFEST_FILE
 
 Method = Callable[..., Union[ResultResponse, JsonRPCAction]]
 
@@ -54,3 +58,13 @@ class Plugin:
         if 'result' in feedback and self._settings is not None:
             feedback['SettingsChange'] = self.settings
         self._client.send(feedback)
+
+    def plugin_root_dir(self) -> Path:
+        """Return the root directory of the plugin."""
+        return Path(sys.argv[0]).parent
+    
+    def manifest(self) -> PluginManifestSchema:
+        """Return the plugin manifest."""
+        with open(self.plugin_root_dir() / MANIFEST_FILE, 'r', encoding='utf-8') as f:
+            manifest = json.load(f)
+        return manifest
