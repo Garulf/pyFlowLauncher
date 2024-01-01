@@ -5,7 +5,7 @@ on:
   workflow_call: 
   push:
     paths:
-      - src/**
+      - pyflowlauncher/**
       - tests/**
       - tox.ini
   pull_request:
