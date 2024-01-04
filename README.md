@@ -14,7 +14,7 @@ A basic plugin using a function as the query method.
 
 ```py
 from pyflowlauncher import Plugin, Result, send_results
-from pyflowlauncher.result import, ResultResponse
+from pyflowlauncher.result import ResultResponse
 
 plugin = Plugin()
 
@@ -38,7 +38,7 @@ A more advanced usage using a `Method` class as the query method.
 
 ```py
 from pyflowlauncher import Plugin, Result, Method
-from pyflowlauncher.result import, ResultResponse
+from pyflowlauncher.result import ResultResponse
 
 plugin = Plugin()
 
