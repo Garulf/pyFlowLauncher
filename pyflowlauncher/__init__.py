@@ -2,8 +2,9 @@ import importlib.metadata
 import logging
 import os
 
-from .plugin import Plugin, ResultResponse
-from .result import JsonRPCAction, Result, send_results
+from .plugin import Plugin
+from .result import JsonRPCAction, Result, send_results, ResultResponse
+from .method import Method
 
 log_level = os.environ.get("FLOW_LAUNCHER_API_LOG_LEVEL", "INFO")
 
@@ -19,6 +20,7 @@ __all__ = [
     "send_results",
     "Result",
     "JsonRPCAction",
+    "Method",
 ]
 
 
