@@ -12,7 +12,7 @@ You can use some of these icons in your plugin by importing from the `icons` mod
 
 ## Example
 
-    ```
+```py
     from pyflowlauncher import Plugin, Result, send_results
     from pyflowlauncher.result import ResultResponse
     from pyflowlauncher.icons import ICONS
@@ -31,4 +31,4 @@ You can use some of these icons in your plugin by importing from the `icons` mod
 
 
     plugin.run()
-    ```
+```

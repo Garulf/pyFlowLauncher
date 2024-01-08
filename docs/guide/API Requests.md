@@ -10,7 +10,7 @@ You can send special requests to Flow Launcher to control the launcher from your
 
 ## Sending a command from a Result
 
-    ```py
+```py
     from pyflowlauncher import Plugin, Result, send_results, api
     from pyflowlauncher.result import JsonRPCAction, ResultResponse
 
@@ -29,7 +29,7 @@ You can send special requests to Flow Launcher to control the launcher from your
 
 
     plugin.run()
-    ```
+```
 
 The example above will change the query in Flow Launcher when the user selects your result.
 
@@ -37,7 +37,7 @@ The example above will change the query in Flow Launcher when the user selects y
 
 You can also send an API request in a custom method like so:
 
-    ```py
+```py
     from pyflowlauncher import Plugin, Result, send_results, api
     from pyflowlauncher.result import JsonRPCAction, ResultResponse
 
@@ -62,4 +62,4 @@ You can also send an API request in a custom method like so:
 
 
     plugin.run()
-    ```
+```
