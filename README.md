@@ -1,9 +1,8 @@
-[![][buymeacoffee-shield]][buymeacoffee-link]
+[![buymeacoffee](https://img.shields.io/badge/BUY%20ME%20A%20COFFEE-yellow.svg?style=flat-square&logo=buymeacoffee&logoColor=000)](https://www.buymeacoffee.com/garulf)
 
-[buymeacoffee-link]: https://www.buymeacoffee.com/garulf
-[buymeacoffee-shield]: https://img.shields.io/badge/BUY%20ME%20A%20COFFEE-yellow.svg?style=flat-square&logo=buymeacoffee&logoColor=000
+# PyFlowLauncher
 
-# Installation
+## Installation
 
 Install via pip:
 
