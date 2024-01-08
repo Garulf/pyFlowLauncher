@@ -1,5 +1,7 @@
-<img alt="Static Badge" src="https://img.shields.io/badge/buymeacoffee-garulf-yellow?style=flat-square&logo=buymeacoffee&link=https%3A%2F%2Fwww.buymeacoffee.com%2Fgarulf">
+[![][buymeacoffee-shield]][buymeacoffee-link]
 
+[buymeacoffee-link]: https://www.buymeacoffee.com/garulf
+[buymeacoffee-shield]: https://img.shields.io/badge/BUY%20ME%20A%20COFFEE-yellow.svg?style=flat-square&logo=buymeacoffee&logoColor=000
 
 # Installation
 
