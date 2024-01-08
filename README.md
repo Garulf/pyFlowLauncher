@@ -1,4 +1,5 @@
-![GitHub Actions Workflow Status](https://img.shields.io/github/actions/workflow/status/garulf/pyflowlauncher/tests.yaml?style=flat-square&label=tests)
+<img alt="Static Badge" src="https://img.shields.io/badge/buymeacoffee-garulf-yellow?style=flat-square&logo=buymeacoffee&link=https%3A%2F%2Fwww.buymeacoffee.com%2Fgarulf">
+
 
 # Installation
 
