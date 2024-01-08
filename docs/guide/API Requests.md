@@ -11,24 +11,24 @@ You can send special requests to Flow Launcher to control the launcher from your
 ## Sending a command from a Result
 
 ```py
-    from pyflowlauncher import Plugin, Result, send_results, api
-    from pyflowlauncher.result import JsonRPCAction, ResultResponse
+from pyflowlauncher import Plugin, Result, send_results, api
+from pyflowlauncher.result import JsonRPCAction, ResultResponse
 
-    plugin = Plugin()
-
-
-    @plugin.on_method
-    def query(query: str) -> ResultResponse:
-        r = Result(
-            Title="This is a title!",
-            SubTitle="This is the subtitle!",
-            IcoPath="icon.png",
-            JsonRPCAction=api.change_query("This is a new query!"),
-        )
-        return send_results([r])
+plugin = Plugin()
 
 
-    plugin.run()
+@plugin.on_method
+def query(query: str) -> ResultResponse:
+    r = Result(
+        Title="This is a title!",
+        SubTitle="This is the subtitle!",
+        IcoPath="icon.png",
+        JsonRPCAction=api.change_query("This is a new query!"),
+    )
+    return send_results([r])
+
+
+plugin.run()
 ```
 
 The example above will change the query in Flow Launcher when the user selects your result.
@@ -38,28 +38,28 @@ The example above will change the query in Flow Launcher when the user selects y
 You can also send an API request in a custom method like so:
 
 ```py
-    from pyflowlauncher import Plugin, Result, send_results, api
-    from pyflowlauncher.result import JsonRPCAction, ResultResponse
+from pyflowlauncher import Plugin, Result, send_results, api
+from pyflowlauncher.result import JsonRPCAction, ResultResponse
 
-    plugin = Plugin()
-
-
-    @plugin._on_method
-    def example_method() -> JsonRPCAction:
-        # Do stuff here
-        return api.change_query("This is also a new query!")
+plugin = Plugin()
 
 
-    @plugin.on_method
-    def query(query: str) -> ResultResponse:
-        r = Result(
-            Title="This is a title!",
-            SubTitle="This is the subtitle!",
-            IcoPath="icon.png",
-        )
-        r.add_action(example_method)
-        return send_results([r])
+@plugin._on_method
+def example_method() -> JsonRPCAction:
+    # Do stuff here
+    return api.change_query("This is also a new query!")
 
 
-    plugin.run()
+@plugin.on_method
+def query(query: str) -> ResultResponse:
+    r = Result(
+        Title="This is a title!",
+        SubTitle="This is the subtitle!",
+        IcoPath="icon.png",
+    )
+    r.add_action(example_method)
+    return send_results([r])
+
+
+plugin.run()
 ```
