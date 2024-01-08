@@ -2,6 +2,8 @@
 
 # PyFlowLauncher
 
+PyFlowLauncher is an API that allows you to quickly create plugins for Flow Launcher!
+
 ## Installation
 
 Install via pip:
