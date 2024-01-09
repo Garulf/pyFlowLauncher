@@ -23,6 +23,9 @@ dependencies = [
 [tool.setuptools]
 packages = ["pyflowlauncher"]
 
+[tool.setuptools.package-data]
+"pyflowlauncher" = ["py.typed"]
+
 [tool.bumpversion]
 current_version = "0.4.0-dev.0"
 parse = """(?x)
