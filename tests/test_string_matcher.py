@@ -1,5 +1,3 @@
-import pytest
-
 import pyflowlauncher.string_matcher as string_matcher
 
 
