@@ -123,10 +123,10 @@ def string_matcher(query: str, text: str, ignore_case: bool = True,
         nearest_space_index = calculate_closest_space_index(
             space_indices, first_match_index)
 
-        score = calculate_search_score(query, text, first_match_index - nearest_space_index - 1,
+        score: float = calculate_search_score(query, text, first_match_index - nearest_space_index - 1,
                                        space_indices, last_match_index - first_match_index, all_substrings_contained_in_text)
 
-        return MatchData(True, query_search_precision, index_list, score)
+        return MatchData(True, query_search_precision, index_list, int(score))
 
     return MatchData(False, query_search_precision)
 
