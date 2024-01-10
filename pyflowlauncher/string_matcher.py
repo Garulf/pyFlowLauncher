@@ -124,7 +124,8 @@ def string_matcher(query: str, text: str, ignore_case: bool = True,
             space_indices, first_match_index)
 
         score: float = calculate_search_score(query, text, first_match_index - nearest_space_index - 1,
-                                       space_indices, last_match_index - first_match_index, all_substrings_contained_in_text)
+                                              space_indices, last_match_index - first_match_index,
+                                              all_substrings_contained_in_text)
 
         return MatchData(True, query_search_precision, index_list, int(score))
 
