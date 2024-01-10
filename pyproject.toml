@@ -6,7 +6,7 @@ name = "pyflowlauncher"
 authors = [
     {name = "William McAllister", email = "dev.garulf@gmail.com"}
 ]
-version = '0.5.0-dev.0'
+version = '0.5.1-dev.0'
 description = "Python library to help build Flow Launcher plugins."
 readme = "README.md"
 requires-python = ">=3.8"
@@ -27,7 +27,7 @@ packages = ["pyflowlauncher"]
 "pyflowlauncher" = ["py.typed"]
 
 [tool.bumpversion]
-current_version = "0.5.0-dev.0"
+current_version = "0.5.1-dev.0"
 parse = """(?x)
     (?P<major>[0-9]+)
     \\.(?P<minor>[0-9]+)
