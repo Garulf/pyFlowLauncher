@@ -35,14 +35,14 @@ def test_settings():
 def test_run_dir(tmp_path, monkeypatch):
     monkeypatch.setattr('sys.argv', [tmp_path / 'plugin.py'])
     plugin = Plugin()
-    assert plugin.plugin_run_dir() == tmp_path
+    assert plugin.run_dir == tmp_path
 
 
 def test_root_dir(tmp_path, monkeypatch):
     monkeypatch.setattr('sys.argv', [tmp_path / 'plugin.py'])
     monkeypatch.setattr('pyflowlauncher.plugin.Path.exists', lambda _: True)
     plugin = Plugin()
-    assert plugin.plugin_root_dir() == tmp_path
+    assert plugin.root_dir() == tmp_path
 
 
 def test_root_dir_not_found(tmp_path, monkeypatch):
@@ -50,4 +50,4 @@ def test_root_dir_not_found(tmp_path, monkeypatch):
     monkeypatch.setattr('pyflowlauncher.plugin.Path.exists', lambda _: False)
     plugin = Plugin()
     with pytest.raises(FileNotFoundError):
-        assert plugin.plugin_root_dir() == tmp_path
+        assert plugin.root_dir() == tmp_path
