@@ -59,18 +59,19 @@ class Plugin:
             feedback['SettingsChange'] = self.settings
         self._client.send(feedback)
 
+    @property
     def plugin_run_dir(self) -> Path:
         """Return the run directory of the plugin."""
         return Path(sys.argv[0]).parent
 
     def plugin_root_dir(self) -> Path:
         """Return the root directory of the plugin."""
-        current_dir = self.plugin_run_dir()
+        current_dir = self.plugin_run_dir
         for part in current_dir.parts:
             if current_dir.joinpath(MANIFEST_FILE).exists():
                 return current_dir
             current_dir = current_dir.parent
-        raise FileNotFoundError(f"Could not find {MANIFEST_FILE} in {self.plugin_run_dir()} or any parent directory.")
+        raise FileNotFoundError(f"Could not find {MANIFEST_FILE} in {self.plugin_run_dir} or any parent directory.")
 
     def manifest(self) -> PluginManifestSchema:
         """Return the plugin manifest."""
