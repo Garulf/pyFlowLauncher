@@ -42,6 +42,10 @@ class Plugin:
         self._event_handler.add_method(wrapper)
         return wrapper
 
+    def method(self, method: Method) -> Method:
+        """Register a method to be called when the plugin is run."""
+        return self.on_method(method)
+
     @property
     def settings(self) -> dict:
         if self._settings is None:
