@@ -15,7 +15,7 @@ You can use some of these icons in your plugin by importing from the `icons` mod
 ```py
 from pyflowlauncher import Plugin, Result, send_results
 from pyflowlauncher.result import ResultResponse
-from pyflowlauncher.icons import ICONS
+from pyflowlauncher.icons import ADMIN
 
 plugin = Plugin()
 
@@ -25,7 +25,7 @@ def query(query: str) -> ResultResponse:
     r = Result(
         Title="This is a title!",
         SubTitle="This is the subtitle!",
-        IcoPath=ICONS["app"]
+        IcoPath=ADMIN
     )
     return send_results([r])
 
