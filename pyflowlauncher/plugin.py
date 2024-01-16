@@ -46,6 +46,10 @@ class Plugin:
         """Register a method to be called when the plugin is run."""
         return self.on_method(method)
 
+    def add_exception_handler(self, exception: Exception, handler: Callable[..., Any]) -> None:
+        """Add exception handler to be called when an exception is raised in a method."""
+        self._event_handler.add_exception_handler(exception, handler)
+
     @property
     def settings(self) -> dict:
         if self._settings is None:
