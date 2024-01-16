@@ -15,7 +15,10 @@ jobs:
     steps:
       - name: Checkout master
         uses: actions/checkout@v2
-
+      - name: Lint examples
+        run: |
+          pip install tox
+          tox -e lint
       - name: Deploy docs
         uses: mhausenblas/mkdocs-deploy-gh-pages@master
         env:
