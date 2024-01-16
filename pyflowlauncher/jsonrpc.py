@@ -24,5 +24,5 @@ class JsonRPCClient:
     def recieve(self) -> JsonRPCRequest:
         try:
             return json.loads(sys.argv[1])
-        except IndexError:
+        except (IndexError, json.JSONDecodeError):
             return {'method': 'query', 'parameters': ['']}
