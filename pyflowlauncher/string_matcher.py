@@ -1,4 +1,5 @@
 from dataclasses import dataclass, field
+from functools import lru_cache
 from typing import List
 from enum import IntEnum
 
@@ -31,6 +32,7 @@ class MatchData:
     score: int = 0
 
 
+@lru_cache(maxsize=128)
 def string_matcher(query: str, text: str, ignore_case: bool = True,
                    query_search_precision: int = DEFAULT_QUERY_SEARCH_PRECISION) -> MatchData:
     """Compare query to text"""
