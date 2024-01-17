@@ -1,13 +1,20 @@
 from dataclasses import dataclass, field
 from typing import List
+from enum import IntEnum
 
 SPACE_CHAR: str = ' '
-QUERY_SEARCH_PRECISION = {
-    'Regular': 50,
-    'Low': 20,
-    'None': 0
-}
-DEFAULT_QUERY_SEARCH_PRECISION = QUERY_SEARCH_PRECISION['Regular']
+REGULAR_SEARCH_PRECISION: int = 50
+LOW_SEARCH_PRECISION: int = 20
+NONE_SEARCH_PRECISION: int = 0
+
+
+class SearchPrecision(IntEnum):
+    REGULAR = REGULAR_SEARCH_PRECISION
+    LOW = LOW_SEARCH_PRECISION
+    NONE = NONE_SEARCH_PRECISION
+
+
+DEFAULT_QUERY_SEARCH_PRECISION = SearchPrecision.REGULAR
 
 """
 This is a python copy of Flow Launcher's string matcher.
