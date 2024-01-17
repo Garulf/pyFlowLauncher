@@ -1,4 +1,4 @@
-# Sending API requests to FLow Launcher
+# Sending API requests to Flow Launcher
 
 You can send special requests to Flow Launcher to control the launcher from your plugin. This communication is currently only one way.
 
