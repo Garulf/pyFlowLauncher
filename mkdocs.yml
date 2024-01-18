@@ -40,6 +40,5 @@ plugins:
 
 
 markdown_extensions:
-    - markdown_include.include
     - admonition
     - pymdownx.snippets
