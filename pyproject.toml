@@ -20,6 +20,9 @@ dependencies = [
     'typing_extensions>=4.8.0; python_version < "3.11"'
 ]
 
+[project.optional-dependencies]
+all = ['typing_extensions>=4.8.0']
+
 [tool.setuptools]
 packages = ["pyflowlauncher"]
 
