@@ -12,8 +12,10 @@ pyFlowLauncher is an API that allows you to quickly create plugins for Flow Laun
 Install via pip:
 
 ```py
-python -m pip install pyflowlauncher
+python -m pip install pyflowlauncher[all]
 ```
+
+⚠️ The "[all]" is important if you intend to support Python  < "3.11". ⚠️
 
 ## Usage
 
