@@ -57,3 +57,14 @@ def test_action():
     plugin = Plugin()
     action = plugin.action(query)
     assert action == {'method': 'query', 'parameters': []}
+
+
+def test_exception_handler():
+    plugin = Plugin()
+
+    @plugin.on_except(KeyError)
+    def action(e: Exception):
+        print('OH NO!')
+        return {'result': [{'title': 'title', 'subtitle': 'subtitle', 'icon': 'icon.png'}]}
+
+    assert plugin._event_handler._handlers == {KeyError: action}
