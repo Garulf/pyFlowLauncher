@@ -19,7 +19,7 @@ class EventHandler:
     def add_exception_handler(self, exception: Exception, handler: Callable[..., Any]):
         self._handlers[exception.__class__.__name__] = handler
 
-    def __call__(self, method, *args, **kwargs):
+    def __call__(self, method: str, *args, **kwargs):
         try:
             return self._methods[method](*args, **kwargs)
         except Exception as e:
