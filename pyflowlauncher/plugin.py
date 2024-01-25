@@ -48,6 +48,13 @@ class Plugin:
         """Add exception handler to be called when an exception is raised in a method."""
         self._event_handler.add_exception_handler(exception, handler)
 
+    def on_except(self, exception: Type[Exception]) -> Callable[..., Any]:
+        @wraps(exception)
+        def wrapper(handler: Callable[..., Any]) -> Callable[..., Any]:
+            self.add_exception_handler(exception, handler)
+            return handler
+        return wrapper
+
     def action(self, method: Method, parameters: Optional[Iterable] = None) -> JsonRPCAction:
         """Register a method and return a JsonRPCAction that calls it."""
         method_name = self.add_method(method)
