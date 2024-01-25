@@ -1,6 +1,6 @@
 
 
-from typing import Any, Callable
+from typing import Any, Callable, Iterable
 
 
 class EventHandler:
@@ -9,10 +9,13 @@ class EventHandler:
         self._methods = {}
         self._handlers = {}
 
-    def add_method(self, method, *, name=None):
-        self._methods[name or method.__name__] = method
+    def _get_callable_name(self, method: Callable[..., Any]):
+        return getattr(method, '__name__', method.__class__.__name__).lower()
 
-    def add_methods(self, methods):
+    def add_method(self, method: Callable[..., Any], *, name=None):
+        self._methods[name or self._get_callable_name(method)] = method
+
+    def add_methods(self, methods: Iterable[Callable[..., Any]]):
         for method in methods:
             self.add_method(method)
 
