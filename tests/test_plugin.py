@@ -51,3 +51,9 @@ def test_root_dir_not_found(tmp_path, monkeypatch):
     plugin = Plugin()
     with pytest.raises(FileNotFoundError):
         assert plugin.root_dir() == tmp_path
+
+
+def test_action():
+    plugin = Plugin()
+    action = plugin.action(query)
+    assert action == {'method': 'query', 'parameters': []}

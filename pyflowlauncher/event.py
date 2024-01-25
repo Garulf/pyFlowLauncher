@@ -12,8 +12,10 @@ class EventHandler:
     def _get_callable_name(self, method: Callable[..., Any]):
         return getattr(method, '__name__', method.__class__.__name__).lower()
 
-    def add_method(self, method: Callable[..., Any], *, name=None):
-        self._methods[name or self._get_callable_name(method)] = method
+    def add_method(self, method: Callable[..., Any], *, name=None) -> str:
+        key = name or self._get_callable_name(method)
+        self._methods[key] = method
+        return key
 
     def add_methods(self, methods: Iterable[Callable[..., Any]]):
         for method in methods:

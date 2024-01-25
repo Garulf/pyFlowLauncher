@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import sys
 from functools import wraps
-from typing import Any, Callable, Iterable, Union
+from typing import Any, Callable, Iterable, Optional, Union
 from pathlib import Path
 import json
 
@@ -26,9 +26,9 @@ class Plugin:
         if methods:
             self.add_methods(methods)
 
-    def add_method(self, method: Method) -> None:
+    def add_method(self, method: Method) -> str:
         """Add a method to the event handler."""
-        self._event_handler.add_method(method)
+        return self._event_handler.add_method(method)
 
     def add_methods(self, methods: Iterable[Method]) -> None:
         self._event_handler.add_methods(methods)
@@ -47,6 +47,11 @@ class Plugin:
     def add_exception_handler(self, exception: Exception, handler: Callable[..., Any]) -> None:
         """Add exception handler to be called when an exception is raised in a method."""
         self._event_handler.add_exception_handler(exception, handler)
+
+    def action(self, method: Method, parameters: Optional[Iterable] = None) -> JsonRPCAction:
+        """Register a method and return a JsonRPCAction that calls it."""
+        method_name = self.add_method(method)
+        return {"method": method_name, "parameters": parameters or []}
 
     @property
     def settings(self) -> dict:
