@@ -28,7 +28,7 @@ class EventHandler:
         try:
             return self._methods[method](*args, **kwargs)
         except Exception as e:
-            handler = self._handlers.get(e, None)
+            handler = self._handlers.get(type(e), None)
             if handler:
                 return handler(e)
-            # raise e
+            raise e
