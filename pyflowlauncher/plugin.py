@@ -28,9 +28,7 @@ class Plugin:
 
     def add_method(self, method: Method) -> None:
         """Add a method to the event handler."""
-        name = getattr(method, '__name__', method.__class__.__name__).lower()
-        self._logger.debug(f"Adding method: '{name}'")
-        self._event_handler.add_method(method, name=name)
+        self._event_handler.add_method(method)
 
     def add_methods(self, methods: Iterable[Method]) -> None:
         self._event_handler.add_methods(methods)
