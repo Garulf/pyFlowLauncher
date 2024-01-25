@@ -1,6 +1,6 @@
 
 
-from typing import Any, Callable, Iterable
+from typing import Any, Callable, Iterable, Type
 
 
 class EventHandler:
@@ -21,7 +21,7 @@ class EventHandler:
         for method in methods:
             self.add_method(method)
 
-    def add_exception_handler(self, exception: Exception, handler: Callable[..., Any]):
+    def add_exception_handler(self, exception: Type[Exception], handler: Callable[..., Any]):
         self._handlers[exception] = handler
 
     def __call__(self, method: str, *args, **kwargs):
