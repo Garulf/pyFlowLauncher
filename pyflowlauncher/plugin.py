@@ -62,7 +62,7 @@ class Plugin:
 
     def run(self) -> None:
         request = self._client.recieve()
-        method = request.get('method')
+        method = request["method"]
         parameters = request.get('parameters', [])
         feedback = self._event_handler(method, *parameters)
         # Inject settings if changed

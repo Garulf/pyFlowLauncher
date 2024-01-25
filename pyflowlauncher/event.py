@@ -22,13 +22,13 @@ class EventHandler:
             self.add_method(method)
 
     def add_exception_handler(self, exception: Exception, handler: Callable[..., Any]):
-        self._handlers[exception.__class__.__name__] = handler
+        self._handlers[exception] = handler
 
     def __call__(self, method: str, *args, **kwargs):
         try:
             return self._methods[method](*args, **kwargs)
         except Exception as e:
-            handler = self._handlers.get(e.__class__.__name__, None)
+            handler = self._handlers.get(e, None)
             if handler:
                 return handler(e)
-            raise e
+            # raise e
