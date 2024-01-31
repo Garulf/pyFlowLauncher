@@ -16,7 +16,7 @@ python -m pip install pyflowlauncher[all]
 ```
 
 > [!IMPORTANT]
-> Please use the `[all]` flag is in order to support Python versions older then `3.11`.
+> Please use the `[all]` flag in order to support Python versions older then `3.11`.
 
 ## Usage
 
