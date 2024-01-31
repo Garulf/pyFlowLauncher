@@ -15,7 +15,8 @@ Install via pip:
 python -m pip install pyflowlauncher[all]
 ```
 
- > ⚠️ The `[all]` is important if you intend to support Python versions older then `3.11`.
+> [!IMPORTANT]
+> Please use the `[all]` flag is in order to support Python versions older then `3.11`.
 
 ## Usage
 
