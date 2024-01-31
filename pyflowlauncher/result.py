@@ -48,7 +48,7 @@ class Result:
     CopyText: Optional[str] = None
     AutoCompleteText: Optional[str] = None
     RoundedIcon: bool = False
-    PreviewInfo: Optional[PreviewInfo] = None
+    Preview: Optional[PreviewInfo] = None
 
     def as_dict(self) -> Dict[str, Any]:
         return self.__dict__
