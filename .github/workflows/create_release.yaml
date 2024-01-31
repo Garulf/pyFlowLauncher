@@ -39,7 +39,3 @@ jobs:
   publish:
     needs: release
     uses: ./.github/workflows/pypi.yaml
-
-concurrency:
-  group: tests
-  cancel-in-progress: true
