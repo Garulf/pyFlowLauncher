@@ -13,7 +13,7 @@ from .jsonrpc import JsonRPCClient
 from .result import JsonRPCAction, ResultResponse
 from .manifest import PluginManifestSchema, MANIFEST_FILE
 
-Method = Callable[..., Union[ResultResponse, JsonRPCAction]]
+Method = Callable[..., Union[ResultResponse, JsonRPCAction, None]]
 
 
 class Plugin:
