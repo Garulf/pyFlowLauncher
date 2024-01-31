@@ -34,7 +34,7 @@ class PreviewInfo(TypedDict):
     Description: Optional[str]
     IsMedia: bool
     PreviewDeligate: Optional[str]
-    
+
 
 @dataclass
 class Result:
