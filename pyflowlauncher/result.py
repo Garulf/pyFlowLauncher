@@ -28,6 +28,14 @@ class Glyph(TypedDict):
     FontFamily: str
 
 
+class PreviewInfo(TypedDict):
+    """Flow Launcher Preview section"""
+    PreviewImagePath: Optional[str]
+    Description: Optional[str]
+    IsMedia: bool
+    PreviewDeligate: Optional[str]
+    
+
 @dataclass
 class Result:
     Title: str
@@ -40,6 +48,7 @@ class Result:
     CopyText: Optional[str] = None
     AutoCompleteText: Optional[str] = None
     RoundedIcon: bool = False
+    PreviewInfo: Optional[PreviewInfo] = None
 
     def as_dict(self) -> Dict[str, Any]:
         return self.__dict__
