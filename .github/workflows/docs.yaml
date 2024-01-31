@@ -18,7 +18,7 @@ jobs:
       - name: Lint examples
         run: |
           pip install tox
-          tox -e lint
+          tox -e docs
       - name: Deploy docs
         uses: mhausenblas/mkdocs-deploy-gh-pages@master
         env:
