@@ -1,6 +1,5 @@
 import importlib.metadata
 import logging
-import os
 
 from .plugin import Plugin
 from .result import JsonRPCAction, Result, send_results, ResultResponse
