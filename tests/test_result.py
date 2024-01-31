@@ -15,6 +15,12 @@ def test_asdict():
             "Method": "Test",
             "Parameters": ["Test"],
             "DontHideAfterAction": True
+        },
+        Preview={
+            "PreviewImagePath": "Test.png",
+            "Description": "Test",
+            "IsMedia": True,
+            "PreviewDeligate": None
         }
     )
     assert r.as_dict() == {
@@ -34,7 +40,13 @@ def test_asdict():
         },
         "CopyText": "Test",
         "AutoCompleteText": "Test",
-        "RoundedIcon": True
+        "RoundedIcon": True,
+        "Preview": {
+            "PreviewImagePath": "Test.png",
+            "Description": "Test",
+            "IsMedia": True,
+            "PreviewDeligate": None
+        }
     }
 
 
