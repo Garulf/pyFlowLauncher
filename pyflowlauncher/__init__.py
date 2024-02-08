@@ -1,4 +1,3 @@
-import importlib.metadata
 import logging
 
 from .plugin import Plugin
@@ -7,9 +6,6 @@ from .method import Method
 
 
 logger = logging.getLogger(__name__)
-
-
-__version__ = importlib.metadata.version(__name__)
 
 
 __all__ = [
