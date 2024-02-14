@@ -1,5 +1,4 @@
-
-
+import asyncio
 from typing import Any, Callable, Iterable, Type
 
 
@@ -24,9 +23,12 @@ class EventHandler:
     def add_exception_handler(self, exception: Type[Exception], handler: Callable[..., Any]):
         self._handlers[exception] = handler
 
-    def __call__(self, method: str, *args, **kwargs):
+    async def __call__(self, method: str, *args, **kwargs):
         try:
-            return self._methods[method](*args, **kwargs)
+            result = self._methods[method](*args, **kwargs)
+            if asyncio.iscoroutine(result):
+                return await result
+            return result
         except Exception as e:
             handler = self._handlers.get(type(e), None)
             if handler:

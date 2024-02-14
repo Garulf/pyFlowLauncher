@@ -5,6 +5,7 @@ from functools import wraps
 from typing import Any, Callable, Iterable, Optional, Type, Union
 from pathlib import Path
 import json
+import asyncio
 
 from pyflowlauncher.shared import logger
 
@@ -71,7 +72,11 @@ class Plugin:
         request = self._client.recieve()
         method = request["method"]
         parameters = request.get('parameters', [])
-        feedback = self._event_handler(method, *parameters)
+        if sys.version_info >= (3, 10, 0):
+            feedback = asyncio.run(self._event_handler(method, *parameters))
+        else:
+            loop = asyncio.get_event_loop()
+            feedback = loop.run_until_complete(self._event_handler(method, *parameters))
         if not feedback:
             return
         self._client.send(feedback)
