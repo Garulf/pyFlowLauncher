@@ -10,6 +10,10 @@ def temp_method2():
     return None
 
 
+async def async_temp_method3():
+    return None
+
+
 def except_method():
     raise Exception
 
@@ -26,10 +30,18 @@ def test_add_methods():
     assert handler._methods == {"temp_method1": temp_method1, "temp_method2": temp_method2}
 
 
-def test_call():
+@pytest.mark.asyncio
+async def test_call():
     handler = EventHandler()
     handler.add_method(temp_method1)
-    assert handler("temp_method1") is None
+    assert await handler("temp_method1") is None
+
+
+@pytest.mark.asyncio
+async def test_call_async():
+    handler = EventHandler()
+    handler.add_method(async_temp_method3)
+    assert await handler("async_temp_method3") is None
 
 
 def test_add_exception_handler():
@@ -38,8 +50,9 @@ def test_add_exception_handler():
     assert handler._handlers == {Exception: temp_method1}
 
 
-def test_call_exception():
+@pytest.mark.asyncio
+async def test_call_exception():
     handler = EventHandler()
     handler.add_method(except_method)
     with pytest.raises(Exception):
-        handler("except_method")
+        await handler("except_method")
