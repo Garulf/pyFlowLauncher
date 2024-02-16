@@ -29,16 +29,16 @@ class Plugin:
 
     def add_method(self, method: Method) -> str:
         """Add a method to the event handler."""
-        return self._event_handler.add_method(method)
+        return self._event_handler.add_event(method)
 
     def add_methods(self, methods: Iterable[Method]) -> None:
-        self._event_handler.add_methods(methods)
+        self._event_handler.add_events(methods)
 
     def on_method(self, method: Method) -> Method:
         @wraps(method)
         def wrapper(*args, **kwargs):
             return method(*args, **kwargs)
-        self._event_handler.add_method(wrapper)
+        self._event_handler.add_event(wrapper)
         return wrapper
 
     def method(self, method: Method) -> Method:
