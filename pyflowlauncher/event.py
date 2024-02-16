@@ -23,8 +23,8 @@ class EventHandler:
     def add_exception_handler(self, exception: Type[Exception], handler: Callable[..., Any]):
         self._handlers[exception] = handler
 
-    def _call_event(self, event: str, *args, **kwargs) -> Callable[..., Any] | None:
-        return self._events[event](*args, **kwargs)
+    def get_event(self, event: str) -> Callable[..., Any]:
+        return self._events[event]
 
     async def _await_maybe(self, result: Any) -> Any:
         if asyncio.iscoroutine(result):
@@ -33,7 +33,7 @@ class EventHandler:
 
     async def trigger_event(self, event: str, *args, **kwargs) -> Any:
         try:
-            result = self._call_event(event, *args, **kwargs)
+            result = self.get_event(event)(*args, **kwargs)
             return await self._await_maybe(result)
         except Exception as e:
             handler = self._handlers.get(type(e), None)
