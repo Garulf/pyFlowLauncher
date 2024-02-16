@@ -73,10 +73,10 @@ class Plugin:
         method = request["method"]
         parameters = request.get('parameters', [])
         if sys.version_info >= (3, 10, 0):
-            feedback = asyncio.run(self._event_handler(method, *parameters))
+            feedback = asyncio.run(self._event_handler.trigger_event(method, *parameters))
         else:
             loop = asyncio.get_event_loop()
-            feedback = loop.run_until_complete(self._event_handler(method, *parameters))
+            feedback = loop.run_until_complete(self._event_handler.trigger_event(method, *parameters))
         if not feedback:
             return
         self._client.send(feedback)
