@@ -2,6 +2,7 @@
 [![Docs Workflow Status](https://img.shields.io/github/actions/workflow/status/garulf/pyflowlauncher/tests.yaml?style=flat-square&label=docs)](https://github.com/Garulf/pyFlowLauncher/actions/workflows/docs.yaml) 
 [![Release Workflow Status](https://img.shields.io/github/actions/workflow/status/garulf/pyflowlauncher/create_release.yaml?style=flat-square&label=release)](https://github.com/Garulf/pyFlowLauncher/actions/workflows/create_release.yaml) 
 [![pypi](https://img.shields.io/pypi/v/pyflowlauncher?style=flat-square)](https://pypi.org/project/pyflowlauncher/)
+[![PyPI - Python Version](https://img.shields.io/pypi/pyversions/pyflowlauncher)](https://pypi.org/project/pyflowlauncher/)
 [![GitHub License](https://img.shields.io/github/license/garulf/pyflowlauncher?style=flat-square)](./LICENSE)
 [![buymeacoffee](https://img.shields.io/badge/buy%20me%20a%20coffee-yellow.svg?style=flat-square&logo=buymeacoffee&logoColor=000)](https://www.buymeacoffee.com/garulf)
 
