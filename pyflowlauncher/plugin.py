@@ -29,16 +29,16 @@ class Plugin:
 
     def add_method(self, method: Method) -> str:
         """Add a method to the event handler."""
-        return self._event_handler.add_method(method)
+        return self._event_handler.add_event(method)
 
     def add_methods(self, methods: Iterable[Method]) -> None:
-        self._event_handler.add_methods(methods)
+        self._event_handler.add_events(methods)
 
     def on_method(self, method: Method) -> Method:
         @wraps(method)
         def wrapper(*args, **kwargs):
             return method(*args, **kwargs)
-        self._event_handler.add_method(wrapper)
+        self._event_handler.add_event(wrapper)
         return wrapper
 
     def method(self, method: Method) -> Method:
@@ -73,10 +73,10 @@ class Plugin:
         method = request["method"]
         parameters = request.get('parameters', [])
         if sys.version_info >= (3, 10, 0):
-            feedback = asyncio.run(self._event_handler(method, *parameters))
+            feedback = asyncio.run(self._event_handler.trigger_event(method, *parameters))
         else:
             loop = asyncio.get_event_loop()
-            feedback = loop.run_until_complete(self._event_handler(method, *parameters))
+            feedback = loop.run_until_complete(self._event_handler.trigger_event(method, *parameters))
         if not feedback:
             return
         self._client.send(feedback)
