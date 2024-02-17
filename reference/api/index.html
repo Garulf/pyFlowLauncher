@@ -1,0 +1,1280 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+      
+      
+      
+        <link rel="prev" href="../../guide/scoring_results/">
+      
+      
+        <link rel="next" href="../event/">
+      
+      <link rel="icon" href="../../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.4.2, mkdocs-material-9.0.6">
+    
+    
+      
+        <title>API Reference - PyFlowLauncher</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../assets/stylesheets/main.558e4712.min.css">
+      
+        
+        <link rel="stylesheet" href="../../assets/stylesheets/palette.2505c338.min.css">
+      
+      
+
+    
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+      <link rel="stylesheet" href="../../assets/_mkdocstrings.css">
+    
+    <script>__md_scope=new URL("../..",location),__md_hash=e=>[...e].reduce((e,_)=>(e<<5)-e+_.charCodeAt(0),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+    
+  </head>
+  
+  
+    
+    
+      
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="slate" data-md-color-primary="" data-md-color-accent="">
+  
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&"object"==typeof palette.color)for(var key of Object.keys(palette.color))document.body.setAttribute("data-md-color-"+key,palette.color[key])</script>
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#api-reference" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+<header class="md-header" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href="../.." title="PyFlowLauncher" class="md-header__button md-logo" aria-label="PyFlowLauncher" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54Z"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3V6m0 5h18v2H3v-2m0 5h18v2H3v-2Z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            PyFlowLauncher
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              API Reference
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      <form class="md-header__option" data-md-component="palette">
+        
+          
+          <input class="md-option" data-md-color-media="(prefers-color-scheme: dark)" data-md-color-scheme="slate" data-md-color-primary="" data-md-color-accent=""  aria-label="Switch to light mode"  type="radio" name="__palette" id="__palette_1">
+          
+            <label class="md-header__button md-icon" title="Switch to light mode" for="__palette_2" hidden>
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 18c-.89 0-1.74-.2-2.5-.55C11.56 16.5 13 14.42 13 12c0-2.42-1.44-4.5-3.5-5.45C10.26 6.2 11.11 6 12 6a6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12 20 8.69Z"/></svg>
+            </label>
+          
+        
+          
+          <input class="md-option" data-md-color-media="(prefers-color-scheme: light)" data-md-color-scheme="default" data-md-color-primary="" data-md-color-accent=""  aria-label="Switch to dark mode"  type="radio" name="__palette" id="__palette_2">
+          
+            <label class="md-header__button md-icon" title="Switch to dark mode" for="__palette_1" hidden>
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a4 4 0 0 0-4 4 4 4 0 0 0 4 4 4 4 0 0 0 4-4 4 4 0 0 0-4-4m0 10a6 6 0 0 1-6-6 6 6 0 0 1 6-6 6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12 20 8.69Z"/></svg>
+            </label>
+          
+        
+      </form>
+    
+    
+    
+    
+      <div class="md-header__source">
+        <a href="https://github.com/Garulf/pyFlowLauncher" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 6.2.1 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc.--><path d="M439.55 236.05 244 40.45a28.87 28.87 0 0 0-40.81 0l-40.66 40.63 51.52 51.52c27.06-9.14 52.68 16.77 43.39 43.68l49.66 49.66c34.23-11.8 61.18 31 35.47 56.69-26.49 26.49-70.21-2.87-56-37.34L240.22 199v121.85c25.3 12.54 22.26 41.85 9.08 55a34.34 34.34 0 0 1-48.55 0c-17.57-17.6-11.07-46.91 11.25-56v-123c-20.8-8.51-24.6-30.74-18.64-45L142.57 101 8.45 235.14a28.86 28.86 0 0 0 0 40.81l195.61 195.6a28.86 28.86 0 0 0 40.8 0l194.69-194.69a28.86 28.86 0 0 0 0-40.81z"/></svg>
+  </div>
+  <div class="md-source__repository">
+    PyFlowLauncher
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+<nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../.." title="PyFlowLauncher" class="md-nav__button md-logo" aria-label="PyFlowLauncher" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54Z"/></svg>
+
+    </a>
+    PyFlowLauncher
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/Garulf/pyFlowLauncher" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 6.2.1 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc.--><path d="M439.55 236.05 244 40.45a28.87 28.87 0 0 0-40.81 0l-40.66 40.63 51.52 51.52c27.06-9.14 52.68 16.77 43.39 43.68l49.66 49.66c34.23-11.8 61.18 31 35.47 56.69-26.49 26.49-70.21-2.87-56-37.34L240.22 199v121.85c25.3 12.54 22.26 41.85 9.08 55a34.34 34.34 0 0 1-48.55 0c-17.57-17.6-11.07-46.91 11.25-56v-123c-20.8-8.51-24.6-30.74-18.64-45L142.57 101 8.45 235.14a28.86 28.86 0 0 0 0 40.81l195.61 195.6a28.86 28.86 0 0 0 40.8 0l194.69-194.69a28.86 28.86 0 0 0 0-40.81z"/></svg>
+  </div>
+  <div class="md-source__repository">
+    PyFlowLauncher
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+      
+
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../.." class="md-nav__link">
+        Home
+      </a>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+      
+      
+      <input class="md-nav__toggle md-toggle " data-md-toggle="__nav_2" type="checkbox" id="__nav_2" >
+      
+      
+      
+        <label class="md-nav__link" for="__nav_2" tabindex="0" aria-expanded="false">
+          Guide
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" aria-label="Guide" data-md-level="1">
+        <label class="md-nav__title" for="__nav_2">
+          <span class="md-nav__icon md-icon"></span>
+          Guide
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../guide/API%20Requests/" class="md-nav__link">
+        Sending API requests to Flow Launcher
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../guide/Launcher_Icons/" class="md-nav__link">
+        Using icons included with Flow Launcher
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../guide/Plugin%20methods/" class="md-nav__link">
+        Triggering Plugin methods
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../guide/scoring_results/" class="md-nav__link">
+        Score results
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+    
+  
+  
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
+      
+      
+      
+      
+      <input class="md-nav__toggle md-toggle " data-md-toggle="__nav_3" type="checkbox" id="__nav_3" checked>
+      
+      
+      
+        <label class="md-nav__link" for="__nav_3" tabindex="0" aria-expanded="true">
+          Reference
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" aria-label="Reference" data-md-level="1">
+        <label class="md-nav__title" for="__nav_3">
+          <span class="md-nav__icon md-icon"></span>
+          Reference
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+    
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" data-md-toggle="toc" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          API Reference
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        API Reference
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#pyflowlauncher.api" class="md-nav__link">
+    api
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#pyflowlauncher.api-attributes" class="md-nav__link">
+    Attributes
+  </a>
+  
+    <nav class="md-nav" aria-label="Attributes">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#pyflowlauncher.api.NAME_SPACE" class="md-nav__link">
+    NAME_SPACE
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#pyflowlauncher.api-classes" class="md-nav__link">
+    Classes
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#pyflowlauncher.api-functions" class="md-nav__link">
+    Functions
+  </a>
+  
+    <nav class="md-nav" aria-label="Functions">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#pyflowlauncher.api.change_query" class="md-nav__link">
+    change_query
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#pyflowlauncher.api.close_app" class="md-nav__link">
+    close_app
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#pyflowlauncher.api.copy_to_clipboard" class="md-nav__link">
+    copy_to_clipboard
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#pyflowlauncher.api.hide_app" class="md-nav__link">
+    hide_app
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#pyflowlauncher.api.open_directory" class="md-nav__link">
+    open_directory
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#pyflowlauncher.api.open_setting_dialog" class="md-nav__link">
+    open_setting_dialog
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#pyflowlauncher.api.open_uri" class="md-nav__link">
+    open_uri
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#pyflowlauncher.api.open_url" class="md-nav__link">
+    open_url
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#pyflowlauncher.api.reload_plugins" class="md-nav__link">
+    reload_plugins
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#pyflowlauncher.api.shell_run" class="md-nav__link">
+    shell_run
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#pyflowlauncher.api.show_app" class="md-nav__link">
+    show_app
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#pyflowlauncher.api.show_msg" class="md-nav__link">
+    show_msg
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#pyflowlauncher.api.start_loading_bar" class="md-nav__link">
+    start_loading_bar
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#pyflowlauncher.api.stop_loading_bar" class="md-nav__link">
+    stop_loading_bar
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../event/" class="md-nav__link">
+        event
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../plugin/" class="md-nav__link">
+        Plugin Reference
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../result/" class="md-nav__link">
+        result
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#pyflowlauncher.api" class="md-nav__link">
+    api
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#pyflowlauncher.api-attributes" class="md-nav__link">
+    Attributes
+  </a>
+  
+    <nav class="md-nav" aria-label="Attributes">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#pyflowlauncher.api.NAME_SPACE" class="md-nav__link">
+    NAME_SPACE
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#pyflowlauncher.api-classes" class="md-nav__link">
+    Classes
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#pyflowlauncher.api-functions" class="md-nav__link">
+    Functions
+  </a>
+  
+    <nav class="md-nav" aria-label="Functions">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#pyflowlauncher.api.change_query" class="md-nav__link">
+    change_query
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#pyflowlauncher.api.close_app" class="md-nav__link">
+    close_app
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#pyflowlauncher.api.copy_to_clipboard" class="md-nav__link">
+    copy_to_clipboard
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#pyflowlauncher.api.hide_app" class="md-nav__link">
+    hide_app
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#pyflowlauncher.api.open_directory" class="md-nav__link">
+    open_directory
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#pyflowlauncher.api.open_setting_dialog" class="md-nav__link">
+    open_setting_dialog
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#pyflowlauncher.api.open_uri" class="md-nav__link">
+    open_uri
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#pyflowlauncher.api.open_url" class="md-nav__link">
+    open_url
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#pyflowlauncher.api.reload_plugins" class="md-nav__link">
+    reload_plugins
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#pyflowlauncher.api.shell_run" class="md-nav__link">
+    shell_run
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#pyflowlauncher.api.show_app" class="md-nav__link">
+    show_app
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#pyflowlauncher.api.show_msg" class="md-nav__link">
+    show_msg
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#pyflowlauncher.api.start_loading_bar" class="md-nav__link">
+    start_loading_bar
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#pyflowlauncher.api.stop_loading_bar" class="md-nav__link">
+    stop_loading_bar
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+  
+  
+
+
+
+<h1 id="api-reference">API Reference</h1>
+
+
+<div class="doc doc-object doc-module">
+
+
+
+<a id="pyflowlauncher.api"></a>
+  <div class="doc doc-contents first">
+
+  
+
+  <div class="doc doc-children">
+
+
+
+
+
+<h2 id="pyflowlauncher.api-attributes">Attributes</h2>
+
+<div class="doc doc-object doc-attribute">
+
+
+
+<h3 id="pyflowlauncher.api.NAME_SPACE" class="doc doc-heading">
+          <span class="doc doc-object-name doc-attribute-name">NAME_SPACE</span>
+
+  
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-module-attribute"><code>module-attribute</code></small>
+  </span>
+
+</h3>
+<div class="doc-signature highlight"><pre><span></span><code><span class="n">NAME_SPACE</span> <span class="o">=</span> <span class="s1">&#39;Flow.Launcher&#39;</span>
+</code></pre></div>
+
+  <div class="doc doc-contents ">
+  </div>
+
+</div>
+<h2 id="pyflowlauncher.api-classes">Classes</h2>
+<h2 id="pyflowlauncher.api-functions">Functions</h2>
+
+
+<div class="doc doc-object doc-function">
+
+
+
+<h3 id="pyflowlauncher.api.change_query" class="doc doc-heading">
+          <span class="doc doc-object-name doc-function-name">change_query</span>
+
+
+</h3>
+<div class="doc-signature highlight"><pre><span></span><code><span class="n">change_query</span><span class="p">(</span><span class="n">query</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">requery</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">JsonRPCAction</span>
+</code></pre></div>
+
+  <div class="doc doc-contents ">
+  
+      <p>Change the query in Flow Launcher.</p>
+
+          <details class="quote">
+            <summary>Source code in <code>pyflowlauncher/api.py</code></summary>
+            <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">12</span>
+<span class="normal">13</span>
+<span class="normal">14</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">change_query</span><span class="p">(</span><span class="n">query</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">requery</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">JsonRPCAction</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Change the query in Flow Launcher.&quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">_send_action</span><span class="p">(</span><span class="s2">&quot;ChangeQuery&quot;</span><span class="p">,</span> <span class="n">query</span><span class="p">,</span> <span class="n">requery</span><span class="p">)</span>
+</code></pre></div></td></tr></table></div>
+          </details>
+  </div>
+
+</div>
+
+
+<div class="doc doc-object doc-function">
+
+
+
+<h3 id="pyflowlauncher.api.close_app" class="doc doc-heading">
+          <span class="doc doc-object-name doc-function-name">close_app</span>
+
+
+</h3>
+<div class="doc-signature highlight"><pre><span></span><code><span class="n">close_app</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="n">JsonRPCAction</span>
+</code></pre></div>
+
+  <div class="doc doc-contents ">
+  
+      <p>Close Flow Launcher.</p>
+
+          <details class="quote">
+            <summary>Source code in <code>pyflowlauncher/api.py</code></summary>
+            <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">22</span>
+<span class="normal">23</span>
+<span class="normal">24</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">close_app</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="n">JsonRPCAction</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Close Flow Launcher.&quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">_send_action</span><span class="p">(</span><span class="s2">&quot;CloseApp&quot;</span><span class="p">)</span>
+</code></pre></div></td></tr></table></div>
+          </details>
+  </div>
+
+</div>
+
+
+<div class="doc doc-object doc-function">
+
+
+
+<h3 id="pyflowlauncher.api.copy_to_clipboard" class="doc doc-heading">
+          <span class="doc doc-object-name doc-function-name">copy_to_clipboard</span>
+
+
+</h3>
+<div class="doc-signature highlight"><pre><span></span><code><span class="n">copy_to_clipboard</span><span class="p">(</span><span class="n">text</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">direct_copy</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span> <span class="n">show_default_notification</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">JsonRPCAction</span>
+</code></pre></div>
+
+  <div class="doc doc-contents ">
+  
+      <p>Copy text to the clipboard.</p>
+
+          <details class="quote">
+            <summary>Source code in <code>pyflowlauncher/api.py</code></summary>
+            <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">62</span>
+<span class="normal">63</span>
+<span class="normal">64</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">copy_to_clipboard</span><span class="p">(</span><span class="n">text</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">direct_copy</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span> <span class="n">show_default_notification</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">JsonRPCAction</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Copy text to the clipboard.&quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">_send_action</span><span class="p">(</span><span class="s2">&quot;CopyToClipboard&quot;</span><span class="p">,</span> <span class="n">text</span><span class="p">,</span> <span class="n">direct_copy</span><span class="p">,</span> <span class="n">show_default_notification</span><span class="p">)</span>
+</code></pre></div></td></tr></table></div>
+          </details>
+  </div>
+
+</div>
+
+
+<div class="doc doc-object doc-function">
+
+
+
+<h3 id="pyflowlauncher.api.hide_app" class="doc doc-heading">
+          <span class="doc doc-object-name doc-function-name">hide_app</span>
+
+
+</h3>
+<div class="doc-signature highlight"><pre><span></span><code><span class="n">hide_app</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="n">JsonRPCAction</span>
+</code></pre></div>
+
+  <div class="doc doc-contents ">
+  
+      <p>Hide Flow Launcher.</p>
+
+          <details class="quote">
+            <summary>Source code in <code>pyflowlauncher/api.py</code></summary>
+            <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">27</span>
+<span class="normal">28</span>
+<span class="normal">29</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">hide_app</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="n">JsonRPCAction</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Hide Flow Launcher.&quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">_send_action</span><span class="p">(</span><span class="s2">&quot;HideApp&quot;</span><span class="p">)</span>
+</code></pre></div></td></tr></table></div>
+          </details>
+  </div>
+
+</div>
+
+
+<div class="doc doc-object doc-function">
+
+
+
+<h3 id="pyflowlauncher.api.open_directory" class="doc doc-heading">
+          <span class="doc doc-object-name doc-function-name">open_directory</span>
+
+
+</h3>
+<div class="doc-signature highlight"><pre><span></span><code><span class="n">open_directory</span><span class="p">(</span><span class="n">directory_path</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">filename_or_filepath</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">JsonRPCAction</span>
+</code></pre></div>
+
+  <div class="doc doc-contents ">
+  
+      <p>Open a directory.</p>
+
+          <details class="quote">
+            <summary>Source code in <code>pyflowlauncher/api.py</code></summary>
+            <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">67</span>
+<span class="normal">68</span>
+<span class="normal">69</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">open_directory</span><span class="p">(</span><span class="n">directory_path</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">filename_or_filepath</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">JsonRPCAction</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Open a directory.&quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">_send_action</span><span class="p">(</span><span class="s2">&quot;OpenDirectory&quot;</span><span class="p">,</span> <span class="n">directory_path</span><span class="p">,</span> <span class="n">filename_or_filepath</span><span class="p">)</span>
+</code></pre></div></td></tr></table></div>
+          </details>
+  </div>
+
+</div>
+
+
+<div class="doc doc-object doc-function">
+
+
+
+<h3 id="pyflowlauncher.api.open_setting_dialog" class="doc doc-heading">
+          <span class="doc doc-object-name doc-function-name">open_setting_dialog</span>
+
+
+</h3>
+<div class="doc-signature highlight"><pre><span></span><code><span class="n">open_setting_dialog</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="n">JsonRPCAction</span>
+</code></pre></div>
+
+  <div class="doc doc-contents ">
+  
+      <p>Open the settings window in Flow Launcher.</p>
+
+          <details class="quote">
+            <summary>Source code in <code>pyflowlauncher/api.py</code></summary>
+            <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">42</span>
+<span class="normal">43</span>
+<span class="normal">44</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">open_setting_dialog</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="n">JsonRPCAction</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Open the settings window in Flow Launcher.&quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">_send_action</span><span class="p">(</span><span class="s2">&quot;OpenSettingDialog&quot;</span><span class="p">)</span>
+</code></pre></div></td></tr></table></div>
+          </details>
+  </div>
+
+</div>
+
+
+<div class="doc doc-object doc-function">
+
+
+
+<h3 id="pyflowlauncher.api.open_uri" class="doc doc-heading">
+          <span class="doc doc-object-name doc-function-name">open_uri</span>
+
+
+</h3>
+<div class="doc-signature highlight"><pre><span></span><code><span class="n">open_uri</span><span class="p">(</span><span class="n">uri</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">JsonRPCAction</span>
+</code></pre></div>
+
+  <div class="doc doc-contents ">
+  
+      <p>Open a URI.</p>
+
+          <details class="quote">
+            <summary>Source code in <code>pyflowlauncher/api.py</code></summary>
+            <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">77</span>
+<span class="normal">78</span>
+<span class="normal">79</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">open_uri</span><span class="p">(</span><span class="n">uri</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">JsonRPCAction</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Open a URI.&quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">_send_action</span><span class="p">(</span><span class="s2">&quot;OpenAppUri&quot;</span><span class="p">,</span> <span class="n">uri</span><span class="p">)</span>
+</code></pre></div></td></tr></table></div>
+          </details>
+  </div>
+
+</div>
+
+
+<div class="doc doc-object doc-function">
+
+
+
+<h3 id="pyflowlauncher.api.open_url" class="doc doc-heading">
+          <span class="doc doc-object-name doc-function-name">open_url</span>
+
+
+</h3>
+<div class="doc-signature highlight"><pre><span></span><code><span class="n">open_url</span><span class="p">(</span><span class="n">url</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">in_private</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">JsonRPCAction</span>
+</code></pre></div>
+
+  <div class="doc doc-contents ">
+  
+      <p>Open a URL.</p>
+
+          <details class="quote">
+            <summary>Source code in <code>pyflowlauncher/api.py</code></summary>
+            <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">72</span>
+<span class="normal">73</span>
+<span class="normal">74</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">open_url</span><span class="p">(</span><span class="n">url</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">in_private</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">JsonRPCAction</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Open a URL.&quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">_send_action</span><span class="p">(</span><span class="s2">&quot;OpenUrl&quot;</span><span class="p">,</span> <span class="n">url</span><span class="p">,</span> <span class="n">in_private</span><span class="p">)</span>
+</code></pre></div></td></tr></table></div>
+          </details>
+  </div>
+
+</div>
+
+
+<div class="doc doc-object doc-function">
+
+
+
+<h3 id="pyflowlauncher.api.reload_plugins" class="doc doc-heading">
+          <span class="doc doc-object-name doc-function-name">reload_plugins</span>
+
+
+</h3>
+<div class="doc-signature highlight"><pre><span></span><code><span class="n">reload_plugins</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="n">JsonRPCAction</span>
+</code></pre></div>
+
+  <div class="doc doc-contents ">
+  
+      <p>Reload the plugins in Flow Launcher.</p>
+
+          <details class="quote">
+            <summary>Source code in <code>pyflowlauncher/api.py</code></summary>
+            <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">57</span>
+<span class="normal">58</span>
+<span class="normal">59</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">reload_plugins</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="n">JsonRPCAction</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Reload the plugins in Flow Launcher.&quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">_send_action</span><span class="p">(</span><span class="s2">&quot;ReloadPlugins&quot;</span><span class="p">)</span>
+</code></pre></div></td></tr></table></div>
+          </details>
+  </div>
+
+</div>
+
+
+<div class="doc doc-object doc-function">
+
+
+
+<h3 id="pyflowlauncher.api.shell_run" class="doc doc-heading">
+          <span class="doc doc-object-name doc-function-name">shell_run</span>
+
+
+</h3>
+<div class="doc-signature highlight"><pre><span></span><code><span class="n">shell_run</span><span class="p">(</span><span class="n">command</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">filename</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;cmd.exe&#39;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">JsonRPCAction</span>
+</code></pre></div>
+
+  <div class="doc doc-contents ">
+  
+      <p>Run a shell command.</p>
+
+          <details class="quote">
+            <summary>Source code in <code>pyflowlauncher/api.py</code></summary>
+            <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">17</span>
+<span class="normal">18</span>
+<span class="normal">19</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">shell_run</span><span class="p">(</span><span class="n">command</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">filename</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;cmd.exe&#39;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">JsonRPCAction</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Run a shell command.&quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">_send_action</span><span class="p">(</span><span class="s2">&quot;ShellRun&quot;</span><span class="p">,</span> <span class="n">command</span><span class="p">,</span> <span class="n">filename</span><span class="p">)</span>
+</code></pre></div></td></tr></table></div>
+          </details>
+  </div>
+
+</div>
+
+
+<div class="doc doc-object doc-function">
+
+
+
+<h3 id="pyflowlauncher.api.show_app" class="doc doc-heading">
+          <span class="doc doc-object-name doc-function-name">show_app</span>
+
+
+</h3>
+<div class="doc-signature highlight"><pre><span></span><code><span class="n">show_app</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="n">JsonRPCAction</span>
+</code></pre></div>
+
+  <div class="doc doc-contents ">
+  
+      <p>Show Flow Launcher.</p>
+
+          <details class="quote">
+            <summary>Source code in <code>pyflowlauncher/api.py</code></summary>
+            <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">32</span>
+<span class="normal">33</span>
+<span class="normal">34</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">show_app</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="n">JsonRPCAction</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Show Flow Launcher.&quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">_send_action</span><span class="p">(</span><span class="s2">&quot;ShowApp&quot;</span><span class="p">)</span>
+</code></pre></div></td></tr></table></div>
+          </details>
+  </div>
+
+</div>
+
+
+<div class="doc doc-object doc-function">
+
+
+
+<h3 id="pyflowlauncher.api.show_msg" class="doc doc-heading">
+          <span class="doc doc-object-name doc-function-name">show_msg</span>
+
+
+</h3>
+<div class="doc-signature highlight"><pre><span></span><code><span class="n">show_msg</span><span class="p">(</span><span class="n">title</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">sub_title</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">ico_path</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">JsonRPCAction</span>
+</code></pre></div>
+
+  <div class="doc doc-contents ">
+  
+      <p>Show a message in Flow Launcher.</p>
+
+          <details class="quote">
+            <summary>Source code in <code>pyflowlauncher/api.py</code></summary>
+            <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">37</span>
+<span class="normal">38</span>
+<span class="normal">39</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">show_msg</span><span class="p">(</span><span class="n">title</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">sub_title</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">ico_path</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">JsonRPCAction</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Show a message in Flow Launcher.&quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">_send_action</span><span class="p">(</span><span class="s2">&quot;ShowMsg&quot;</span><span class="p">,</span> <span class="n">title</span><span class="p">,</span> <span class="n">sub_title</span><span class="p">,</span> <span class="n">ico_path</span><span class="p">)</span>
+</code></pre></div></td></tr></table></div>
+          </details>
+  </div>
+
+</div>
+
+
+<div class="doc doc-object doc-function">
+
+
+
+<h3 id="pyflowlauncher.api.start_loading_bar" class="doc doc-heading">
+          <span class="doc doc-object-name doc-function-name">start_loading_bar</span>
+
+
+</h3>
+<div class="doc-signature highlight"><pre><span></span><code><span class="n">start_loading_bar</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="n">JsonRPCAction</span>
+</code></pre></div>
+
+  <div class="doc doc-contents ">
+  
+      <p>Start the loading bar in Flow Launcher.</p>
+
+          <details class="quote">
+            <summary>Source code in <code>pyflowlauncher/api.py</code></summary>
+            <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">47</span>
+<span class="normal">48</span>
+<span class="normal">49</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">start_loading_bar</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="n">JsonRPCAction</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Start the loading bar in Flow Launcher.&quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">_send_action</span><span class="p">(</span><span class="s2">&quot;StartLoadingBar&quot;</span><span class="p">)</span>
+</code></pre></div></td></tr></table></div>
+          </details>
+  </div>
+
+</div>
+
+
+<div class="doc doc-object doc-function">
+
+
+
+<h3 id="pyflowlauncher.api.stop_loading_bar" class="doc doc-heading">
+          <span class="doc doc-object-name doc-function-name">stop_loading_bar</span>
+
+
+</h3>
+<div class="doc-signature highlight"><pre><span></span><code><span class="n">stop_loading_bar</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="n">JsonRPCAction</span>
+</code></pre></div>
+
+  <div class="doc doc-contents ">
+  
+      <p>Stop the loading bar in Flow Launcher.</p>
+
+          <details class="quote">
+            <summary>Source code in <code>pyflowlauncher/api.py</code></summary>
+            <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">52</span>
+<span class="normal">53</span>
+<span class="normal">54</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span> <span class="nf">stop_loading_bar</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="n">JsonRPCAction</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Stop the loading bar in Flow Launcher.&quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">_send_action</span><span class="p">(</span><span class="s2">&quot;StopLoadingBar&quot;</span><span class="p">)</span>
+</code></pre></div></td></tr></table></div>
+          </details>
+  </div>
+
+</div>
+
+
+
+  </div>
+
+  </div>
+
+</div>
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+        </div>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    <script id="__config" type="application/json">{"base": "../..", "features": ["content.code.copy"], "search": "../../assets/javascripts/workers/search.e5c33ebb.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}}</script>
+    
+    
+      <script src="../../assets/javascripts/bundle.51d95adb.min.js"></script>
+      
+    
+  </body>
+</html>
