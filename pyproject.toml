@@ -50,13 +50,6 @@ tag = true
 allow_dirty = false
 commit = true
 
-[tool.bumpversion.parts.label]
-optional_value = "release"
-values =[
-	"dev",
-	"rc",
-	"release",
-]
 
 [[tool.bumpversion.files]]
 filename = "pyproject.toml"
