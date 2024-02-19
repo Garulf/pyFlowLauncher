@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 import sys
-from typing import Any, List, Optional
+from typing import Any, Dict, List, Optional
 
 if sys.version_info < (3, 11):
     from typing_extensions import NotRequired, TypedDict
@@ -20,16 +20,22 @@ class BaseJsonRPCRequest(TypedDict):
 class JsonRPCRequest(BaseJsonRPCRequest):
     """Flow Launcher JsonRPC Request"""
     dontHideAfterAction: NotRequired[bool]
-    settings: NotRequired[dict]
+    settings: NotRequired[Dict]
 
 
 class BaseJsonRPCResult(TypedDict):
     """Standard JsonRPC Result"""
-    id: NotRequired[int]
+    id: NotRequired[Optional[int]]
     jsonrpc: str
     result: Any
 
 
 class JsonRPCResult(BaseJsonRPCResult):
     """Flow Launcher JsonRPC Result"""
-    SettingsChange: NotRequired[Optional[dict]]
+    SettingsChange: NotRequired[Optional[Dict]]
+
+
+class PartialJsonRPCResult(TypedDict):
+    """Flow Launcher JsonRPC Result"""
+    SettingsChange: NotRequired[Optional[Dict]]
+    result: NotRequired[Dict]

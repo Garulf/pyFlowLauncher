@@ -62,8 +62,8 @@ class Plugin:
 
     async def run_async(self) -> None:
         request = server.parse_request(sys.argv[1])
-        feedback = await self._event_handler.trigger_event(request["method"], *request["parameters"])
-        print(server.response(feedback, request["id"]))
+        response = await self._event_handler.trigger_event(request["method"], *request["parameters"])
+        print(server.response_string(**response, id=request["id"]))
 
     def run(self) -> None:
         if sys.version_info >= (3, 10, 0):
