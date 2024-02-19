@@ -10,18 +10,17 @@ import asyncio
 from pyflowlauncher.shared import logger
 
 from .event import EventHandler
-from .jsonrpc import JsonRPCClient
-from .result import JsonRPCAction, ResultResponse
+from .jsonrpc import server
+from .jsonrpc.models import JsonRPCRequest, JsonRPCResult
 from .manifest import PluginManifestSchema, MANIFEST_FILE
 
-Method = Callable[..., Union[ResultResponse, JsonRPCAction, None]]
+Method = Callable[..., Union[JsonRPCResult, None]]
 
 
 class Plugin:
 
     def __init__(self, methods: list[Method] | None = None) -> None:
         self._logger = logger(self)
-        self._client = JsonRPCClient()
         self._event_handler = EventHandler()
         self._settings: dict[str, Any] = {}
         if methods:
@@ -56,30 +55,22 @@ class Plugin:
             return handler
         return wrapper
 
-    def action(self, method: Method, parameters: Optional[Iterable] = None) -> JsonRPCAction:
+    def action(self, method: Method, parameters: Optional[Iterable] = None) -> JsonRPCRequest:
         """Register a method and return a JsonRPCAction that calls it."""
         method_name = self.add_method(method)
-        return {"method": method_name, "parameters": parameters or []}
+        return {"method": method_name, "parameters": list(parameters or [])}
 
-    @property
-    def settings(self) -> dict:
-        if self._settings is None:
-            self._settings = {}
-        self._settings = self._client.recieve().get('settings', {})
-        return self._settings
+    async def run_async(self) -> None:
+        request = server.parse_request(sys.argv[1])
+        feedback = await self._event_handler.trigger_event(request["method"], *request["parameters"])
+        print(server.response(feedback, request["id"]))
 
     def run(self) -> None:
-        request = self._client.recieve()
-        method = request["method"]
-        parameters = request.get('parameters', [])
         if sys.version_info >= (3, 10, 0):
-            feedback = asyncio.run(self._event_handler.trigger_event(method, *parameters))
+            asyncio.run(self.run_async())
         else:
             loop = asyncio.get_event_loop()
-            feedback = loop.run_until_complete(self._event_handler.trigger_event(method, *parameters))
-        if not feedback:
-            return
-        self._client.send(feedback)
+            loop.run_until_complete(self.run_async())
 
     @property
     def run_dir(self) -> Path:
