@@ -16,5 +16,6 @@ def score_results(
             query_search_precision=score_cutoff
         )
         if match.matched or (match_on_empty_query and not query):
+            result.TitleHighlightData = match.index_list
             result.Score = match.score
             yield result
