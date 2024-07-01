@@ -6,6 +6,7 @@ def test_asdict():
         Title="Test",
         SubTitle="Test",
         IcoPath="Test.png",
+        TitleHighlightData=[0],
         ContextData=["Test"],
         Glyph={"Glyph": "Test", "FontFamily": "Test"},
         CopyText="Test",
@@ -27,6 +28,7 @@ def test_asdict():
         "Title": "Test",
         "SubTitle": "Test",
         "IcoPath": "Test.png",
+        "TitleHighlightData": [0],
         "Score": 0,
         "JsonRPCAction": {
             "Method": "Test",

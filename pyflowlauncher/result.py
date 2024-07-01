@@ -49,6 +49,7 @@ class Result:
     AutoCompleteText: Optional[str] = None
     RoundedIcon: bool = False
     Preview: Optional[PreviewInfo] = None
+    TitleHighlightData: Optional[List[int]] = None
 
     def as_dict(self) -> Dict[str, Any]:
         return self.__dict__
