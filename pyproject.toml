@@ -6,7 +6,7 @@ name = "pyflowlauncher"
 authors = [
     {name = "William McAllister", email = "dev.garulf@gmail.com"}
 ]
-version = '0.9.1'
+version = '0.9.2'
 description = "Python library to help build Flow Launcher plugins."
 readme = "README.md"
 requires-python = ">=3.8"
