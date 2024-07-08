@@ -1,7 +1,10 @@
+import sys
 from typing import Any, Dict
-from .jsonrpc import JsonRPCClient
+
+from .jsonrpc.server import parse_request
 
 
 def settings() -> Dict[str, Any]:
     """Retrieve the settings from Flow Launcher."""
-    return JsonRPCClient().recieve().get('settings', {})
+    request = parse_request(sys.argv[1])
+    return request.get("settings", {})

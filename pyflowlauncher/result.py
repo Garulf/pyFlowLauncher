@@ -1,25 +1,14 @@
 from __future__ import annotations
 
-import sys
 from dataclasses import dataclass
 from pathlib import Path
-from typing import TYPE_CHECKING, Any, Dict, Iterable, List, Optional, Union
+from typing import TYPE_CHECKING, TypedDict, Any, Dict, Iterable, List, Optional, Union
 
-if sys.version_info < (3, 11):
-    from typing_extensions import NotRequired, TypedDict
-else:
-    from typing import NotRequired, TypedDict
-
+from .jsonrpc.models import JsonRPCRequest
+from .jsonrpc.client import create_request
 
 if TYPE_CHECKING:
     from .plugin import Method
-
-
-class JsonRPCAction(TypedDict):
-    """Flow Launcher JsonRPCAction"""
-    method: str
-    parameters: Iterable
-    dontHideAfterAction: NotRequired[bool]
 
 
 class Glyph(TypedDict):
@@ -42,7 +31,7 @@ class Result:
     SubTitle: Optional[str] = None
     IcoPath: Optional[Union[str, Path]] = None
     Score: int = 0
-    JsonRPCAction: Optional[JsonRPCAction] = None
+    JsonRPCAction: Optional[JsonRPCRequest] = None
     ContextData: Optional[Iterable] = None
     Glyph: Optional[Glyph] = None
     CopyText: Optional[str] = None
@@ -58,18 +47,13 @@ class Result:
                    parameters: Optional[Iterable[Any]] = None,
                    *,
                    dont_hide_after_action: bool = False) -> None:
-        self.JsonRPCAction = {
-            "method": method.__name__,
-            "parameters": parameters or [],
-            "dontHideAfterAction": dont_hide_after_action
-        }
+        self.JsonRPCAction = create_request(
+            method.__name__,
+            list(parameters or []),
+        )
+        self.JsonRPCAction["dontHideAfterAction"] = dont_hide_after_action
 
 
-class ResultResponse(TypedDict):
-    result: List[Dict[str, Any]]
-    SettingsChange: NotRequired[Optional[Dict[str, Any]]]
-
-
-def send_results(results: Iterable[Result], settings: Optional[Dict[str, Any]] = None) -> ResultResponse:
+def send_results(results: Iterable[Result]) -> List[Dict[str, Any]]:
     """Formats and returns results as a JsonRPCResponse"""
-    return {'result': [result.as_dict() for result in results], 'SettingsChange': settings}
+    return [result.as_dict() for result in results]

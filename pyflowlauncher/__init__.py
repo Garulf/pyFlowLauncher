@@ -1,8 +1,10 @@
 import logging
 
 from .plugin import Plugin
-from .result import JsonRPCAction, Result, send_results, ResultResponse
+from .result import Result, send_results
 from .method import Method
+from .jsonrpc.models import JsonRPCRequest, JsonRPCResult
+from .jsonrpc.client import send_request
 
 
 logger = logging.getLogger(__name__)
@@ -10,9 +12,10 @@ logger = logging.getLogger(__name__)
 
 __all__ = [
     "Plugin",
-    "ResultResponse",
     "send_results",
     "Result",
-    "JsonRPCAction",
+    "JsonRPCRequest",
+    "JsonRPCResult",
     "Method",
+    "send_request",
 ]
