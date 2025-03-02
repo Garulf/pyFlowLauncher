@@ -72,16 +72,16 @@ def create_result(
     title_highlight_data: Optional[List[int]] = None
 ) -> Result:
     return {
-        Title: title,
-        SubTitle: sub_title,
-        IcoPath: ico_path,
-        Score: score,
-        JsonRPCAction: jsonrpc_action,
-        ContextData: context_data,
-        Glyph: glyph,
-        CopyText: copy_text,
-        AutoCompleteText: auto_complete_text,
-        RoundedIcon: rounded_icon
-        Preview: preview,
-        TitleHighlightData: title_highlight_data
+        Title = title,
+        SubTitle = sub_title,
+        IcoPath = ico_path,
+        Score = score,
+        JsonRPCAction = jsonrpc_action,
+        ContextData = context_data,
+        Glyph = glyph,
+        CopyText = copy_text,
+        AutoCompleteText = auto_complete_text,
+        RoundedIcon = rounded_icon
+        Preview = preview,
+        TitleHighlightData = title_highlight_data
     }
