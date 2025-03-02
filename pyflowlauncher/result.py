@@ -36,33 +36,20 @@ class PreviewInfo(TypedDict):
     PreviewDeligate: Optional[str]
 
 
-@dataclass
-class Result:
+class Result(TypedDict):
+    """Result Item"""
     Title: str
-    SubTitle: Optional[str] = None
-    IcoPath: Optional[Union[str, Path]] = None
-    Score: int = 0
-    JsonRPCAction: Optional[JsonRPCAction] = None
-    ContextData: Optional[Iterable] = None
-    Glyph: Optional[Glyph] = None
-    CopyText: Optional[str] = None
-    AutoCompleteText: Optional[str] = None
-    RoundedIcon: bool = False
-    Preview: Optional[PreviewInfo] = None
-    TitleHighlightData: Optional[List[int]] = None
-
-    def as_dict(self) -> Dict[str, Any]:
-        return self.__dict__
-
-    def add_action(self, method: Method,
-                   parameters: Optional[Iterable[Any]] = None,
-                   *,
-                   dont_hide_after_action: bool = False) -> None:
-        self.JsonRPCAction = {
-            "method": method.__name__,
-            "parameters": parameters or [],
-            "dontHideAfterAction": dont_hide_after_action
-        }
+    SubTitle: NotRequired[str]
+    IcoPath: NotRequired[Union[str, Path]]
+    Score: NotRequired[int]
+    JsonRPCAction: NotRequired[JsonRPCAction]
+    ContextData: NotRequired[Iterable]
+    Glyph: NotRequired[Glyph]
+    CopyText: NotRequired[str]
+    AutoCompleteText: NotRequired[str]
+    RoundedIcon: NotRequired[bool]
+    Preview: NotRequired[PreviewInfo]
+    TitleHighlightData: NotRequired[List[int]]
 
 
 class ResultResponse(TypedDict):
