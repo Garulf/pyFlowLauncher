@@ -81,7 +81,7 @@ def create_result(
         "Glyph": glyph,
         "CopyText": copy_text,
         "AutoCompleteText": auto_complete_text,
-        "RoundedIcon": rounded_icon
+        "RoundedIcon": rounded_icon,
         "Preview": preview,
         "TitleHighlightData": title_highlight_data
     }
