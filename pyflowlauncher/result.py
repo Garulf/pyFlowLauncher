@@ -57,6 +57,31 @@ class ResultResponse(TypedDict):
     SettingsChange: NotRequired[Optional[Dict[str, Any]]]
 
 
-def send_results(results: Iterable[Result], settings: Optional[Dict[str, Any]] = None) -> ResultResponse:
-    """Formats and returns results as a JsonRPCResponse"""
-    return {'result': [result.as_dict() for result in results], 'SettingsChange': settings}
+def create_result(
+    title: str,
+    sub_title: Optional[str] = None,
+    ico_path: Optional[Union[str, Path]] = None,
+    score: Optional[int] = None,
+    jsonrpc_action: Optional[JsonRPCAction] = None,
+    context_data: Optional[Iterable] = None,
+    glyph: Optional[Glyph] = None,
+    copy_text: Optional[str] = None,
+    auto_complete_text: Optional[str] = None,
+    rounded_icon: Optional[bool] = False,
+    preview: Optional[PreviewInfo] = None,
+    title_highlight_data: Optional[List[int]] = None
+) -> Result:
+    return {
+        Title: title,
+        SubTitle: sub_title,
+        IcoPath: ico_path,
+        Score: score,
+        JsonRPCAction: jsonrpc_action,
+        ContextData: context_data,
+        Glyph: glyph,
+        CopyText: copy_text,
+        AutoCompleteText: auto_complete_text,
+        RoundedIcon: rounded_icon
+        Preview: preview,
+        TitleHighlightData: title_highlight_data
+    }
