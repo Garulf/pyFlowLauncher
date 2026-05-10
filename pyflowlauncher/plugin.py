@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import sys
 from functools import cached_property, wraps
-from typing import Any, Callable, Iterable, Optional, Type, Union
+from typing import Any, Callable, Iterable, Optional, Type, Union, List
 from pathlib import Path
 import json
 import asyncio
@@ -10,11 +10,11 @@ import asyncio
 from pyflowlauncher.shared import logger
 
 from .event import EventHandler
-from .jsonrpc import JsonRPCClient
-from .result import JsonRPCAction, ResultResponse
+from .jsonrpc import JsonRPCClient, JsonRPCRequest
+from .result import ResultResponse
 from .models.plugin_manifest import PluginMetadata
 
-Method = Callable[..., Union[ResultResponse, JsonRPCAction, None]]
+Method = Callable[..., Union[ResultResponse, JsonRPCRequest, None]]
 
 
 MANIFEST_FILE = 'plugin.json'
@@ -58,8 +58,8 @@ class Plugin:
             return handler
         return wrapper
 
-    def action(self, method: Method, parameters: Optional[Iterable] = None) -> JsonRPCAction:
-        """Register a method and return a JsonRPCAction that calls it."""
+    def action(self, method: Method, parameters: Optional[List] = None) -> JsonRPCRequest:
+        """Register a method and return a JsonRPCRequest that calls it."""
         method_name = self.add_method(method)
         return {"method": method_name, "parameters": parameters or []}
 
