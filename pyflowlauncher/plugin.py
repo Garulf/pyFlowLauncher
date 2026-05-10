@@ -86,6 +86,7 @@ class Plugin:
         """Return the run directory of the plugin."""
         return Path(sys.argv[0]).parent
 
+    @property
     def root_dir(self) -> Path:
         """Return the root directory of the plugin."""
         current_dir = self.run_dir
@@ -95,8 +96,9 @@ class Plugin:
             current_dir = current_dir.parent
         raise FileNotFoundError(f"Could not find {MANIFEST_FILE} in {self.run_dir} or any parent directory.")
 
+    @property
     def manifest(self) -> PluginManifestSchema:
         """Return the plugin manifest."""
-        with open(self.root_dir() / MANIFEST_FILE, 'r', encoding='utf-8') as f:
+        with open(self.root_dir / MANIFEST_FILE, 'r', encoding='utf-8') as f:
             manifest = json.load(f)
         return manifest
