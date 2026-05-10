@@ -5,7 +5,7 @@ from .result import Result
 
 class JsonRPCRequest(TypedDict):
     Method: str
-    Parameters: list
+    Parameters: List[str]
     DontHideAfterAction: NotRequired[bool]
 
 
