@@ -12,10 +12,12 @@ from pyflowlauncher.shared import logger
 from .event import EventHandler
 from .jsonrpc import JsonRPCClient
 from .result import JsonRPCAction, ResultResponse
-from .manifest import PluginManifestSchema, MANIFEST_FILE
+from .models.plugin_manifest import PluginMetadata
 
 Method = Callable[..., Union[ResultResponse, JsonRPCAction, None]]
 
+
+MANIFEST_FILE = 'plugin.json'
 
 class Plugin:
 
@@ -102,8 +104,28 @@ class Plugin:
         return self.root_dir / MANIFEST_FILE
 
     @cached_property
-    def manifest(self) -> PluginManifestSchema:
+    def manifest(self) -> PluginMetadata:
         """Return the plugin manifest."""
         with open(self.manifest_path, 'r', encoding='utf-8') as f:
             manifest = json.load(f)
         return manifest
+
+    @property
+    def name(self) -> str:
+        """Return the name of the plugin."""
+        return self.manifest['Name']
+
+    @property
+    def author(self) -> str:
+        """Return the author of the plugin."""
+        return self.manifest['Author']
+
+    @property
+    def version(self) -> str:
+        """Return the version of the plugin."""
+        return self.manifest['Version']
+
+    @property
+    def id(self) -> str:
+        """Return the ID of the plugin."""
+        return self.manifest['ID']
