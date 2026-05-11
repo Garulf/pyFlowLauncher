@@ -49,6 +49,26 @@ class Result:
 
     def as_dict(self) -> Dict[str, Any]:
         return self.__dict__
+    
+    @staticmethod
+    def from_json(json_result: JsonRPCResult) -> Result:
+        """Creates a Result instance from a JsonRPCResult dictionary."""
+        if 'Title' not in json_result:
+            raise ValueError("JsonRPCResult must have a 'Title' field")
+        return Result(
+            title=json_result['Title'],
+            subtitle=json_result.get('SubTitle'),
+            icon=json_result.get('IcoPath'),
+            score=json_result.get('Score', 0),
+            json_rpc_action=json_result.get('JsonRPCAction'),
+            context_data=json_result.get('ContextData'),
+            glyph=json_result.get('Glyph'),
+            copy_text=json_result.get('CopyText'),
+            auto_complete_text=json_result.get('AutoCompleteText'),
+            rounded_icon=json_result.get('RoundedIcon', False),
+            preview=json_result.get('Preview'),
+            title_highlight_data=list(json_result.get('TitleHighlightData', []))
+        )
 
     def to_json(self) -> JsonRPCResult:
         """Converts the Result instance to a JsonRPCResult dictionary"""
