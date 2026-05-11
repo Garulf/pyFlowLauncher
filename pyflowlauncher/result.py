@@ -18,9 +18,9 @@ from .models.json_rpc import JsonRPCResult, JsonRPCRequest, JsonRPCResponse
 class Result:
     title: str
     subtitle: Optional[str] = None
-    ico_path: Optional[Union[str, Path]] = None
+    icon: Optional[Union[str, Path]] = None
     score: int = 0
-    json_rpc_action: Optional[JsonRPCRequest] = None
+    action: Optional[JsonRPCRequest] = None
     context_data: Optional[Iterable] = None
     glyph: Optional[Glyph] = None
     copy_text: Optional[str] = None
@@ -37,9 +37,9 @@ class Result:
         return cast(JsonRPCResult, {
             'Title': self.title,
             'SubTitle': self.subtitle,
-            'IcoPath': str(self.ico_path) if self.ico_path else None,
+            'IcoPath': str(self.icon) if self.icon else None,
             'Score': self.score,
-            'JsonRPCAction': self.json_rpc_action,
+            'JsonRPCAction': self.action,
             'ContextData': self.context_data,
             'Glyph': self.glyph,
             'CopyText': self.copy_text,
