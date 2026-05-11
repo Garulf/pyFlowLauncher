@@ -31,6 +31,7 @@ class Plugin:
 
     def add_method(self, method: Method) -> str:
         """Add a method to the event handler."""
+        setattr(method, '_is_registered_method', True)
         return self._event_handler.add_event(method)
 
     def add_methods(self, methods: Iterable[Method]) -> None:
@@ -40,7 +41,7 @@ class Plugin:
         @wraps(method)
         def wrapper(*args, **kwargs):
             return method(*args, **kwargs)
-        self._event_handler.add_event(wrapper)
+        self.add_method(wrapper)
         return wrapper
 
     def method(self, method: Method) -> Method:
