@@ -7,14 +7,14 @@ from pathlib import Path
 import json
 import asyncio
 
+from pyflowlauncher.models.json_rpc import JsonRPCResponse
 from pyflowlauncher.shared import logger
 
 from .event import EventHandler
 from .jsonrpc import JsonRPCClient, JsonRPCRequest
-from .result import ResultResponse
 from .models.plugin_manifest import PluginMetadata
 
-Method = Callable[..., Union[ResultResponse, JsonRPCRequest, None]]
+Method = Callable[..., Union[JsonRPCResponse, JsonRPCRequest, None]]
 
 
 MANIFEST_FILE = 'plugin.json'
