@@ -1,7 +1,6 @@
 from typing import TypedDict, List, NotRequired
 
 
-
 FILE_NAME = 'plugin.json'
 
 
