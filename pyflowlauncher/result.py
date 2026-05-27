@@ -4,6 +4,7 @@ from dataclasses import dataclass
 from pathlib import Path
 from typing import Any, Callable, Dict, Iterable, List, Optional, Union, cast
 
+from .plugin import Method
 from .models.result import Glyph, PreviewInfo
 from .models.json_rpc import JsonRPCResult, JsonRPCRequest, JsonRPCResponse
 
@@ -31,7 +32,7 @@ class Result:
     preview: Optional[PreviewInfo] = None
     title_highlight_data: Optional[List[int]] = None
 
-    def add_action(self, method: Callable[..., Any], parameters: Optional[Iterable[Any]] = None, dont_hide_after_action: bool = False) -> None:
+    def add_action(self, method: Method, parameters: Optional[Iterable[Any]] = None, dont_hide_after_action: bool = False) -> None:
         """Adds a JsonRPC action to the result."""
         if not getattr(method, '_is_registered_method', False):
             raise MethodNotRegisteredError(method)

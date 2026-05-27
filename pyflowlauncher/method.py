@@ -8,6 +8,9 @@ from .result import Result, send_results
 from .base import pyFlowLauncherObject
 
 
+
+
+
 class Method(pyFlowLauncherObject, ABC):
 
     def __init__(self) -> None:
