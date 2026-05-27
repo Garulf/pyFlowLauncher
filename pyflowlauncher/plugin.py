@@ -8,7 +8,7 @@ import json
 import asyncio
 
 from pyflowlauncher.models.json_rpc import JsonRPCResponse
-from pyflowlauncher.shared import logger
+from .base import pyFlowLauncherObject
 
 from .event import EventHandler
 from .jsonrpc import JsonRPCClient, JsonRPCRequest
@@ -20,10 +20,10 @@ Method = Callable[..., Union[JsonRPCResponse, JsonRPCRequest, None]]
 MANIFEST_FILE = 'plugin.json'
 
 
-class Plugin:
+class Plugin(pyFlowLauncherObject):
 
     def __init__(self, methods: list[Method] | None = None) -> None:
-        self._logger = logger(self)
+        super().__init__()
         self._client = JsonRPCClient()
         self._event_handler = EventHandler()
         self._settings: dict[str, Any] = {}
