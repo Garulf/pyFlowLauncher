@@ -21,11 +21,28 @@ class Manifest:
     action_keywords: list[str] = field(default_factory=list)
 
     @classmethod
+    def from_json(cls, json_data: PluginMetadata) -> Self:
+        """Create a Manifest instance from a JSON dictionary."""
+        return cls(
+            id=json_data['ID'],
+            name=json_data['Name'],
+            author=json_data['Author'],
+            version=json_data['Version'],
+            language=json_data['Language'],
+            description=json_data['Description'],
+            website=json_data['Website'],
+            execute_file_name=json_data['ExecuteFileName'],
+            ico_path=json_data['IcoPath'],
+            action_keyword=json_data['ActionKeyword'],
+            action_keywords=json_data.get('ActionKeywords', []),
+        )
+
+    @classmethod
     def from_file(cls, path: Path) -> Self:
         """Load the manifest from a JSON file."""
         with open(path, 'r', encoding='utf-8') as f:
             data = json.load(f)
-        return cls(**data)
+        return cls.from_json(data)
 
     @classmethod
     def from_dir(cls, dir_path: Path) -> Self:
