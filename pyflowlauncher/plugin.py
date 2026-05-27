@@ -86,7 +86,7 @@ class Plugin(pyFlowLauncherObject):
     @property
     def run_dir(self) -> Path:
         """Return the run directory of the plugin."""
-        return Path(sys.argv[0]).parent
+        return Path(sys.argv[0]).resolve().parent
 
     @cached_property
     def root_dir(self) -> Path:
