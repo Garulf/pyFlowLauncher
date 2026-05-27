@@ -12,12 +12,11 @@ from .base import pyFlowLauncherObject
 
 from .event import EventHandler
 from .jsonrpc import JsonRPCClient, JsonRPCRequest
-from .models.plugin_manifest import PluginMetadata
+from .models.plugin_manifest import FILE_NAME
+from .manifest import Manifest
+
 
 Method = Callable[..., Union[JsonRPCResponse, JsonRPCRequest, None]]
-
-
-MANIFEST_FILE = 'plugin.json'
 
 
 class Plugin(pyFlowLauncherObject):
@@ -95,39 +94,17 @@ class Plugin(pyFlowLauncherObject):
         """Return the root directory of the plugin."""
         current_dir = self.run_dir
         for part in current_dir.parts:
-            if current_dir.joinpath(MANIFEST_FILE).exists():
+            if current_dir.joinpath(FILE_NAME).exists():
                 return current_dir
             current_dir = current_dir.parent
-        raise FileNotFoundError(f"Could not find {MANIFEST_FILE} in {self.run_dir} or any parent directory.")
+        raise FileNotFoundError(f"Could not find {FILE_NAME} in {self.run_dir} or any parent directory.")
 
     @cached_property
     def manifest_path(self) -> Path:
         """Return the path to the plugin manifest."""
-        return self.root_dir / MANIFEST_FILE
+        return self.root_dir / FILE_NAME
 
     @cached_property
-    def manifest(self) -> PluginMetadata:
+    def manifest(self) -> Manifest:
         """Return the plugin manifest."""
-        with open(self.manifest_path, 'r', encoding='utf-8') as f:
-            manifest = json.load(f)
-        return manifest
-
-    @property
-    def name(self) -> str:
-        """Return the name of the plugin."""
-        return self.manifest['Name']
-
-    @property
-    def author(self) -> str:
-        """Return the author of the plugin."""
-        return self.manifest['Author']
-
-    @property
-    def version(self) -> str:
-        """Return the version of the plugin."""
-        return self.manifest['Version']
-
-    @property
-    def id(self) -> str:
-        """Return the ID of the plugin."""
-        return self.manifest['ID']
+        return Manifest.from_file(self.manifest_path)

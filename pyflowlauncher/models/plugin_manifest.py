@@ -1,6 +1,9 @@
 from typing import TypedDict, List
 
 
+FILE_NAME = 'plugin.json'
+
+
 class PluginMetadata(TypedDict):
     ID: str
     Name: str
