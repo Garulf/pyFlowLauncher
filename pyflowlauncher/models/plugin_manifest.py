@@ -13,5 +13,3 @@ class PluginMetadata(TypedDict):
     IcoPath: str
     ActionKeyword: str
     ActionKeywords: List[str]
-
-    
