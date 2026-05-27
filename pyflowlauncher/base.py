@@ -20,4 +20,4 @@ class pyFlowLauncherObject:
     """Base class for all pyFlowLauncher objects."""
 
     def __init__(self):
-        self._logger = logging.getLogger(f'pyflowlauncher.{self.__class__.__name__}')
+        self.logger = logging.getLogger(f'pyflowlauncher.{self.__class__.__name__}')
