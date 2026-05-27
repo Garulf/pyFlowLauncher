@@ -19,6 +19,7 @@ Method = Callable[..., Union[JsonRPCResponse, JsonRPCRequest, None]]
 
 MANIFEST_FILE = 'plugin.json'
 
+
 class Plugin:
 
     def __init__(self, methods: list[Method] | None = None) -> None:
@@ -98,7 +99,7 @@ class Plugin:
                 return current_dir
             current_dir = current_dir.parent
         raise FileNotFoundError(f"Could not find {MANIFEST_FILE} in {self.run_dir} or any parent directory.")
-    
+
     @cached_property
     def manifest_path(self) -> Path:
         """Return the path to the plugin manifest."""
