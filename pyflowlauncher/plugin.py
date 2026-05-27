@@ -4,7 +4,6 @@ import sys
 from functools import cached_property, wraps
 from typing import Any, Callable, Iterable, Optional, Type, Union, List
 from pathlib import Path
-import json
 import asyncio
 
 from pyflowlauncher.models.json_rpc import JsonRPCResponse
