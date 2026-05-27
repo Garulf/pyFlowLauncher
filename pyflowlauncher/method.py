@@ -5,13 +5,13 @@ from typing import Any, Dict, Optional
 
 from .models.json_rpc import JsonRPCRequest, JsonRPCResponse
 from .result import Result, send_results
-from .shared import logger
+from .base import pyFlowLauncherObject
 
 
-class Method(ABC):
+class Method(pyFlowLauncherObject, ABC):
 
     def __init__(self) -> None:
-        self._logger = logger(self)
+        super().__init__()
         self._results: list[Result] = []
 
     def add_result(self, result: Result) -> None:
