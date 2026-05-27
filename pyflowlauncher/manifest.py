@@ -51,21 +51,21 @@ class Manifest:
 
     def to_json(self) -> PluginMetadata:
         """Convert the manifest to a JSON-serializable dictionary."""
-        return PluginMetadata(
-            ID=self.id,
-            Name=self.name,
-            Author=self.author,
-            Version=self.version,
-            Language=self.language,
-            Description=self.description,
-            Website=self.website,
-            ExecuteFileName=self.execute_file_name,
-            IcoPath=self.ico_path,
-            ActionKeyword=self.action_keyword,
-            ActionKeywords=self.action_keywords,
-        )
+        return {
+            "ID": self.id,
+            "Name": self.name,
+            "Author": self.author,
+            "Version": self.version,
+            "Language": self.language,
+            "Description": self.description,
+            "Website": self.website,
+            "ExecuteFileName": self.execute_file_name,
+            "IcoPath": self.ico_path,
+            "ActionKeyword": self.action_keyword,
+            "ActionKeywords": self.action_keywords,
+        }
 
-    def save(self, path: str) -> None:
+    def save(self, path: Path) -> None:
         """Save the manifest to a JSON file."""
         with open(path, 'w', encoding='utf-8') as f:
             json.dump(self.to_json(), f, ensure_ascii=False, indent=4)
