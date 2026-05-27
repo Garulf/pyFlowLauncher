@@ -1,4 +1,5 @@
-from typing import TypedDict, List
+from typing import TypedDict, List, NotRequired
+
 
 
 FILE_NAME = 'plugin.json'
@@ -15,4 +16,4 @@ class PluginMetadata(TypedDict):
     ExecuteFileName: str
     IcoPath: str
     ActionKeyword: str
-    ActionKeywords: List[str]
+    ActionKeywords: NotRequired[List[str]]
