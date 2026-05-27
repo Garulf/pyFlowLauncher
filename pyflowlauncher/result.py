@@ -8,6 +8,14 @@ from .models.result import Glyph, PreviewInfo
 from .models.json_rpc import JsonRPCResult, JsonRPCRequest, JsonRPCResponse
 
 
+class MethodNotRegisteredError(Exception):
+    """Exception raised when trying to add an action with a method that is not registered as a plugin method."""
+
+    def __init__(self, method: Callable[..., Any]):
+        self.method = method
+        super().__init__(f"Method {method.__name__} is not registered as a plugin method. Please use the @plugin.on_method decorator to register it.")
+
+
 @dataclass
 class Result:
     title: str
@@ -26,7 +34,7 @@ class Result:
     def add_action(self, method: Callable[..., Any], parameters: Optional[Iterable[Any]] = None, dont_hide_after_action: bool = False) -> None:
         """Adds a JsonRPC action to the result."""
         if not getattr(method, '_is_registered_method', False):
-            raise ValueError(f"Method {method.__name__} is not registered as a plugin method. Please use the @plugin.on_method decorator to register it.")
+            raise MethodNotRegisteredError(method)
         self.json_rpc_action = {
             'Method': method.__name__,
             'Parameters': list(parameters) if parameters else [],
