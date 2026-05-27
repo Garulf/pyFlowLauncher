@@ -1,14 +1,8 @@
 from __future__ import annotations
 
-import sys
 from dataclasses import dataclass
 from pathlib import Path
 from typing import Any, Callable, Dict, Iterable, List, Optional, Union, cast
-
-if sys.version_info < (3, 11):
-    from typing_extensions import NotRequired, TypedDict
-else:
-    from typing import NotRequired, TypedDict
 
 from .models.result import Glyph, PreviewInfo
 from .models.json_rpc import JsonRPCResult, JsonRPCRequest, JsonRPCResponse
@@ -41,7 +35,7 @@ class Result:
 
     def as_dict(self) -> Dict[str, Any]:
         return self.__dict__
-    
+
     @staticmethod
     def from_json(json_result: JsonRPCResult) -> Result:
         """Creates a Result instance from a JsonRPCResult dictionary."""
