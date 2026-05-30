@@ -1,15 +1,15 @@
 from pyflowlauncher import Plugin, Result, send_results
-from pyflowlauncher.result import ResultResponse
+from pyflowlauncher.models.json_rpc import JsonRPCResponse
 
 plugin = Plugin()
 
 
 @plugin.on_method
-def query(query: str) -> ResultResponse:
+def query(query: str) -> JsonRPCResponse:
     r = Result(
-        Title="This is a title!",
-        SubTitle="This is the subtitle!",
-        JsonRPCAction={"method": "action", "parameters": []}
+        title="This is a title!",
+        subtitle="This is the subtitle!",
+        json_rpc_action={"Method": "action", "Parameters": []}
     )
     return send_results([r])
 
