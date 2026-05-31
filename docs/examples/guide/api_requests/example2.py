@@ -1,21 +1,21 @@
 from pyflowlauncher import Plugin, Result, send_results, api
-from pyflowlauncher.result import JsonRPCAction, ResultResponse
+from pyflowlauncher.models.json_rpc import JsonRPCResponse
 
 plugin = Plugin()
 
 
 @plugin.on_method
-def example_method() -> JsonRPCAction:
+def example_method() -> JsonRPCResponse:
     # Do stuff here
     return api.change_query("This is also a new query!")
 
 
 @plugin.on_method
-def query(query: str) -> ResultResponse:
+def query(query: str) -> JsonRPCResponse:
     r = Result(
-        Title="This is a title!",
-        SubTitle="This is the subtitle!",
-        IcoPath="icon.png",
+        title="This is a title!",
+        subtitle="This is the subtitle!",
+        icon="icon.png",
     )
     r.add_action(example_method)
     return send_results([r])
