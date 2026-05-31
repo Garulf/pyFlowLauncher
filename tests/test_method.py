@@ -22,4 +22,4 @@ def test_return_results():
             return self.return_results()
 
     method = TestMethod()
-    assert method() == {"result": [result.as_dict()], 'SettingsChange': None}
+    assert method() == {"Result": [result.to_json()], 'SettingsChange': None}
