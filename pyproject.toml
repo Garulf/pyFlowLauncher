@@ -28,7 +28,7 @@ dependencies = [
 all = ['typing_extensions>=4.8.0']
 
 [tool.setuptools]
-packages = ["pyflowlauncher"]
+packages = ["pyflowlauncher", "pyflowlauncher.models"]
 
 [tool.setuptools.package-data]
 "pyflowlauncher" = ["py.typed"]
