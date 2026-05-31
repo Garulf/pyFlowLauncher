@@ -1,7 +1,12 @@
 from dataclasses import dataclass, field
 import json
-from typing import Self
 from pathlib import Path
+import sys
+
+if sys.version_info < (3, 11):
+    from typing_extensions import Self
+else:
+    from typing import Self
 
 from .models.plugin_manifest import FILE_NAME, PluginMetadata
 
