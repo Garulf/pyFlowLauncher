@@ -1,10 +1,10 @@
 import sys
-from typing import Optional, Required, Iterable
+from typing import Optional, Iterable
 
 if sys.version_info < (3, 11):
-    from typing_extensions import NotRequired, TypedDict
+    from typing_extensions import NotRequired, TypedDict, Required
 else:
-    from typing import NotRequired, TypedDict
+    from typing import NotRequired, TypedDict, Required
 
 
 class Glyph(TypedDict):
