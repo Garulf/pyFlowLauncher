@@ -1,4 +1,10 @@
-from typing import Any, Dict, List, NotRequired, Optional, TypedDict
+import sys
+from typing import Any, Dict, List, Optional
+
+if sys.version_info < (3, 11):
+    from typing_extensions import NotRequired, TypedDict
+else:
+    from typing import NotRequired, TypedDict
 
 from .result import Result
 

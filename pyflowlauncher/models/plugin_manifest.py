@@ -1,4 +1,10 @@
-from typing import TypedDict, List, NotRequired
+import sys
+from typing import List
+
+if sys.version_info < (3, 11):
+    from typing_extensions import NotRequired, TypedDict
+else:
+    from typing import NotRequired, TypedDict
 
 
 FILE_NAME = 'plugin.json'
