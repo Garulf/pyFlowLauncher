@@ -14,7 +14,10 @@ class MethodNotRegisteredError(Exception):
 
     def __init__(self, method: Callable[..., Any]):
         self.method = method
-        super().__init__(f"Method {method.__name__} is not registered as a plugin method. Please use the @plugin.on_method decorator to register it.")
+        super().__init__(
+            f"Method {method.__name__} is not registered as a plugin method. "
+            "Please use the @plugin.on_method decorator to register it."
+        )
 
 
 @dataclass
@@ -32,7 +35,9 @@ class Result:
     preview: Optional[PreviewInfo] = None
     title_highlight_data: Optional[List[int]] = None
 
-    def add_action(self, method: Method, parameters: Optional[Iterable[Any]] = None, dont_hide_after_action: bool = False) -> None:
+    def add_action(
+        self, method: Method, parameters: Optional[Iterable[Any]] = None, dont_hide_after_action: bool = False
+    ) -> None:
         """Adds a JsonRPC action to the result."""
         if not getattr(method, '_is_registered_method', False):
             raise MethodNotRegisteredError(method)

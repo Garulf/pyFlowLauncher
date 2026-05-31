@@ -2,11 +2,10 @@ from __future__ import annotations
 
 import sys
 from functools import cached_property, wraps
-from typing import Any, Callable, Iterable, Optional, Type, Union, List
+from typing import Any, Callable, Iterable, Optional, Type, List
 from pathlib import Path
 import asyncio
 
-from pyflowlauncher.models.json_rpc import JsonRPCResponse
 from .base import pyFlowLauncherObject
 
 from .event import EventHandler
@@ -15,7 +14,7 @@ from .models.plugin_manifest import FILE_NAME
 from .manifest import Manifest
 
 
-Method = Callable[..., Union[JsonRPCResponse, JsonRPCRequest, None]]
+Method = Callable[..., Any]
 
 
 class Plugin(pyFlowLauncherObject):

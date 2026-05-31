@@ -6,7 +6,7 @@ NAME_SPACE = 'Flow.Launcher'
 
 
 def _send_action(method: str, *parameters) -> JsonRPCRequest:
-    return {"method": f"{NAME_SPACE}.{method}", "parameters": parameters}
+    return {"Method": f"{NAME_SPACE}.{method}", "Parameters": list(parameters)}
 
 
 def change_query(query: str, requery: bool = False) -> JsonRPCRequest:
