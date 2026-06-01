@@ -29,17 +29,17 @@ A basic plugin using a function as the query method.
 
 ```py
 from pyflowlauncher import Plugin, Result, send_results
-from pyflowlauncher.result import ResultResponse
+from .models.json_rpc import JsonRPCResponse
 
 plugin = Plugin()
 
 
 @plugin.on_method
-def query(query: str) -> ResultResponse:
+def query(query: str) -> JsonRPCResponse:
     r = Result(
-        Title="This is a title!",
-        SubTitle="This is the subtitle!",
-        IcoPath="icon.png"
+        title="This is a title!",
+        subtitle="This is the subtitle!",
+        icon="icon.png"
     )
     return send_results([r])
 
@@ -53,17 +53,17 @@ A more advanced usage using a `Method` class as the query method.
 
 ```py
 from pyflowlauncher import Plugin, Result, Method
-from pyflowlauncher.result import ResultResponse
+from .models.json_rpc import JsonRPCResponse
 
 plugin = Plugin()
 
 
 class Query(Method):
 
-    def __call__(self, query: str) -> ResultResponse:
+    def __call__(self, query: str) -> JsonRPCResponse:
         r = Result(
-            Title="This is a title!",
-            SubTitle="This is the subtitle!"
+            title="This is a title!",
+            subtitle="This is the subtitle!"
         )
         self.add_result(r)
         return self.return_results()
