@@ -3,6 +3,7 @@ import logging
 from .plugin import Plugin
 from .result import Result, send_results
 from .method import Method
+from .response import handle_response
 
 
 logger = logging.getLogger(__name__)
@@ -13,4 +14,5 @@ __all__ = [
     "send_results",
     "Result",
     "Method",
+    "handle_response",
 ]
