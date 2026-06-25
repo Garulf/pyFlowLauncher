@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import sys
 from functools import cached_property, wraps
-from typing import Any, Iterable, Optional, Type, List
+from typing import Any, Callable, Iterable, Optional, Type, List
 from pathlib import Path
 import asyncio
 
