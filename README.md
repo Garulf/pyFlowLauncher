@@ -28,24 +28,24 @@ python -m pip install pyflowlauncher[all]
 A basic plugin using a function as the query method.
 
 ```py
-from pyflowlauncher import Plugin, Result, send_results
-from .models.json_rpc import JsonRPCResponse
+from pyflowlauncher import Plugin, Result
 
 plugin = Plugin()
 
 
 @plugin.on_method
-def query(query: str) -> JsonRPCResponse:
-    r = Result(
+def query(query: str):
+    yield Result(
         title="This is a title!",
         subtitle="This is the subtitle!",
         icon="icon.png"
     )
-    return send_results([r])
 
 
 plugin.run()
 ```
+
+Methods decorated with `@plugin.on_method` can `yield` one or more `Result` objects, return a list of `Result` objects, or return a single `Result` — the framework normalizes all forms into the correct response automatically.
 
 ### Advanced plugin
 
