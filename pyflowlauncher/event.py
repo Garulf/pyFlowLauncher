@@ -1,5 +1,8 @@
 import asyncio
+import inspect
 from typing import Any, Callable, Iterable, Type, Union
+
+from .result import Result, send_results
 
 
 class EventNotFound(Exception):
@@ -39,6 +42,14 @@ class EventHandler:
     async def _await_maybe(self, result: Any) -> Any:
         if asyncio.iscoroutine(result):
             return await result
+        if inspect.isasyncgen(result):
+            results = []
+            async for item in result:
+                if isinstance(item, Result):
+                    results.append(item)
+                elif isinstance(item, list):
+                    results.extend(r for r in item if isinstance(r, Result))
+            return send_results(results)
         return result
 
     async def trigger_exception_handler(self, exception: Exception) -> Any:

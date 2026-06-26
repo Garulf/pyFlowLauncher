@@ -4,7 +4,7 @@ from dataclasses import dataclass
 from pathlib import Path
 from typing import Any, Callable, Dict, Iterable, List, Optional, Union, cast
 
-from .plugin import Method
+from .types import Method
 from .models.result import Glyph, PreviewInfo
 from .models.json_rpc import JsonRPCResult, JsonRPCRequest, JsonRPCResponse
 

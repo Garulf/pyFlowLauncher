@@ -9,12 +9,13 @@ import asyncio
 from .base import pyFlowLauncherObject
 
 from .event import EventHandler
+from .response import handle_response
 from .jsonrpc import JsonRPCClient, JsonRPCRequest
 from .models.plugin_manifest import FILE_NAME
 from .manifest import Manifest
 
 
-Method = Callable[..., Any]
+from .types import Method
 
 
 class Plugin(pyFlowLauncherObject):
@@ -38,7 +39,7 @@ class Plugin(pyFlowLauncherObject):
     def on_method(self, method: Method) -> Method:
         @wraps(method)
         def wrapper(*args, **kwargs):
-            return method(*args, **kwargs)
+            return handle_response(method(*args, **kwargs))
         self.add_method(wrapper)
         return wrapper
 
