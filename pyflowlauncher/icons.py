@@ -21,6 +21,22 @@ def _get_icon(icon_name: str, file_ext: str = "png") -> Optional[str]:
     return None
 
 
+class Icons:
+    """Flow Launcher icon paths, accessible via launcher.icons.<name>."""
+    _IMAGE_DIR = "Images"
+
+    def __init__(self, program_dir: Optional[Path]) -> None:
+        self._dir = Path(program_dir) / self._IMAGE_DIR if program_dir else None
+
+    def _get(self, name: str, ext: str = "png") -> Optional[str]:
+        if self._dir is None:
+            return None
+        return str(self._dir / f"{name}.{ext}")
+
+    def __getattr__(self, name: str) -> Optional[str]:
+        return self._get(name)
+
+
 ADMIN = _get_icon("admin")
 APP = _get_icon("app")
 APP_ERROR = _get_icon("app_error")

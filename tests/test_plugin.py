@@ -1,5 +1,6 @@
 import pytest
 from pyflowlauncher.plugin import Plugin
+from pyflowlauncher.launcher import Launcher
 
 
 def temp_method1():
@@ -28,8 +29,14 @@ def test_add_methods():
 
 
 def test_settings():
-    plugin = Plugin()
-    plugin._client.recieve = lambda: {'method': 'settings', 'parameters': [], 'settings': {'test': 'test'}}
+    class MockLauncher(Launcher):
+        @property
+        def settings(self):
+            return {'test': 'test'}
+        async def run(self, dispatch):
+            pass
+
+    plugin = Plugin(launcher=MockLauncher())
     assert plugin.settings == {'test': 'test'}
 
 

@@ -9,8 +9,8 @@ import asyncio
 from .base import pyFlowLauncherObject
 
 from .event import EventHandler
+from .launcher import Launcher, FlowLauncherV1, FlowLauncherV2
 from .response import handle_response
-from .jsonrpc import JsonRPCClient, JsonRPCRequest
 from .models.plugin_manifest import FILE_NAME
 from .manifest import Manifest
 
@@ -20,13 +20,20 @@ from .types import Method
 
 class Plugin(pyFlowLauncherObject):
 
-    def __init__(self, methods: list[Method] | None = None) -> None:
+    def __init__(self, methods: list[Method] | None = None, launcher: Optional[Launcher] = None) -> None:
         super().__init__()
-        self._client = JsonRPCClient()
+        self._launcher: Launcher = launcher if launcher is not None else self._detect_launcher()
         self._event_handler = EventHandler()
-        self._settings: dict[str, Any] = {}
         if methods:
             self.add_methods(methods)
+
+    def _detect_launcher(self) -> Launcher:
+        try:
+            if self.manifest.language.lower() == 'python_v2':
+                return FlowLauncherV2()
+        except FileNotFoundError:
+            pass
+        return FlowLauncherV1()
 
     def add_method(self, method: Method) -> str:
         """Add a method to the event handler."""
@@ -66,24 +73,22 @@ class Plugin(pyFlowLauncherObject):
         return {"method": method_name, "parameters": parameters or []}
 
     @property
+    def launcher(self) -> Launcher:
+        return self._launcher
+
+    @property
     def settings(self) -> dict:
-        if self._settings is None:
-            self._settings = {}
-        self._settings = self._client.recieve().get('settings', {})
-        return self._settings
+        return self._launcher.settings
 
     def run(self) -> None:
-        request = self._client.recieve()
-        method = request["method"]
-        parameters = request.get('parameters', [])
+        async def dispatch(method: str, parameters: list) -> Any:
+            return await self._event_handler.trigger_event(method, *parameters)
+
         if sys.version_info >= (3, 10, 0):
-            feedback = asyncio.run(self._event_handler.trigger_event(method, *parameters))
+            asyncio.run(self._launcher.run(dispatch))
         else:
             loop = asyncio.get_event_loop()
-            feedback = loop.run_until_complete(self._event_handler.trigger_event(method, *parameters))
-        if not feedback:
-            return
-        self._client.send(feedback)
+            loop.run_until_complete(self._launcher.run(dispatch))
 
     @property
     def run_dir(self) -> Path:

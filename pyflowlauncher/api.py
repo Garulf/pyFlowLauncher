@@ -77,3 +77,21 @@ def open_url(url: str, in_private: bool = False) -> JsonRPCRequest:
 def open_uri(uri: str) -> JsonRPCRequest:
     """Open a URI."""
     return _send_action("OpenAppUri", uri)
+
+
+class Api:
+    """Flow Launcher API calls, accessible via plugin.launcher.api."""
+    change_query = staticmethod(change_query)
+    shell_run = staticmethod(shell_run)
+    close_app = staticmethod(close_app)
+    hide_app = staticmethod(hide_app)
+    show_app = staticmethod(show_app)
+    show_msg = staticmethod(show_msg)
+    open_setting_dialog = staticmethod(open_setting_dialog)
+    start_loading_bar = staticmethod(start_loading_bar)
+    stop_loading_bar = staticmethod(stop_loading_bar)
+    reload_plugins = staticmethod(reload_plugins)
+    copy_to_clipboard = staticmethod(copy_to_clipboard)
+    open_directory = staticmethod(open_directory)
+    open_url = staticmethod(open_url)
+    open_uri = staticmethod(open_uri)
