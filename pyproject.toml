@@ -36,27 +36,3 @@ packages = ["pyflowlauncher", "pyflowlauncher.models"]
 [tool.setuptools.package-data]
 "pyflowlauncher" = ["py.typed"]
 
-[tool.bumpversion]
-current_version = "0.9.1"
-parse = """(?x)
-    (?P<major>[0-9]+)
-    \\.(?P<minor>[0-9]+)
-    \\.(?P<patch>[0-9]+)
-    (?:
-        -(?P<label>dev|rc|release)
-        (?:.(?P<label_n>[0-9]+))?
-    )?
-"""
-serialize = [
-    "{major}.{minor}.{patch}-{label}.{label_n}",
-    "{major}.{minor}.{patch}",
-]
-search = "version = '{current_version}'"
-replace = "version = '{new_version}'"
-tag = true
-allow_dirty = false
-commit = true
-
-
-[[tool.bumpversion.files]]
-filename = "pyproject.toml"
