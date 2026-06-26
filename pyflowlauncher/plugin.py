@@ -30,18 +30,20 @@ class Plugin(pyFlowLauncherObject):
 
     def add_method(self, method: Method) -> str:
         """Add a method to the event handler."""
-        setattr(method, '_is_registered_method', True)
-        return self._event_handler.add_event(method)
-
-    def add_methods(self, methods: Iterable[Method]) -> None:
-        self._event_handler.add_events(methods)
-
-    def on_method(self, method: Method) -> Method:
         @wraps(method)
         def wrapper(*args, **kwargs):
             return handle_response(method(*args, **kwargs))
-        self.add_method(wrapper)
-        return wrapper
+        setattr(wrapper, '_is_registered_method', True)
+        setattr(method, '_is_registered_method', True)
+        return self._event_handler.add_event(wrapper)
+
+    def add_methods(self, methods: Iterable[Method]) -> None:
+        for method in methods:
+            self.add_method(method)
+
+    def on_method(self, method: Method) -> Method:
+        self.add_method(method)
+        return method
 
     def method(self, method: Method) -> Method:
         """Register a method to be called when the plugin is run."""

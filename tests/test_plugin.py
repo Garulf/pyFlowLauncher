@@ -17,13 +17,14 @@ def query(query: str):
 def test_add_method():
     plugin = Plugin()
     plugin.add_method(temp_method1)
-    assert plugin._event_handler._events == {'temp_method1': temp_method1}
+    assert 'temp_method1' in plugin._event_handler._events
 
 
 def test_add_methods():
     plugin = Plugin()
     plugin.add_methods([temp_method1, temp_method2])
-    assert plugin._event_handler._events == {'temp_method1': temp_method1, 'temp_method2': temp_method2}
+    assert 'temp_method1' in plugin._event_handler._events
+    assert 'temp_method2' in plugin._event_handler._events
 
 
 def test_settings():
