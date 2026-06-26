@@ -137,3 +137,69 @@ async def test_async_generator_yields_list():
 
     result = await plugin._event_handler.trigger_event("query", "test")
     assert result == send_results([Result(title="x"), Result(title="y")])
+
+
+# --- Regression: _is_registered_method on on_method return value ---
+
+def test_on_method_result_has_registered_flag():
+    plugin = Plugin()
+
+    @plugin.on_method
+    def query(q: str):
+        return Result(title="x")
+
+    assert getattr(query, '_is_registered_method', False) is True
+
+
+def test_add_method_result_has_registered_flag():
+    plugin = Plugin()
+
+    def query(q: str):
+        return Result(title="x")
+
+    plugin.add_method(query)
+    assert getattr(query, '_is_registered_method', False) is True
+
+
+def test_on_method_add_action_does_not_raise():
+    plugin = Plugin()
+
+    @plugin.on_method
+    def action_handler():
+        pass
+
+    r = Result(title="x")
+    r.add_action(action_handler)  # should not raise MethodNotRegisteredError
+
+
+# --- Regression: async def returning Result/list ---
+
+@pytest.mark.asyncio
+async def test_async_return_single_result():
+    plugin = Plugin()
+
+    @plugin.on_method
+    async def query(q: str):
+        return Result(title="async-return")
+
+    result = await plugin._event_handler.trigger_event("query", "test")
+    assert result == send_results([Result(title="async-return")])
+
+
+@pytest.mark.asyncio
+async def test_async_return_list_of_results():
+    plugin = Plugin()
+
+    @plugin.on_method
+    async def query(q: str):
+        return [Result(title="a"), Result(title="b")]
+
+    result = await plugin._event_handler.trigger_event("query", "test")
+    assert result == send_results([Result(title="a"), Result(title="b")])
+
+
+# --- Regression: list branch filters non-Result items ---
+
+def test_list_with_non_result_items_filtered():
+    results = [Result(title="a"), "not a result", 42]
+    assert handle_response(results) == send_results([Result(title="a")])

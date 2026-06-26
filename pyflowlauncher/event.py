@@ -3,6 +3,7 @@ import inspect
 from typing import Any, Callable, Iterable, Type, Union
 
 from .result import Result, send_results
+from .response import _collect_item
 
 
 class EventNotFound(Exception):
@@ -41,15 +42,16 @@ class EventHandler:
 
     async def _await_maybe(self, result: Any) -> Any:
         if asyncio.iscoroutine(result):
-            return await result
+            return await self._await_maybe(await result)
         if inspect.isasyncgen(result):
             results = []
             async for item in result:
-                if isinstance(item, Result):
-                    results.append(item)
-                elif isinstance(item, list):
-                    results.extend(r for r in item if isinstance(r, Result))
+                results.extend(_collect_item(item))
             return send_results(results)
+        if isinstance(result, Result):
+            return send_results([result])
+        if isinstance(result, list):
+            return send_results([r for r in result if isinstance(r, Result)])
         return result
 
     async def trigger_exception_handler(self, exception: Exception) -> Any:

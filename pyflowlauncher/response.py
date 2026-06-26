@@ -17,17 +17,22 @@ def handle_response(result: Any) -> Union[JsonRPCResponse, JsonRPCRequest, None]
     if isinstance(result, Result):
         return send_results([result])
     if isinstance(result, list):
-        return send_results(result)
+        return send_results([r for r in result if isinstance(r, Result)])
     if inspect.isgenerator(result):
         return _collect_generator(result)
     return result
 
 
+def _collect_item(item: Any) -> list[Result]:
+    if isinstance(item, Result):
+        return [item]
+    if isinstance(item, list):
+        return [r for r in item if isinstance(r, Result)]
+    return []
+
+
 def _collect_generator(gen: Generator) -> JsonRPCResponse:
     results = []
     for item in gen:
-        if isinstance(item, Result):
-            results.append(item)
-        elif isinstance(item, list):
-            results.extend(r for r in item if isinstance(r, Result))
+        results.extend(_collect_item(item))
     return send_results(results)
