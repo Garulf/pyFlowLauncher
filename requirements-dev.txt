@@ -3,4 +3,3 @@ pytest
 pytest-asyncio
 tox
 mypy>=1.7.0
-bump-my-version>=1.3.0

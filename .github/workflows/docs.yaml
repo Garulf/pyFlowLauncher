@@ -1,13 +1,9 @@
 name: Publish docs via GitHub Pages
 
 on:
+  release:
+    types: [published]
   workflow_dispatch:
-  push:
-    branches: [ main ]
-    paths:
-      - 'docs/**'
-      - mkdocs.yml
-      - README.md
 jobs:
   build:
     name: Deploy docs
