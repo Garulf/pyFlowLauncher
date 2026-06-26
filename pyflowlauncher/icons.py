@@ -34,6 +34,8 @@ class Icons:
         return str(self._dir / f"{name}.{ext}")
 
     def __getattr__(self, name: str) -> Optional[str]:
+        if name.startswith('__') and name.endswith('__'):
+            raise AttributeError(name)
         return self._get(name)
 
 

@@ -68,19 +68,15 @@ class TestFlowLauncherV1:
 
         assert sent == []
 
-    def test_settings_rereads_argv(self, monkeypatch):
+    def test_settings_cached_after_run(self, monkeypatch):
         launcher = FlowLauncherV1()
-        call_count = 0
+        request = {'method': 'query', 'parameters': [], 'settings': {'key': 'value'}}
+        monkeypatch.setattr(launcher._client, 'recieve', lambda: request)
+        monkeypatch.setattr(launcher._client, 'send', lambda data: None)
 
-        def recieve():
-            nonlocal call_count
-            call_count += 1
-            return {'method': 'query', 'parameters': [], 'settings': {'call': call_count}}
+        asyncio.run(launcher.run(_make_dispatch(None)))
 
-        monkeypatch.setattr(launcher._client, 'recieve', recieve)
-
-        assert launcher.settings == {'call': 1}
-        assert launcher.settings == {'call': 2}
+        assert launcher.settings == {'key': 'value'}
 
     def test_is_default_for_unknown_manifest(self, monkeypatch):
         monkeypatch.setattr('pyflowlauncher.plugin.Plugin.manifest',

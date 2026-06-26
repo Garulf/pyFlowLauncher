@@ -63,10 +63,6 @@ class FlowLauncherV1(Launcher):
         super().__init__()
         self._client = JsonRPCClient()
 
-    @property
-    def settings(self) -> dict:
-        return self._client.recieve().get('settings', {})
-
     async def run(self, dispatch: Callable[[str, list], Awaitable[Any]]) -> None:
         request = self._client.recieve()
         self._settings = request.get('settings', {})
@@ -110,7 +106,7 @@ class FlowLauncherV2(Launcher):
 
             params = request.get('parameters', [])
             if method == 'query' and params and isinstance(params[0], dict):
-                params = [params[0].get('search', params[0].get('trimmedQuery', ''))]
+                params = [params[0].get('search') or params[0].get('trimmedQuery', '')]
 
             try:
                 result = await dispatch(method, params)
@@ -127,6 +123,7 @@ class FlowLauncherV2(Launcher):
 
     def _send_response(self, request_id: Any, method: str, result: Any) -> None:
         if result is None:
+            self._send({'id': request_id, 'result': {}, 'error': None})
             return
         if isinstance(result, dict) and 'Result' in result:
             payload = {

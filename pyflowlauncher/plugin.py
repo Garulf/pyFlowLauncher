@@ -10,6 +10,7 @@ from .base import pyFlowLauncherObject
 
 from .event import EventHandler
 from .launcher import Launcher, FlowLauncherV1, FlowLauncherV2
+from .jsonrpc import JsonRPCRequest
 from .response import handle_response
 from .models.plugin_manifest import FILE_NAME
 from .manifest import Manifest
@@ -29,7 +30,7 @@ class Plugin(pyFlowLauncherObject):
 
     def _detect_launcher(self) -> Launcher:
         try:
-            if self.manifest.language.lower() == 'python_v2':
+            if (self.manifest.language or '').lower() == 'python_v2':
                 return FlowLauncherV2()
         except FileNotFoundError:
             pass
