@@ -19,7 +19,6 @@ from unittest.mock import patch
 
 from pyflowlauncher import Plugin, Result
 from pyflowlauncher.launcher import FlowLauncherV2
-from pyflowlauncher.result import send_results
 
 
 # ---------------------------------------------------------------------------
@@ -36,13 +35,14 @@ def make_plugin() -> Plugin:
     return plugin
 
 
-def run(plugin: Plugin, messages: list) -> list:
+def run(plugin: Plugin, messages: list, dispatch=None) -> list:
     """Feed newline-delimited JSON messages to a V2 plugin; return parsed responses."""
     stdin_text = '\n'.join(json.dumps(m) for m in messages) + '\n'
     responses = []
 
-    async def dispatch(method: str, params: list) -> Any:
-        return await plugin._event_handler.trigger_event(method, *params)
+    if dispatch is None:
+        async def dispatch(method: str, params: list) -> Any:
+            return await plugin._event_handler.trigger_event(method, *params)
 
     async def _run():
         with patch('sys.stdin', StringIO(stdin_text)), \
@@ -140,11 +140,10 @@ class TestV2Lifecycle:
             dispatched.append(method)
             return await plugin._event_handler.trigger_event(method, *params)
 
-        stdin_text = (
-            json.dumps({'id': 1, 'method': 'initialize', 'params': []}) + '\n'
-            + json.dumps({'id': 2, 'method': 'close', 'params': []}) + '\n'
-        )
-        asyncio.run(_run_with_dispatch(plugin, stdin_text, dispatch))
+        run(plugin, [
+            {'id': 1, 'method': 'initialize', 'params': []},
+            {'id': 2, 'method': 'close', 'params': []},
+        ], dispatch=dispatch)
         assert 'initialize' not in dispatched
 
     def test_initialize_returns_empty_result(self):
@@ -164,11 +163,10 @@ class TestV2Lifecycle:
             dispatched.append(method)
             return await plugin._event_handler.trigger_event(method, *params)
 
-        stdin_text = (
-            json.dumps({'id': 1, 'method': 'reload_data', 'params': []}) + '\n'
-            + json.dumps({'id': 2, 'method': 'close', 'params': []}) + '\n'
-        )
-        asyncio.run(_run_with_dispatch(plugin, stdin_text, dispatch))
+        run(plugin, [
+            {'id': 1, 'method': 'reload_data', 'params': []},
+            {'id': 2, 'method': 'close', 'params': []},
+        ], dispatch=dispatch)
         assert 'reload_data' not in dispatched
 
     def test_close_stops_loop(self):
@@ -179,11 +177,10 @@ class TestV2Lifecycle:
             dispatched.append(method)
             return await plugin._event_handler.trigger_event(method, *params)
 
-        stdin_text = (
-            json.dumps({'id': 1, 'method': 'close', 'params': []}) + '\n'
-            + json.dumps({'id': 2, 'method': 'query', 'params': [{'search': 'after'}, {}]}) + '\n'
-        )
-        asyncio.run(_run_with_dispatch(plugin, stdin_text, dispatch))
+        run(plugin, [
+            {'id': 1, 'method': 'close', 'params': []},
+            {'id': 2, 'method': 'query', 'params': [{'search': 'after'}, {}]},
+        ], dispatch=dispatch)
         assert 'query' not in dispatched
 
 
@@ -198,12 +195,11 @@ class TestV2Notifications:
             dispatched.append(method)
             return await plugin._event_handler.trigger_event(method, *params)
 
-        stdin_text = (
-            json.dumps({'id': 1, 'method': 'query', 'params': [{'search': 'hi'}, {}]}) + '\n'
-            + json.dumps({'method': '$/cancelRequest', 'params': {'id': 1}}) + '\n'
-            + json.dumps({'id': 2, 'method': 'close', 'params': []}) + '\n'
-        )
-        asyncio.run(_run_with_dispatch(plugin, stdin_text, dispatch))
+        run(plugin, [
+            {'id': 1, 'method': 'query', 'params': [{'search': 'hi'}, {}]},
+            {'method': '$/cancelRequest', 'params': {'id': 1}},
+            {'id': 2, 'method': 'close', 'params': []},
+        ], dispatch=dispatch)
         assert '$/cancelRequest' not in dispatched
 
     def test_dollar_prefix_methods_ignored(self):
@@ -215,11 +211,10 @@ class TestV2Notifications:
             dispatched.append(method)
             return None
 
-        stdin_text = (
-            json.dumps({'method': '$/progress', 'params': {}}) + '\n'
-            + json.dumps({'id': 1, 'method': 'close', 'params': []}) + '\n'
-        )
-        asyncio.run(_run_with_dispatch(plugin, stdin_text, dispatch))
+        run(plugin, [
+            {'method': '$/progress', 'params': {}},
+            {'id': 1, 'method': 'close', 'params': []},
+        ], dispatch=dispatch)
         assert not any(m.startswith('$/') for m in dispatched)
 
 
@@ -262,9 +257,8 @@ class TestV2ErrorHandling:
         assert second['result']['result'][0]['Title'] == 'recovered'
 
     def test_invalid_json_line_skipped(self):
+        # run() can't inject a raw invalid-JSON line, so build stdin manually.
         plugin = make_plugin()
-        responses = run(plugin, [])
-
         stdin_text = (
             'not-valid-json\n'
             + json.dumps({'id': 1, 'method': 'query', 'params': [{'search': 'ok'}, {}]}) + '\n'
@@ -275,7 +269,7 @@ class TestV2ErrorHandling:
         async def dispatch(method: str, params: list) -> Any:
             return await plugin._event_handler.trigger_event(method, *params)
 
-        async def _run():
+        async def _inner():
             with patch('sys.stdin', StringIO(stdin_text)), \
                  patch('sys.stdout', StringIO()) as out:
                 await plugin._launcher.run(dispatch)
@@ -284,7 +278,7 @@ class TestV2ErrorHandling:
                     if line.strip():
                         responses.append(json.loads(line))
 
-        asyncio.run(_run())
+        asyncio.run(_inner())
         assert query_response(responses, 1)['result']['result'][0]['Title'] == 'Hello, ok!'
 
 
@@ -304,17 +298,3 @@ class TestV2Settings:
         assert plugin._launcher.settings == {'key': 'val'}
 
 
-# ---------------------------------------------------------------------------
-# Internal helper
-# ---------------------------------------------------------------------------
-
-async def _run_with_dispatch(plugin: Plugin, stdin_text: str, dispatch) -> list:
-    responses = []
-    with patch('sys.stdin', StringIO(stdin_text)), \
-         patch('sys.stdout', StringIO()) as out:
-        await plugin._launcher.run(dispatch)
-        out.seek(0)
-        for line in out.read().splitlines():
-            if line.strip():
-                responses.append(json.loads(line))
-    return responses
