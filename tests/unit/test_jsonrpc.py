@@ -80,3 +80,62 @@ def test_v2_messages_stops_on_eof():
 def test_v2_messages_skips_blank_lines():
     msgs = _collect_messages('\n{"method": "ping"}\n\n')
     assert msgs == [{"method": "ping"}]
+
+
+def test_v2_messages_routes_response_to_pending_future():
+    """A message without 'method' resolves the matching pending Future."""
+    resolved = []
+
+    async def _run():
+        client = JsonRPCV2Client()
+        loop = asyncio.get_running_loop()
+        fut = loop.create_future()
+        client._pending[99] = fut
+
+        stdin_text = '{"id": 99, "result": {"success": true}}\n'
+        with patch('sys.stdin', StringIO(stdin_text)):
+            async for _ in client.messages():
+                pass
+
+        resolved.append(await asyncio.wait_for(fut, timeout=1))
+
+    asyncio.run(_run())
+    assert resolved == [{"success": True}]
+
+
+def test_v2_request_sends_correct_json(capture_stdout):
+    async def _run():
+        client = JsonRPCV2Client()
+        loop = asyncio.get_running_loop()
+        fut = loop.create_future()
+        fut.set_result(None)
+        client._pending[1] = fut
+        client.send({'id': 1, 'method': 'FuzzySearch', 'params': ['hi', 'Hello']})
+
+    asyncio.run(_run())
+    assert '"method": "FuzzySearch"' in capture_stdout["stdout"]
+
+
+def test_v2_request_resolves_on_response():
+    """request() sends a call and resolves when the response arrives via messages()."""
+    result = []
+
+    async def _run():
+        client = JsonRPCV2Client()
+        # The request() writes to stdout then awaits; feed the response via stdin.
+        stdin_text = '{"id": 1, "result": {"success": true, "score": 80}}\n'
+
+        with patch('sys.stdin', StringIO(stdin_text)), \
+             patch('sys.stdout', StringIO()):
+            # Drain messages() concurrently so the response gets routed.
+            async def drain():
+                async for _ in client.messages():
+                    pass
+
+            task = asyncio.create_task(drain())
+            val = await client.request('FuzzySearch', ['hi', 'Hello'])
+            result.append(val)
+            await task
+
+    asyncio.run(_run())
+    assert result == [{"success": True, "score": 80}]

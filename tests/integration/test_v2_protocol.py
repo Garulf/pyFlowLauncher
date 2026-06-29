@@ -298,3 +298,52 @@ class TestV2Settings:
         assert plugin._launcher.settings == {'key': 'val'}
 
 
+class TestV2FuzzySearch:
+
+    def test_fuzzy_search_round_trip(self):
+        """Handler calls api.fuzzy_search; host responds; result reaches handler."""
+        plugin = Plugin(launcher=FlowLauncherV2())
+        match_results = []
+
+        @plugin.on_method
+        async def query(q: str):
+            match = await plugin.launcher.api.fuzzy_search(q, 'Hello World')
+            match_results.append(match)
+            yield Result(title=f"score:{match.score}")
+
+        # The query request comes in first; then the FuzzySearch response from
+        # the host; then close to terminate the loop.
+        fuzzy_response = json.dumps({
+            'id': 1,
+            'result': {'success': True, 'score': 95, 'rawScore': 95,
+                       'matchData': [0, 1, 2], 'searchPrecision': 50},
+        })
+        stdin_text = (
+            json.dumps({'id': 10, 'method': 'query',
+                        'params': [{'search': 'hel', 'trimmedQuery': 'hel'}]}) + '\n'
+            + fuzzy_response + '\n'
+            + json.dumps({'id': 11, 'method': 'close', 'params': []}) + '\n'
+        )
+        responses = []
+
+        async def dispatch(method: str, params: list) -> Any:
+            return await plugin._event_handler.trigger_event(method, *params)
+
+        async def _inner():
+            with patch('sys.stdin', StringIO(stdin_text)), \
+                 patch('sys.stdout', StringIO()) as out:
+                await plugin._launcher.run(dispatch)
+                out.seek(0)
+                for line in out.read().splitlines():
+                    if line.strip():
+                        responses.append(json.loads(line))
+
+        asyncio.run(_inner())
+
+        assert len(match_results) == 1
+        assert match_results[0].matched is True
+        assert match_results[0].score == 95
+        query_resp = query_response(responses, 10)
+        assert query_resp['result']['result'][0]['Title'] == 'score:95'
+
+

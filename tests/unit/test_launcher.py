@@ -9,6 +9,7 @@ import pytest
 from pyflowlauncher.launcher import FlowLauncherV1, FlowLauncherV2, Launcher
 from pyflowlauncher.plugin import Plugin
 from pyflowlauncher.result import Result, send_results
+from pyflowlauncher.string_matcher import MatchData
 
 
 # ---------------------------------------------------------------------------
@@ -93,6 +94,12 @@ class TestFlowLauncherV1:
         v2 = FlowLauncherV2()
         plugin = Plugin(launcher=v2)
         assert plugin._launcher is v2
+
+    def test_fuzzy_search_uses_local_matcher(self):
+        launcher = FlowLauncherV1()
+        result = asyncio.run(launcher.api.fuzzy_search("hello", "Hello World"))
+        assert isinstance(result, MatchData)
+        assert result.matched is True
 
 
 # ---------------------------------------------------------------------------
@@ -276,6 +283,22 @@ class TestFlowLauncherV2:
         asyncio.run(_run())
         action_resp = next(r for r in output if 'hide' in r)
         assert action_resp == {'id': 5, 'hide': True}
+
+    def test_fuzzy_search_calls_client_request(self):
+        launcher = FlowLauncherV2()
+        fuzzy_result = {'success': True, 'score': 80, 'matchData': [0, 1], 'searchPrecision': 50}
+
+        async def fake_request(method, params):
+            assert method == 'FuzzySearch'
+            assert params == ['hello', 'Hello World']
+            return fuzzy_result
+
+        launcher._client.request = fake_request
+        result = asyncio.run(launcher.api.fuzzy_search('hello', 'Hello World'))
+        assert isinstance(result, MatchData)
+        assert result.matched is True
+        assert result.score == 80
+        assert result.index_list == [0, 1]
 
 
 # ---------------------------------------------------------------------------

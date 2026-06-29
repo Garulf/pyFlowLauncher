@@ -1,6 +1,11 @@
-from typing import Optional
+from __future__ import annotations
+
+from typing import TYPE_CHECKING, Any, Callable, Coroutine, Optional
 
 from .models.json_rpc import JsonRPCRequest
+
+if TYPE_CHECKING:
+    from .string_matcher import MatchData
 
 NAME_SPACE = 'Flow.Launcher'
 
@@ -79,6 +84,9 @@ def open_uri(uri: str) -> JsonRPCRequest:
     return _send_action("OpenAppUri", uri)
 
 
+_FuzzySearchFn = Callable[[str, str], Coroutine[Any, Any, "MatchData"]]
+
+
 class Api:
     """Flow Launcher API calls, accessible via plugin.launcher.api."""
     change_query = staticmethod(change_query)
@@ -95,3 +103,15 @@ class Api:
     open_directory = staticmethod(open_directory)
     open_url = staticmethod(open_url)
     open_uri = staticmethod(open_uri)
+
+    def __init__(self, fuzzy_search_fn: Optional[_FuzzySearchFn] = None) -> None:
+        self._fuzzy_search_fn = fuzzy_search_fn
+
+    async def fuzzy_search(self, query: str, text: str) -> MatchData:
+        """Match query against text.
+
+        On V2 delegates to Flow Launcher's own FuzzySearch over JSON-RPC so
+        search precision settings are respected. On V1 falls back to the
+        bundled Python string_matcher.
+        """
+        return await self._fuzzy_search_fn(query, text)
