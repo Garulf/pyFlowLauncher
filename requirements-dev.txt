@@ -2,4 +2,4 @@ flake8
 pytest
 pytest-asyncio
 tox
-mypy>=1.7.0
+mypy>=2.1.0
