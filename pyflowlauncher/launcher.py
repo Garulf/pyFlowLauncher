@@ -1,7 +1,6 @@
 from __future__ import annotations
 
 import asyncio
-import json
 import os
 import sys
 from abc import ABC, abstractmethod
@@ -11,7 +10,7 @@ from typing import Any, Awaitable, Callable, Optional
 from .api import Api
 from .base import pyFlowLauncherObject
 from .icons import Icons
-from .jsonrpc import JsonRPCClient
+from .jsonrpc import JsonRPCClient, JsonRPCV2Client
 
 
 class Launcher(pyFlowLauncherObject, ABC):
@@ -75,21 +74,12 @@ class FlowLauncherV2(Launcher):
 
     _LIFECYCLE_METHODS = {'initialize', 'reload_data'}
 
-    async def run(self, dispatch: Callable[[str, list], Awaitable[Any]]) -> None:
-        loop = asyncio.get_event_loop()
-        while True:
-            line = await loop.run_in_executor(None, sys.stdin.readline)
-            if not line:
-                break
-            line = line.strip()
-            if not line:
-                continue
-            try:
-                request = json.loads(line)
-            except json.JSONDecodeError:
-                self.logger.warning("Bad JSON-RPC line: %r", line)
-                continue
+    def __init__(self) -> None:
+        super().__init__()
+        self._client = JsonRPCV2Client()
 
+    async def run(self, dispatch: Callable[[str, list], Awaitable[Any]]) -> None:
+        async for request in self._client.messages():
             request_id = request.get('id')
             method = request.get('method', '')
             incoming_settings = request.get('settings')
@@ -97,11 +87,11 @@ class FlowLauncherV2(Launcher):
                 self._settings = incoming_settings
 
             if method == 'close':
-                self._send({'id': request_id, 'result': {}, 'error': None})
+                self._client.send({'id': request_id, 'result': {}, 'error': None})
                 break
 
             if method in self._LIFECYCLE_METHODS:
-                self._send({'id': request_id, 'result': {}, 'error': None})
+                self._client.send({'id': request_id, 'result': {}, 'error': None})
                 continue
 
             if method.startswith('$/'):
@@ -115,7 +105,7 @@ class FlowLauncherV2(Launcher):
                 result = await dispatch(method, params)
             except Exception:
                 self.logger.exception("Unhandled error dispatching %r", method)
-                self._send({
+                self._client.send({
                     'id': request_id,
                     'result': {'result': [], 'debugMessage': 'Internal error', 'settingsChange': None},
                     'error': None,
@@ -124,13 +114,9 @@ class FlowLauncherV2(Launcher):
 
             self._send_response(request_id, method, result)
 
-    def _send(self, data: dict) -> None:
-        sys.stdout.write(json.dumps(data) + '\n')
-        sys.stdout.flush()
-
     def _send_response(self, request_id: Any, method: str, result: Any) -> None:
         if result is None:
-            self._send({'id': request_id, 'result': {}, 'error': None})
+            self._client.send({'id': request_id, 'result': {}, 'error': None})
             return
         if isinstance(result, dict) and 'Result' in result:
             payload = {
@@ -143,4 +129,4 @@ class FlowLauncherV2(Launcher):
             }
         else:
             payload = {'id': request_id, 'hide': True}
-        self._send(payload)
+        self._client.send(payload)
