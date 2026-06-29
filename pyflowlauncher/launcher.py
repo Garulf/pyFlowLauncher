@@ -104,7 +104,10 @@ class FlowLauncherV2(Launcher):
                 self._send({'id': request_id, 'result': {}, 'error': None})
                 continue
 
-            params = request.get('parameters', [])
+            if method.startswith('$/'):
+                continue
+
+            params = request.get('params', request.get('parameters', []))
             if method == 'query' and params and isinstance(params[0], dict):
                 params = [params[0].get('search') or params[0].get('trimmedQuery', '')]
 
@@ -112,7 +115,7 @@ class FlowLauncherV2(Launcher):
                 result = await dispatch(method, params)
             except Exception:
                 self.logger.exception("Unhandled error dispatching %r", method)
-                self._send({'id': request_id, 'result': [], 'error': None, 'debugMessage': ''})
+                self._send({'id': request_id, 'result': {'result': [], 'debugMessage': 'Internal error', 'settingsChange': None}, 'error': None})
                 continue
 
             self._send_response(request_id, method, result)
@@ -128,9 +131,11 @@ class FlowLauncherV2(Launcher):
         if isinstance(result, dict) and 'Result' in result:
             payload = {
                 'id': request_id,
-                'result': result['Result'],
-                'settingsChange': result.get('SettingsChange'),
-                'debugMessage': '',
+                'result': {
+                    'result': result['Result'],
+                    'settingsChange': result.get('SettingsChange'),
+                    'debugMessage': '',
+                },
             }
         else:
             payload = {'id': request_id, 'hide': True}
