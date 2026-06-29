@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 """
 Integration tests for the V1 (command-line JSON-RPC) protocol.
 
