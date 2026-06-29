@@ -115,7 +115,11 @@ class FlowLauncherV2(Launcher):
                 result = await dispatch(method, params)
             except Exception:
                 self.logger.exception("Unhandled error dispatching %r", method)
-                self._send({'id': request_id, 'result': {'result': [], 'debugMessage': 'Internal error', 'settingsChange': None}, 'error': None})
+                self._send({
+                    'id': request_id,
+                    'result': {'result': [], 'debugMessage': 'Internal error', 'settingsChange': None},
+                    'error': None,
+                })
                 continue
 
             self._send_response(request_id, method, result)
