@@ -114,4 +114,10 @@ class Api:
         search precision settings are respected. On V1 falls back to the
         bundled Python string_matcher.
         """
+        if self._fuzzy_search_fn is None:
+            raise RuntimeError(
+                "fuzzy_search is unavailable: this Api was created without a "
+                "fuzzy_search_fn. Use the launcher-provided instance via "
+                "plugin.launcher.api instead of constructing Api() directly."
+            )
         return await self._fuzzy_search_fn(query, text)

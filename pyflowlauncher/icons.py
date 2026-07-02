@@ -15,23 +15,26 @@ if not ENV_EXISTS:
     _logger.warning("Unable to find FLOW_PROGRAM_DIRECTORY environment variable. Icons will not be loaded.")
 
 
+def _icon_path(program_dir, name: str, ext: str = "png") -> str:
+    return str(Path(program_dir) / IMAGE_DIR / f"{name}.{ext}")
+
+
 def _get_icon(icon_name: str, file_ext: str = "png") -> Optional[str]:
     if ENV_EXISTS:
-        return str(Path(FLOW_PROGRAM_DIRECTORY) / IMAGE_DIR / f"{icon_name}.{file_ext}")  # type: ignore
+        return _icon_path(FLOW_PROGRAM_DIRECTORY, icon_name, file_ext)  # type: ignore[arg-type]
     return None
 
 
 class Icons:
     """Flow Launcher icon paths, accessible via launcher.icons.<name>."""
-    _IMAGE_DIR = "Images"
 
     def __init__(self, program_dir: Optional[Path]) -> None:
-        self._dir = Path(program_dir) / self._IMAGE_DIR if program_dir else None
+        self._program_dir = program_dir
 
     def _get(self, name: str, ext: str = "png") -> Optional[str]:
-        if self._dir is None:
+        if self._program_dir is None:
             return None
-        return str(self._dir / f"{name}.{ext}")
+        return _icon_path(self._program_dir, name, ext)
 
     def __getattr__(self, name: str) -> Optional[str]:
         if name.startswith('__') and name.endswith('__'):
