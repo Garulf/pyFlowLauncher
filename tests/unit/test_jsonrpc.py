@@ -147,8 +147,11 @@ def test_v2_eof_fails_pending_futures():
     asyncio.run(_run())
 
 
-def test_v2_unmatched_response_id_logs_warning(caplog):
+def test_v2_unmatched_response_id_logs_warning(caplog, monkeypatch):
     """Responses with an unknown id must be logged, not silently dropped."""
+    # base.py disables propagation on the package logger (records go to
+    # plugin.log); pytest < 9 caplog only sees propagated records.
+    monkeypatch.setattr(logging.getLogger('pyflowlauncher'), 'propagate', True)
     with caplog.at_level(logging.WARNING, logger='pyflowlauncher.jsonrpc'):
         msgs = _collect_messages('{"id": 7, "result": {}}\n')
     assert msgs == []
