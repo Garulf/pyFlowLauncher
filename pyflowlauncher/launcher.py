@@ -14,18 +14,18 @@ from .models.json_rpc import MatchResult
 from .string_matcher import MatchData, string_matcher as _local_string_matcher
 
 
-async def _local_fuzzy_search(query: str, text: str) -> MatchData:
-    return _local_string_matcher(query, text)
-
-
 class Launcher(pyFlowLauncherObject, ABC):
 
     def __init__(self) -> None:
         super().__init__()
         self._settings: dict = {}
-        self.api = Api(fuzzy_search_fn=_local_fuzzy_search)
+        self.api = Api(fuzzy_search_fn=self._fuzzy_search)
         self._program_dir: Optional[Path] = self._find_program_dir()
         self.icons = Icons(self._program_dir)
+
+    async def _fuzzy_search(self, query: str, text: str) -> MatchData:
+        """Local fallback matcher; subclasses may delegate to the host."""
+        return _local_string_matcher(query, text)
 
     @property
     def settings(self) -> dict:
@@ -83,16 +83,15 @@ class FlowLauncherV2(Launcher):
         super().__init__()
         self._client = JsonRPCV2Client()
 
-        async def _remote_fuzzy_search(query: str, text: str) -> MatchData:
-            result: MatchResult = await self._client.request('FuzzySearch', [query, text])
-            return MatchData(
-                matched=result.get('success', False),
-                score_cutoff=result.get('searchPrecision', 50),
-                index_list=result.get('matchData') or [],
-                score=result.get('score', 0),
-            )
-
-        self.api = Api(fuzzy_search_fn=_remote_fuzzy_search)
+    async def _fuzzy_search(self, query: str, text: str) -> MatchData:
+        """Delegate to Flow Launcher's FuzzySearch over JSON-RPC."""
+        result: MatchResult = await self._client.request('FuzzySearch', [query, text])
+        return MatchData(
+            matched=result.get('success', False),
+            score_cutoff=result.get('searchPrecision', 50),
+            index_list=result.get('matchData') or [],
+            score=result.get('score', 0),
+        )
 
     async def run(self, dispatch: Callable[[str, list], Awaitable[Any]]) -> None:
         tasks: set = set()
@@ -104,11 +103,11 @@ class FlowLauncherV2(Launcher):
                 self._settings = incoming_settings
 
             if method == 'close':
-                self._client.send({'id': request_id, 'result': {}, 'error': None})
+                self._respond(request_id, {})
                 break
 
             if method in self._LIFECYCLE_METHODS:
-                self._client.send({'id': request_id, 'result': {}, 'error': None})
+                self._respond(request_id, {})
                 continue
 
             if method.startswith('$/'):
@@ -138,27 +137,26 @@ class FlowLauncherV2(Launcher):
             result = await dispatch(method, params)
         except Exception:
             self.logger.exception("Unhandled error dispatching %r", method)
-            self._client.send({
-                'id': request_id,
-                'result': {'result': [], 'debugMessage': 'Internal error', 'settingsChange': None},
-                'error': None,
+            self._respond(request_id, {
+                'result': [], 'debugMessage': 'Internal error', 'settingsChange': None,
             })
             return
         self._send_response(request_id, method, result)
 
+    def _respond(self, request_id: Any, result: Any) -> None:
+        """Send a response in the uniform {id, result, error} envelope."""
+        self._client.send({'id': request_id, 'result': result, 'error': None})
+
     def _send_response(self, request_id: Any, method: str, result: Any) -> None:
         if result is None:
-            self._client.send({'id': request_id, 'result': {}, 'error': None})
-            return
-        if isinstance(result, dict) and 'Result' in result:
-            payload = {
-                'id': request_id,
-                'result': {
-                    'result': result['Result'],
-                    'settingsChange': result.get('SettingsChange'),
-                    'debugMessage': '',
-                },
-            }
+            self._respond(request_id, {})
+        elif isinstance(result, dict) and 'Result' in result:
+            self._respond(request_id, {
+                'result': result['Result'],
+                'settingsChange': result.get('SettingsChange'),
+                'debugMessage': '',
+            })
         else:
-            payload = {'id': request_id, 'hide': True}
-        self._client.send(payload)
+            # Actions: StreamJsonRpc deserializes the result member as
+            # JsonRPCExecuteResponse, whose 'hide' controls window hiding.
+            self._respond(request_id, {'hide': True})

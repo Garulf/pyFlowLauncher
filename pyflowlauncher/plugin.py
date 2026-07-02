@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import json
 import sys
 from functools import cached_property, wraps
 from typing import Any, Callable, Iterable, Optional, Type, List
@@ -34,6 +35,9 @@ class Plugin(pyFlowLauncherObject):
                 return FlowLauncherV2()
         except FileNotFoundError:
             pass
+        except (json.JSONDecodeError, KeyError):
+            self.logger.warning(
+                "Malformed plugin manifest; defaulting to V1 launcher.", exc_info=True)
         return FlowLauncherV1()
 
     def add_method(self, method: Method) -> str:

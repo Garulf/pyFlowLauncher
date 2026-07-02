@@ -4,7 +4,7 @@ import asyncio
 import json
 import logging
 import sys
-from typing import Any, Mapping
+from typing import Any, Mapping, Optional
 
 if sys.version_info < (3, 11):
     from typing_extensions import NotRequired, TypedDict
@@ -34,6 +34,8 @@ class JsonRPCClient:
 
 class JsonRPCV2Client:
 
+    DEFAULT_REQUEST_TIMEOUT = 10.0
+
     def __init__(self) -> None:
         self._pending: dict = {}
         self._counter: int = 0
@@ -48,6 +50,8 @@ class JsonRPCV2Client:
         while True:
             line = await loop.run_in_executor(None, sys.stdin.readline)
             if not line:
+                self._fail_pending(ConnectionError(
+                    "JSON-RPC stream closed before a response arrived"))
                 return
             line = line.strip()
             if not line:
@@ -59,21 +63,39 @@ class JsonRPCV2Client:
                 continue
             if 'method' not in msg:
                 req_id = msg.get('id')
-                if req_id in self._pending:
-                    fut = self._pending.pop(req_id)
-                    if not fut.done():
-                        fut.set_result(msg.get('result'))
+                fut = self._pending.pop(req_id, None)
+                if fut is None:
+                    _logger.warning(
+                        "Discarding JSON-RPC response with unknown id: %r", req_id)
+                elif not fut.done():
+                    fut.set_result(msg.get('result'))
                 continue
             yield msg
 
-    async def request(self, method: str, params: list) -> Any:
-        """Send a JSON-RPC call to Flow Launcher and await the response."""
+    def _fail_pending(self, exc: Exception) -> None:
+        while self._pending:
+            _, fut = self._pending.popitem()
+            if not fut.done():
+                fut.set_exception(exc)
+
+    async def request(
+        self, method: str, params: list,
+        timeout: Optional[float] = DEFAULT_REQUEST_TIMEOUT,
+    ) -> Any:
+        """Send a JSON-RPC call to Flow Launcher and await the response.
+
+        Raises asyncio.TimeoutError if no response arrives within `timeout`
+        seconds, and ConnectionError if the stream closes first.
+        """
         self._counter += 1
         req_id = self._counter
         fut: asyncio.Future = asyncio.get_running_loop().create_future()
         self._pending[req_id] = fut
         self.send({'id': req_id, 'method': method, 'params': params})
-        return await fut
+        try:
+            return await asyncio.wait_for(fut, timeout)
+        finally:
+            self._pending.pop(req_id, None)
 
     def send(self, data: dict) -> None:
         sys.stdout.write(json.dumps(data) + '\n')

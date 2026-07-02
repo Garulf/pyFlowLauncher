@@ -126,6 +126,21 @@ class TestAutoDetect:
         plugin = self._plugin_with_language('Python_V2')
         assert isinstance(plugin._launcher, FlowLauncherV2)
 
+    def _plugin_with_manifest_error(self, exc):
+        with patch.object(Plugin, 'manifest', new_callable=lambda: property(
+            lambda self: (_ for _ in ()).throw(exc)
+        )):
+            return Plugin()
+
+    def test_invalid_json_manifest_falls_back_to_v1(self):
+        plugin = self._plugin_with_manifest_error(
+            json.JSONDecodeError('Expecting value', 'doc', 0))
+        assert isinstance(plugin._launcher, FlowLauncherV1)
+
+    def test_manifest_missing_key_falls_back_to_v1(self):
+        plugin = self._plugin_with_manifest_error(KeyError('Language'))
+        assert isinstance(plugin._launcher, FlowLauncherV1)
+
     def test_explicit_overrides_auto_detect(self):
         manifest = MagicMock()
         manifest.language = 'python_v2'
@@ -281,8 +296,50 @@ class TestFlowLauncherV2:
                         output.append(json.loads(line))
 
         asyncio.run(_run())
-        action_resp = next(r for r in output if 'hide' in r)
-        assert action_resp == {'id': 5, 'hide': True}
+        # StreamJsonRpc reads the 'result' member of the response, so 'hide'
+        # must be nested inside it (deserialized as JsonRPCExecuteResponse).
+        action_resp = next(r for r in output if r.get('id') == 5)
+        assert action_resp == {'id': 5, 'result': {'hide': True}, 'error': None}
+
+    def test_query_response_includes_error_key(self):
+        """All responses must carry the same {id, result, error} envelope."""
+        launcher = FlowLauncherV2()
+        output = []
+
+        async def dispatch(method, params):
+            return send_results([Result(title='r')])
+
+        stdin_text = json.dumps({'id': 1, 'method': 'query',
+                                 'parameters': [{'search': 'x'}], 'settings': {}}) + '\n'
+        stdin_text += json.dumps({'id': 2, 'method': 'close', 'parameters': []}) + '\n'
+
+        async def _run():
+            with patch('sys.stdin', StringIO(stdin_text)), \
+                 patch('sys.stdout', StringIO()) as mock_out:
+                await launcher.run(dispatch)
+                mock_out.seek(0)
+                for line in mock_out.read().splitlines():
+                    if line:
+                        output.append(json.loads(line))
+
+        asyncio.run(_run())
+        query_resp = next(r for r in output if r.get('id') == 1)
+        assert 'error' in query_resp
+        assert query_resp['error'] is None
+
+    def test_constructs_single_api(self, monkeypatch):
+        """The base class must not build an Api that the subclass discards."""
+        from pyflowlauncher import launcher as launcher_mod
+        constructed = []
+        real_api = launcher_mod.Api
+
+        def counting_api(*args, **kwargs):
+            constructed.append(kwargs)
+            return real_api(*args, **kwargs)
+
+        monkeypatch.setattr(launcher_mod, 'Api', counting_api)
+        FlowLauncherV2()
+        assert len(constructed) == 1
 
     def test_fuzzy_search_calls_client_request(self):
         launcher = FlowLauncherV2()
