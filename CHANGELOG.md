@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.0.1](https://github.com/Garulf/pyFlowLauncher/compare/v1.0.0...v1.0.1) (2026-07-09)
+
+
+### Miscellaneous Chores
+
+* release 1.0.1 ([012a949](https://github.com/Garulf/pyFlowLauncher/commit/012a9497f4431ec3a9bc78dfe3a440271a3292ff))
+
 ## [1.0.0](https://github.com/Garulf/pyFlowLauncher/compare/v0.10.0...v1.0.0) (2026-07-09)
 
 
