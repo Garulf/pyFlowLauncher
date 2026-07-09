@@ -1,3 +1,8 @@
+import asyncio
+import inspect
+
+import pytest
+
 from pyflowlauncher import api
 
 
@@ -59,3 +64,21 @@ def test_open_url():
 
 def test_open_uri():
     assert api.open_uri("Test") == {"Method": "Flow.Launcher.OpenAppUri", "Parameters": ["Test"]}
+
+
+def test_fuzzy_search_without_backend_raises_clear_error():
+    bare_api = api.Api()
+    with pytest.raises(RuntimeError, match="fuzzy_search"):
+        asyncio.run(bare_api.fuzzy_search("query", "text"))
+
+
+def test_api_class_exposes_every_module_level_action():
+    """Guard: each public module-level API function must exist on Api."""
+    module_functions = [
+        name for name, obj in vars(api).items()
+        if inspect.isfunction(obj)
+        and not name.startswith('_')
+        and obj.__module__ == api.__name__
+    ]
+    missing = [name for name in module_functions if not hasattr(api.Api, name)]
+    assert not missing, f"Api class is missing module-level actions: {missing}"
