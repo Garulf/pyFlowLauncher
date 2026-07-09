@@ -62,3 +62,10 @@ def test_add_action():
         "Parameters": ["Test"],
         "DontHideAfterAction": True
     }
+
+
+def test_add_action_return():
+    method = lambda: None
+    method._is_registered_method = True
+    r = Result(title="Test").add_action(method)
+    assert isinstance(r, Result)
