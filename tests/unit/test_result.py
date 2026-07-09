@@ -65,5 +65,7 @@ def test_add_action():
 
 
 def test_add_action_return():
-    r = Result(title="Test").add_action(lambda: None)
+    method = lambda: None
+    method._is_registered_method = True
+    r = Result(title="Test").add_action(method)
     assert isinstance(r, Result)
