@@ -2,7 +2,12 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 from pathlib import Path
-from typing import Any, Callable, Dict, Iterable, List, Optional, Self, Union, cast
+from typing import Any, Callable, Dict, Iterable, List, Optional, Union, cast
+
+try:
+    from typing_extensions import Self
+except ImportError:
+    from typing import Self
 
 from .types import Method
 from .models.result import Glyph, PreviewInfo
