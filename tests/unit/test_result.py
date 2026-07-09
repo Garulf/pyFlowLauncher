@@ -62,3 +62,8 @@ def test_add_action():
         "Parameters": ["Test"],
         "DontHideAfterAction": True
     }
+
+
+def test_add_action_return():
+    r = Result(title="Test").add_action(lambda: None)
+    assert isinstance(r, Result)
