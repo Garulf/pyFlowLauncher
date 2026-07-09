@@ -2,11 +2,12 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 from pathlib import Path
+import sys
 from typing import Any, Callable, Dict, Iterable, List, Optional, Union, cast
 
-try:
+if sys.version_info < (3, 11):
     from typing_extensions import Self
-except ImportError:
+else:
     from typing import Self
 
 from .types import Method
