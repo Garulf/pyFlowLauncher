@@ -1,5 +1,13 @@
 # Changelog
 
+## [1.0.2](https://github.com/Garulf/pyFlowLauncher/compare/v1.0.1...v1.0.2) (2026-07-10)
+
+
+### Bug Fixes
+
+* unwrap action parameters and capture query settings in v2 protocol ([342574f](https://github.com/Garulf/pyFlowLauncher/commit/342574ff54bef0b0333970cefb273f2a7dc879c3))
+* unwrap action parameters and capture query settings in v2 protocol ([#27](https://github.com/Garulf/pyFlowLauncher/issues/27)) ([0f9c100](https://github.com/Garulf/pyFlowLauncher/commit/0f9c10057d499f8fdd3947ff81c7c19171cb06bb))
+
 ## [1.0.1](https://github.com/Garulf/pyFlowLauncher/compare/v1.0.0...v1.0.1) (2026-07-09)
 
 
