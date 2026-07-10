@@ -115,7 +115,16 @@ class FlowLauncherV2(Launcher):
 
             params = request.get('params', request.get('parameters', []))
             if method == 'query' and params and isinstance(params[0], dict):
+                # The host sends ("query", [query, Settings.Inner]).
+                if len(params) > 1 and isinstance(params[1], dict):
+                    self._settings = params[1]
                 params = [params[0].get('search') or params[0].get('trimmedQuery', '')]
+            elif method != 'context_menu' and len(params) == 1 and isinstance(params[0], list):
+                # Actions: the host calls RPC.InvokeAsync(method, argument: Parameters),
+                # which wraps the whole Parameters list as one positional argument
+                # (params=[[p1, p2]]). Unwrap so methods get their parameters like V1.
+                # context_menu is excluded: its single list argument IS the ContextData.
+                params = params[0]
 
             task = asyncio.create_task(
                 self._handle_request(request_id, method, params, dispatch)
