@@ -36,6 +36,22 @@ jobs:
     - name: Test with tox
       run: tox
 
+  e2e-windows:
+    # Flow Launcher only runs on Windows; exercise the real process boundary there.
+    runs-on: windows-latest
+    steps:
+    - uses: actions/checkout@v4
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.11'
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        python -m pip install tox
+    - name: Run e2e tests
+      run: tox -e py311 -- tests/e2e
+
 concurrency:
   group: tests
   cancel-in-progress: true
