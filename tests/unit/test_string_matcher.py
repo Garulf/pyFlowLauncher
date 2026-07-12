@@ -69,3 +69,16 @@ def test_subtext():
         score=119
     )
     assert string_matcher.string_matcher("bar", "foo bar baz", query_search_precision=50) == match_data
+
+
+def test_consecutive_spaces_in_query():
+    match_data = string_matcher.string_matcher("foo  bar", "foo baz")
+    assert match_data.matched is False
+
+
+def test_index_list_pruned_on_word_restart():
+    # The second query word restarts mid-word in the text; stale indices from
+    # the abandoned partial match must all be pruned from the index list.
+    match_data = string_matcher.string_matcher("v vl", "ynbgdbzvqsbpdibcjvaydzdtgsgfvla")
+    assert match_data.matched is True
+    assert match_data.index_list == [28, 29]
