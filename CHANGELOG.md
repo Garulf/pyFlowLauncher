@@ -1,5 +1,17 @@
 # Changelog
 
+## [1.1.0](https://github.com/Garulf/pyFlowLauncher/compare/v1.0.2...v1.1.0) (2026-07-13)
+
+
+### Features
+
+* honor $/cancelRequest by cancelling the in-flight task ([#30](https://github.com/Garulf/pyFlowLauncher/issues/30)) ([2cdbbfd](https://github.com/Garulf/pyFlowLauncher/commit/2cdbbfd0a6fa7680a3510abe9bcd18661591acea))
+
+
+### Bug Fixes
+
+* do not leak the action keyword into the v2 query search string ([#31](https://github.com/Garulf/pyFlowLauncher/issues/31)) ([1a1e31c](https://github.com/Garulf/pyFlowLauncher/commit/1a1e31c477287a34bd1ac9a5a7c6fa1ad43b215e))
+
 ## [1.0.2](https://github.com/Garulf/pyFlowLauncher/compare/v1.0.1...v1.0.2) (2026-07-10)
 
 
