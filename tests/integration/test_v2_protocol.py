@@ -129,6 +129,25 @@ class TestV2QueryFormat:
         ])
         assert query_response(responses, 1)['result']['result'][0]['Title'] == 'Hello, World!'
 
+    def test_action_keyword_not_leaked_into_search(self):
+        """Typing only the action keyword sends {'search': '', 'trimmedQuery': 'kw'};
+        the handler must receive '' — not fall back to the keyword-bearing trimmedQuery."""
+        received = []
+        plugin = Plugin(launcher=FlowLauncherV2())
+
+        @plugin.on_method
+        def query(q: str):
+            received.append(q)
+            yield Result(title="ok")
+
+        run(plugin, [
+            {'id': 1, 'method': 'query',
+             'params': [{'search': '', 'trimmedQuery': 'kw', 'rawQuery': 'kw',
+                         'actionKeyword': 'kw'}, {}]},
+            {'id': 2, 'method': 'close', 'params': []},
+        ])
+        assert received == ['']
+
 
 class TestV2Lifecycle:
 

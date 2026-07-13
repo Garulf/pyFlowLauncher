@@ -118,7 +118,9 @@ class FlowLauncherV2(Launcher):
                 # The host sends ("query", [query, Settings.Inner]).
                 if len(params) > 1 and isinstance(params[1], dict):
                     self._settings = params[1]
-                params = [params[0].get('search') or params[0].get('trimmedQuery', '')]
+                # Query.search excludes the action keyword; trimmedQuery/rawQuery
+                # include it, so they must never be used as the search string.
+                params = [params[0].get('search') or '']
             elif method != 'context_menu' and len(params) == 1 and isinstance(params[0], list):
                 # Actions: the host calls RPC.InvokeAsync(method, argument: Parameters),
                 # which wraps the whole Parameters list as one positional argument
