@@ -1,0 +1,59 @@
+name: Pre-release
+
+on:
+  push:
+    branches:
+      - main
+
+permissions:
+  contents: write
+
+concurrency:
+  group: prerelease
+  cancel-in-progress: true
+
+jobs:
+  prerelease:
+    # Skip release-please's release merge commits; those are handled by release-please.yaml
+    if: "${{ !startsWith(github.event.head_commit.message, 'chore(main): release') }}"
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Compute dev version
+        id: version
+        run: |
+          # --exclude keeps the commit count relative to the last *stable* tag,
+          # so it stays monotonic across successive pre-releases
+          describe=$(git describe --tags --long --match 'v*' --exclude '*-dev*')  # e.g. v1.1.0-3-g2cdbbfd
+          last=${describe%-*-*}
+          counted=${describe%-*}
+          count=${counted##*-}
+          IFS=. read -r major minor patch <<< "${last#v}"
+          next="${major}.${minor}.$((patch + 1))"
+          echo "tag=v${next}-dev.${count}" >> "$GITHUB_OUTPUT"
+          echo "pep440=${next}.dev${count}" >> "$GITHUB_OUTPUT"
+
+      - name: Set version in pyproject.toml
+        run: sed -i "s/^version = \".*\"/version = \"${{ steps.version.outputs.pep440 }}\"/" pyproject.toml
+
+      - name: Build
+        run: |
+          pip install -U pip build
+          python -m build
+
+      - name: Create pre-release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh release create "${{ steps.version.outputs.tag }}" dist/* \
+            --prerelease \
+            --target "${{ github.sha }}" \
+            --title "${{ steps.version.outputs.tag }}" \
+            --generate-notes
