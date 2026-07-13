@@ -4,7 +4,7 @@ import asyncio
 import os
 from abc import ABC, abstractmethod
 from pathlib import Path
-from typing import Any, Awaitable, Callable, Optional
+from typing import Any, Awaitable, Callable, Dict, Optional
 
 from .api import Api
 from .base import pyFlowLauncherObject
@@ -95,6 +95,7 @@ class FlowLauncherV2(Launcher):
 
     async def run(self, dispatch: Callable[[str, list], Awaitable[Any]]) -> None:
         tasks: set = set()
+        in_flight: Dict[Any, asyncio.Task] = {}
         async for request in self._client.messages():
             request_id = request.get('id')
             method = request.get('method', '')
@@ -108,6 +109,17 @@ class FlowLauncherV2(Launcher):
 
             if method in self._LIFECYCLE_METHODS:
                 self._respond(request_id, {})
+                continue
+
+            if method == '$/cancelRequest':
+                # StreamJsonRpc cancels a superseded request (e.g. the user kept
+                # typing) with params {'id': <request id>}. Cancel the in-flight
+                # task so slow queries stop doing work nobody will see.
+                cancel_params = request.get('params')
+                cancel_id = cancel_params.get('id') if isinstance(cancel_params, dict) else None
+                cancelled = in_flight.get(cancel_id)
+                if cancelled is not None:
+                    cancelled.cancel()
                 continue
 
             if method.startswith('$/'):
@@ -132,7 +144,14 @@ class FlowLauncherV2(Launcher):
                 self._handle_request(request_id, method, params, dispatch)
             )
             tasks.add(task)
-            task.add_done_callback(tasks.discard)
+            if request_id is not None:
+                in_flight[request_id] = task
+
+            def _cleanup(done: asyncio.Task, rid: Any = request_id) -> None:
+                tasks.discard(done)
+                if in_flight.get(rid) is done:
+                    del in_flight[rid]
+            task.add_done_callback(_cleanup)
 
         if tasks:
             await asyncio.gather(*tasks, return_exceptions=True)
@@ -146,6 +165,13 @@ class FlowLauncherV2(Launcher):
     ) -> None:
         try:
             result = await dispatch(method, params)
+        except asyncio.CancelledError:
+            # StreamJsonRpc's RequestCanceled error; the host discards it, but
+            # answering every request keeps the envelope contract uniform.
+            self._client.send({'id': request_id, 'result': None, 'error': {
+                'code': -32800, 'message': 'Request cancelled',
+            }})
+            raise
         except Exception:
             self.logger.exception("Unhandled error dispatching %r", method)
             self._respond(request_id, {

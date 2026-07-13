@@ -203,6 +203,50 @@ class TestV2Lifecycle:
         assert 'query' not in dispatched
 
 
+class TestV2Cancellation:
+
+    def test_cancel_request_cancels_in_flight_query(self):
+        """$/cancelRequest must stop a slow query instead of letting it finish."""
+        plugin = Plugin(launcher=FlowLauncherV2())
+        completed = []
+
+        @plugin.on_method
+        async def query(q: str):
+            await asyncio.sleep(5)
+            completed.append(q)
+            return Result(title="too late")
+
+        responses = run(plugin, [
+            {'id': 1, 'method': 'query', 'params': [{'search': 'slow'}, {}]},
+            {'method': '$/cancelRequest', 'params': {'id': 1}},
+            {'id': 2, 'method': 'close', 'params': []},
+        ])
+        assert completed == []
+        resp = query_response(responses, 1)
+        assert resp['result'] is None
+        assert resp['error']['code'] == -32800
+
+    def test_cancel_unknown_id_is_ignored(self):
+        plugin = make_plugin()
+        responses = run(plugin, [
+            {'method': '$/cancelRequest', 'params': {'id': 99}},
+            {'id': 1, 'method': 'query', 'params': [{'search': 'World'}, {}]},
+            {'id': 2, 'method': 'close', 'params': []},
+        ])
+        assert query_response(responses, 1)['result']['result'][0]['Title'] == 'Hello, World!'
+        assert all(r.get('id') != 99 for r in responses)
+
+    def test_cancel_with_malformed_params_is_ignored(self):
+        plugin = make_plugin()
+        responses = run(plugin, [
+            {'method': '$/cancelRequest'},
+            {'method': '$/cancelRequest', 'params': [1]},
+            {'id': 1, 'method': 'query', 'params': [{'search': 'World'}, {}]},
+            {'id': 2, 'method': 'close', 'params': []},
+        ])
+        assert query_response(responses, 1)['result']['result'][0]['Title'] == 'Hello, World!'
+
+
 class TestV2Notifications:
 
     def test_cancel_request_silently_ignored(self):
