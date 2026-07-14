@@ -14,8 +14,13 @@ concurrency:
 
 jobs:
   prerelease:
-    # Skip release-please's release merge commits; those are handled by release-please.yaml
-    if: "${{ !startsWith(github.event.head_commit.message, 'chore(main): release') }}"
+    # Only cut a pre-release for commits that change shipped code
+    if: >-
+      ${{ startsWith(github.event.head_commit.message, 'feat') ||
+          startsWith(github.event.head_commit.message, 'fix') ||
+          startsWith(github.event.head_commit.message, 'perf') ||
+          startsWith(github.event.head_commit.message, 'refactor') ||
+          startsWith(github.event.head_commit.message, 'revert') }}
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
