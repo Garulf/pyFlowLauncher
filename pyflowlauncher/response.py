@@ -1,8 +1,9 @@
 from __future__ import annotations
 
 import inspect
-from typing import Any, Generator, Union
+from typing import Any, Generator, Optional, Union
 
+from .command import Command
 from .result import Result, send_results
 from .models.json_rpc import JsonRPCRequest, JsonRPCResponse
 
@@ -33,8 +34,14 @@ def _collect_item(item: Any) -> list[Result]:
     return []
 
 
-def _collect_generator(gen: Generator) -> JsonRPCResponse:
+def _collect_generator(gen: Generator) -> Union[JsonRPCResponse, Command]:
     results = []
+    command: Optional[Command] = None
     for item in gen:
+        if isinstance(item, Command):
+            command = item
+            continue
         results.extend(_collect_item(item))
+    if command is not None:
+        return command
     return send_results(results)

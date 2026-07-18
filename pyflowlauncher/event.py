@@ -2,6 +2,7 @@ import asyncio
 import inspect
 from typing import Any, Callable, Iterable, Type, Union
 
+from .command import Command
 from .result import Result, send_results
 from .response import _collect_item
 
@@ -45,8 +46,14 @@ class EventHandler:
             return await self._await_maybe(await result)
         if inspect.isasyncgen(result):
             results = []
+            command = None
             async for item in result:
+                if isinstance(item, Command):
+                    command = item
+                    continue
                 results.extend(_collect_item(item))
+            if command is not None:
+                return command
             return send_results(results)
         if isinstance(result, Result):
             return send_results([result])
