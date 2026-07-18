@@ -11,6 +11,7 @@ else:
     from typing import Self
 
 from .types import Method
+from .command import Command
 from .models.result import Glyph, PreviewInfo
 from .models.json_rpc import JsonRPCResult, JsonRPCRequest, JsonRPCResponse
 
@@ -42,13 +43,26 @@ class Result:
     title_highlight_data: Optional[List[int]] = None
 
     def add_action(
-        self, method: Method, parameters: Optional[Iterable[Any]] = None, dont_hide_after_action: bool = False
+        self, action: Union[Method, Command],
+        parameters: Optional[Iterable[Any]] = None, dont_hide_after_action: bool = False
     ) -> Self:
-        """Adds a JsonRPC action to the result."""
-        if not getattr(method, '_is_registered_method', False):
-            raise MethodNotRegisteredError(method)
+        """Adds a JsonRPC action to the result.
+
+        ``action`` may be a registered plugin ``Method`` (its ``Parameters``
+        come from ``parameters``) or an inert ``Command`` built from
+        ``plugin.launcher.api`` (its ``Method``/``Parameters`` are used as-is).
+        """
+        if isinstance(action, Command):
+            self.json_rpc_action = {
+                'Method': action['Method'],
+                'Parameters': list(action.get('Parameters', [])),
+                'DontHideAfterAction': dont_hide_after_action,
+            }
+            return self
+        if not getattr(action, '_is_registered_method', False):
+            raise MethodNotRegisteredError(action)
         self.json_rpc_action = {
-            'Method': method.__name__,
+            'Method': action.__name__,
             'Parameters': list(parameters) if parameters else [],
             'DontHideAfterAction': dont_hide_after_action,
         }
