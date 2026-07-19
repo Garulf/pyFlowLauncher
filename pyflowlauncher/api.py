@@ -11,6 +11,10 @@ if TYPE_CHECKING:
 NAME_SPACE = 'Flow.Launcher'
 
 
+class NotSupportedError(Exception):
+    """Raised when an operation is not supported by the active protocol version."""
+
+
 def _send_action(method: str, *parameters) -> Command:
     return Command({"Method": f"{NAME_SPACE}.{method}", "Parameters": list(parameters)})
 
@@ -25,8 +29,13 @@ class Api:
     ``invoke`` (added in a later task) are the launcher-bound calls.
     """
 
-    def __init__(self, fuzzy_search_fn: Optional[_FuzzySearchFn] = None) -> None:
+    def __init__(
+        self,
+        fuzzy_search_fn: Optional[_FuzzySearchFn] = None,
+        invoke_fn: Optional[Callable[["Command"], Coroutine[Any, Any, Any]]] = None,
+    ) -> None:
         self._fuzzy_search_fn = fuzzy_search_fn
+        self._invoke_fn = invoke_fn
 
     def change_query(self, query: str, requery: bool = False) -> Command:
         """Change the query in Flow Launcher."""
@@ -100,6 +109,20 @@ class Api:
                 "plugin.launcher.api instead of constructing Api() directly."
             )
         return await self._fuzzy_search_fn(query, text)
+
+    async def invoke(self, command: Command) -> Any:
+        """Send a command to Flow Launcher now and return its response.
+
+        Supported on Flow Launcher V2 only; on V1 the launcher-provided
+        ``invoke_fn`` raises ``NotSupportedError``.
+        """
+        if self._invoke_fn is None:
+            raise RuntimeError(
+                "invoke is unavailable: this Api was created without an "
+                "invoke_fn. Use the launcher-provided instance via "
+                "plugin.launcher.api instead of constructing Api() directly."
+            )
+        return await self._invoke_fn(command)
 
 
 # Backwards-compatible module-level builders (pyflowlauncher.api.change_query, ...).

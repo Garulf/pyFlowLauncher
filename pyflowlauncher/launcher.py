@@ -6,8 +6,9 @@ from abc import ABC, abstractmethod
 from pathlib import Path
 from typing import Any, Awaitable, Callable, Dict, Optional
 
-from .api import NAME_SPACE, Api
+from .api import NAME_SPACE, Api, NotSupportedError
 from .base import pyFlowLauncherObject
+from .command import Command
 from .icons import Icons
 from .jsonrpc import JsonRPCClient, JsonRPCV2Client
 from .models.json_rpc import MatchResult
@@ -19,13 +20,20 @@ class Launcher(pyFlowLauncherObject, ABC):
     def __init__(self) -> None:
         super().__init__()
         self._settings: dict = {}
-        self.api = Api(fuzzy_search_fn=self._fuzzy_search)
+        self.api = Api(fuzzy_search_fn=self._fuzzy_search, invoke_fn=self._invoke)
         self._program_dir: Optional[Path] = self._find_program_dir()
         self.icons = Icons(self._program_dir)
 
     async def _fuzzy_search(self, query: str, text: str) -> MatchData:
         """Local fallback matcher; subclasses may delegate to the host."""
         return _local_string_matcher(query, text)
+
+    async def _invoke(self, command: Command) -> Any:
+        """Send a command to the host; V1 cannot push, so this is unsupported."""
+        raise NotSupportedError(
+            "invoke requires Flow Launcher V2; attach the command to a Result "
+            "with add_action(), or return it, instead."
+        )
 
     @property
     def settings(self) -> dict:
@@ -92,6 +100,10 @@ class FlowLauncherV2(Launcher):
             index_list=result.get('matchData') or [],
             score=result.get('score', 0),
         )
+
+    async def _invoke(self, command: Command) -> Any:
+        """Send the command over JSON-RPC and return Flow Launcher's response."""
+        return await self._client.request(command['Method'], command['Parameters'])
 
     async def run(self, dispatch: Callable[[str, list], Awaitable[Any]]) -> None:
         tasks: set = set()

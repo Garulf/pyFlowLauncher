@@ -6,10 +6,35 @@ from unittest.mock import MagicMock, patch
 
 import pytest
 
+from pyflowlauncher import api
+from pyflowlauncher.api import NotSupportedError
 from pyflowlauncher.launcher import FlowLauncherV1, FlowLauncherV2, Launcher
 from pyflowlauncher.plugin import Plugin
 from pyflowlauncher.result import Result, send_results
 from pyflowlauncher.string_matcher import MatchData
+
+
+def test_v1_invoke_raises_not_supported():
+    launcher = FlowLauncherV1()
+    with pytest.raises(NotSupportedError):
+        asyncio.run(launcher.api.invoke(api.hide_app()))
+
+
+def test_v2_invoke_sends_over_client_and_returns_response():
+    launcher = FlowLauncherV2()
+
+    class FakeClient:
+        def __init__(self):
+            self.calls = []
+
+        async def request(self, method, params):
+            self.calls.append((method, params))
+            return {"ok": True}
+
+    launcher._client = FakeClient()
+    result = asyncio.run(launcher.api.invoke(api.change_query("g ")))
+    assert result == {"ok": True}
+    assert launcher._client.calls == [("Flow.Launcher.ChangeQuery", ["g ", False])]
 
 
 # ---------------------------------------------------------------------------
