@@ -8,7 +8,7 @@ from .result import Result, send_results
 from .models.json_rpc import JsonRPCRequest, JsonRPCResponse
 
 
-def handle_response(result: Any) -> Union[JsonRPCResponse, JsonRPCRequest, None]:
+def handle_response(result: Any) -> Union[JsonRPCResponse, JsonRPCRequest, Command, None]:
     """Normalize a method's return value into a JSON-RPC response.
 
     Accepts: Result, list of Result, generator of Result/list, JsonRPCRequest,

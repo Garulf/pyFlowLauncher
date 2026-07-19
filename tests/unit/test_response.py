@@ -3,7 +3,6 @@ import asyncio
 from pyflowlauncher import Result, api, handle_response
 from pyflowlauncher.command import Command
 from pyflowlauncher.event import EventHandler
-from pyflowlauncher.response import handle_response
 from pyflowlauncher.result import send_results
 
 

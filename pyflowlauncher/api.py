@@ -3,7 +3,6 @@ from __future__ import annotations
 from typing import TYPE_CHECKING, Any, Callable, Coroutine, Optional
 
 from .command import Command
-from .models.json_rpc import JsonRPCRequest
 
 if TYPE_CHECKING:
     from .string_matcher import MatchData
@@ -26,7 +25,7 @@ class Api:
     """Flow Launcher API, accessible via ``plugin.launcher.api``.
 
     Builder methods return inert ``Command`` values; ``fuzzy_search`` and
-    ``invoke`` (added in a later task) are the launcher-bound calls.
+    ``invoke`` are the launcher-bound calls.
     """
 
     def __init__(

@@ -82,6 +82,12 @@ def test_fuzzy_search_without_backend_raises_clear_error():
         asyncio.run(bare_api.fuzzy_search("query", "text"))
 
 
+def test_command_exported_from_package_root():
+    import pyflowlauncher
+    from pyflowlauncher.command import Command as _Command
+    assert pyflowlauncher.Command is _Command
+
+
 def test_module_level_builders_resolve_to_api_methods():
     """Guard: every BC module-level builder is the Api method of the same name."""
     names = [
