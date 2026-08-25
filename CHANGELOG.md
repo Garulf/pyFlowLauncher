@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.1.1](https://github.com/Garulf/pyFlowLauncher/compare/v1.1.0...v1.1.1) (2026-08-25)
+
+
+### Bug Fixes
+
+* forward built-in Flow.Launcher.* actions back to the host ([#36](https://github.com/Garulf/pyFlowLauncher/issues/36)) ([7ea0738](https://github.com/Garulf/pyFlowLauncher/commit/7ea0738eec57c0225d21b8b32c9c904ae1ac8dcb))
+
 ## [1.1.0](https://github.com/Garulf/pyFlowLauncher/compare/v1.0.2...v1.1.0) (2026-07-13)
 
 
