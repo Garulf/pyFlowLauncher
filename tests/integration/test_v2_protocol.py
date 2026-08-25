@@ -417,6 +417,82 @@ class TestV2Actions:
         assert received == [['ctx1', 'ctx2']]
 
 
+class TestV2BuiltinActions:
+    """Built-in Flow.Launcher.* actions (api.open_uri, api.change_query, etc.)
+    attached directly as a Result's json_rpc_action.
+
+    Flow Launcher's host doesn't execute these locally: JsonRPCPluginV2.ExecuteResultAsync
+    calls RPC.InvokeAsync(action.Method, argument: Parameters), which sends the built-in
+    method name back to this plugin process to run, exactly like a custom action. The
+    plugin must recognize the Flow.Launcher. namespace and loop the call back to the
+    host instead of trying to resolve it as one of its own @on_method handlers.
+    """
+
+    def test_builtin_action_forwarded_to_host_and_original_request_acked(self):
+        plugin = make_plugin()
+
+        async def dispatch(method: str, params: list) -> Any:
+            return await plugin._event_handler.trigger_event(method, *params)
+
+        stdin_text = (
+            json.dumps({'id': 10, 'method': 'Flow.Launcher.OpenAppUri',
+                        'params': [['playnite://playnite/start/abc']]}) + '\n'
+            + json.dumps({'id': 1, 'result': None}) + '\n'
+            + json.dumps({'id': 11, 'method': 'close', 'params': []}) + '\n'
+        )
+        responses = []
+
+        async def _inner():
+            with patch('sys.stdin', StringIO(stdin_text)), \
+                 patch('sys.stdout', StringIO()) as out:
+                await plugin._launcher.run(dispatch)
+                out.seek(0)
+                for line in out.read().splitlines():
+                    if line.strip():
+                        responses.append(json.loads(line))
+
+        asyncio.run(_inner())
+
+        forwarded = next(r for r in responses if r.get('method') == 'Flow.Launcher.OpenAppUri')
+        assert forwarded['params'] == ['playnite://playnite/start/abc']
+
+        original = query_response(responses, 10)
+        assert original['result'] == {'hide': True}
+        assert original.get('error') is None
+
+    def test_builtin_action_not_dispatched_as_a_registered_method(self):
+        """Regression: must not raise EventNotFound / answer 'Internal error'."""
+        plugin = make_plugin()
+        dispatched = []
+
+        async def dispatch(method: str, params: list) -> Any:
+            dispatched.append(method)
+            return await plugin._event_handler.trigger_event(method, *params)
+
+        stdin_text = (
+            json.dumps({'id': 5, 'method': 'Flow.Launcher.ChangeQuery',
+                        'params': [['q ', False]]}) + '\n'
+            + json.dumps({'id': 1, 'result': None}) + '\n'
+            + json.dumps({'id': 6, 'method': 'close', 'params': []}) + '\n'
+        )
+        responses = []
+
+        async def _inner():
+            with patch('sys.stdin', StringIO(stdin_text)), \
+                 patch('sys.stdout', StringIO()) as out:
+                await plugin._launcher.run(dispatch)
+                out.seek(0)
+                for line in out.read().splitlines():
+                    if line.strip():
+                        responses.append(json.loads(line))
+
+        asyncio.run(_inner())
+
+        assert 'Flow.Launcher.ChangeQuery' not in dispatched
+        resp = query_response(responses, 5)
+        assert resp.get('result', {}).get('debugMessage') != 'Internal error'
+
+
 class TestV2Settings:
 
     def test_settings_stored_from_query_params(self):
