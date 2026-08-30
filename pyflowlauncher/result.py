@@ -76,6 +76,7 @@ class Result:
         """Creates a Result instance from a JsonRPCResult dictionary."""
         if 'Title' not in json_result:
             raise ValueError("JsonRPCResult must have a 'Title' field")
+        title_highlight_data = json_result.get('TitleHighlightData')
         return Result(
             title=json_result['Title'],
             subtitle=json_result.get('SubTitle'),
@@ -88,7 +89,7 @@ class Result:
             auto_complete_text=json_result.get('AutoCompleteText'),
             rounded_icon=json_result.get('RoundedIcon', False),
             preview=json_result.get('Preview'),
-            title_highlight_data=list(json_result.get('TitleHighlightData', []))
+            title_highlight_data=list(title_highlight_data) if title_highlight_data else None
         )
 
     def to_json(self) -> JsonRPCResult:

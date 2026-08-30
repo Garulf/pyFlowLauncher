@@ -499,6 +499,48 @@ class TestV2BuiltinActions:
         assert resp.get('result', {}).get('debugMessage') != 'Internal error'
 
 
+class TestV2BuiltInContextMenu:
+
+    def test_context_data_results_round_trip_without_user_handler(self):
+        """Results front-loaded into context_data serialize out with the query
+        response, and the built-in context_menu rebuilds them when Flow sends
+        the stored ContextData back — no user-defined handler required."""
+        plugin = Plugin(launcher=FlowLauncherV2())
+
+        @plugin.on_method
+        def query(q: str):
+            yield Result(title="parent", context_data=[
+                Result(title="ctx item", subtitle="ctx sub"),
+            ])
+
+        responses = run(plugin, [
+            {'id': 1, 'method': 'query', 'params': [{'search': 'x'}, {}]},
+            {'id': 2, 'method': 'close', 'params': []},
+        ])
+        context_data = query_response(responses, 1)['result']['result'][0]['ContextData']
+        assert context_data[0]['Title'] == 'ctx item'
+
+        responses = run(plugin, [
+            {'id': 3, 'method': 'context_menu', 'params': [context_data]},
+            {'id': 4, 'method': 'close', 'params': []},
+        ])
+        menu = query_response(responses, 3)['result']['result']
+        assert menu[0]['Title'] == 'ctx item'
+        assert menu[0]['SubTitle'] == 'ctx sub'
+
+    def test_built_in_context_menu_with_plain_context_data(self):
+        """Legacy plugins store plain tokens in context_data; the built-in
+        handler must return an empty menu, not crash."""
+        plugin = Plugin(launcher=FlowLauncherV2())
+        responses = run(plugin, [
+            {'id': 1, 'method': 'context_menu', 'params': [['ctx1', 'ctx2']]},
+            {'id': 2, 'method': 'close', 'params': []},
+        ])
+        result = query_response(responses, 1)['result']
+        assert result['result'] == []
+        assert result.get('debugMessage') != 'Internal error'
+
+
 class TestV2Settings:
 
     def test_settings_stored_from_query_params(self):

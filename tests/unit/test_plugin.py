@@ -1,6 +1,9 @@
+import asyncio
+
 import pytest
 from pyflowlauncher.plugin import Plugin
 from pyflowlauncher.launcher import Launcher
+from pyflowlauncher.result import Result, send_results
 
 
 def temp_method1():
@@ -65,6 +68,61 @@ def test_action():
     plugin = Plugin()
     action = plugin.action(query)
     assert action == {'method': 'query', 'parameters': []}
+
+
+def _trigger_context_menu(plugin, context_data):
+    return asyncio.run(plugin._event_handler.trigger_event('context_menu', context_data))
+
+
+def test_default_context_menu_is_registered():
+    plugin = Plugin()
+    assert 'context_menu' in plugin._event_handler._events
+
+
+def test_default_context_menu_rebuilds_results_from_wire_dicts():
+    plugin = Plugin()
+    context_data = [Result(title='menu item', subtitle='sub').to_json()]
+    response = _trigger_context_menu(plugin, context_data)
+    assert response == send_results([Result(title='menu item', subtitle='sub')])
+
+
+def test_default_context_menu_accepts_result_instances():
+    plugin = Plugin()
+    menu = Result(title='menu item')
+    assert _trigger_context_menu(plugin, [menu]) == send_results([menu])
+    assert _trigger_context_menu(plugin, menu) == send_results([menu])
+
+
+def test_default_context_menu_skips_non_result_items():
+    plugin = Plugin()
+    response = _trigger_context_menu(plugin, ['token', 42, {'no': 'title'}])
+    assert response == send_results([])
+
+
+def test_default_context_menu_handles_non_iterable_data():
+    plugin = Plugin()
+    assert _trigger_context_menu(plugin, None) is None
+    assert _trigger_context_menu(plugin, 'token') is None
+
+
+def test_user_context_menu_overrides_default():
+    plugin = Plugin()
+
+    @plugin.on_method
+    def context_menu(data):
+        return Result(title='custom')
+
+    response = _trigger_context_menu(plugin, [Result(title='ignored').to_json()])
+    assert response == send_results([Result(title='custom')])
+
+
+def test_init_methods_context_menu_overrides_default():
+    def context_menu(data):
+        return Result(title='custom')
+
+    plugin = Plugin(methods=[context_menu])
+    response = _trigger_context_menu(plugin, ['anything'])
+    assert response == send_results([Result(title='custom')])
 
 
 def test_exception_handler():

@@ -53,6 +53,16 @@ def test_asdict():
     }
 
 
+def test_from_json_round_trips_minimal_result():
+    original = Result(title="Test")
+    assert Result.from_json(original.to_json()) == original
+
+
+def test_from_json_handles_null_title_highlight_data():
+    restored = Result.from_json({"Title": "Test", "TitleHighlightData": None})
+    assert restored.title_highlight_data is None
+
+
 def test_add_action():
     r = Result(title="Test")
     method = lambda: None
