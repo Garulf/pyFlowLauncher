@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.1.2](https://github.com/Garulf/pyFlowLauncher/compare/v1.1.1...v1.1.2) (2026-08-30)
+
+
+### Bug Fixes
+
+* strip the Flow.Launcher. namespace when forwarding built-in actions ([#39](https://github.com/Garulf/pyFlowLauncher/issues/39)) ([c0dafdd](https://github.com/Garulf/pyFlowLauncher/commit/c0dafdd6dfdd66db250db781b167d6ed76d31675))
+
 ## [1.1.1](https://github.com/Garulf/pyFlowLauncher/compare/v1.1.0...v1.1.1) (2026-08-25)
 
 
