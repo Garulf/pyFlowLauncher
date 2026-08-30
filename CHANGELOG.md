@@ -1,5 +1,25 @@
 # Changelog
 
+## [1.2.0](https://github.com/Garulf/pyFlowLauncher/compare/v1.1.2...v1.2.0) (2026-08-30)
+
+
+### Features
+
+* Api.invoke sends commands on V2, raises NotSupportedError on V1 ([dd89c31](https://github.com/Garulf/pyFlowLauncher/commit/dd89c31756282e72278d5dc22d2f9336735d03cd))
+* builders return inert Command values on Api ([dd89c31](https://github.com/Garulf/pyFlowLauncher/commit/dd89c31756282e72278d5dc22d2f9336735d03cd)), closes [#41](https://github.com/Garulf/pyFlowLauncher/issues/41)
+* built-in context_menu rebuilds Results stored in context_data ([dd89c31](https://github.com/Garulf/pyFlowLauncher/commit/dd89c31756282e72278d5dc22d2f9336735d03cd))
+* commands API redesign ([#42](https://github.com/Garulf/pyFlowLauncher/issues/42)) ([dd89c31](https://github.com/Garulf/pyFlowLauncher/commit/dd89c31756282e72278d5dc22d2f9336735d03cd))
+* export Command from package root ([dd89c31](https://github.com/Garulf/pyFlowLauncher/commit/dd89c31756282e72278d5dc22d2f9336735d03cd))
+* Result.add_action accepts a Command ([dd89c31](https://github.com/Garulf/pyFlowLauncher/commit/dd89c31756282e72278d5dc22d2f9336735d03cd))
+* yielded Command is emitted as the response action ([dd89c31](https://github.com/Garulf/pyFlowLauncher/commit/dd89c31756282e72278d5dc22d2f9336735d03cd))
+
+
+### Bug Fixes
+
+* forward api commands returned from action methods on V2 ([dd89c31](https://github.com/Garulf/pyFlowLauncher/commit/dd89c31756282e72278d5dc22d2f9336735d03cd))
+* serialize objects exposing to_json in JSON-RPC output ([dd89c31](https://github.com/Garulf/pyFlowLauncher/commit/dd89c31756282e72278d5dc22d2f9336735d03cd))
+* strip the Flow.Launcher. namespace in Api.invoke ([dd89c31](https://github.com/Garulf/pyFlowLauncher/commit/dd89c31756282e72278d5dc22d2f9336735d03cd))
+
 ## [1.1.2](https://github.com/Garulf/pyFlowLauncher/compare/v1.1.1...v1.1.2) (2026-08-30)
 
 
