@@ -426,6 +426,11 @@ class TestV2BuiltinActions:
     method name back to this plugin process to run, exactly like a custom action. The
     plugin must recognize the Flow.Launcher. namespace and loop the call back to the
     host instead of trying to resolve it as one of its own @on_method handlers.
+
+    The host registers its API (JsonRPCPublicAPI) with StreamJsonRpc under bare CLR
+    method names (OpenAppUri, ChangeQuery, ...), the same names _fuzzy_search already
+    uses successfully, so the Flow.Launcher. prefix must be stripped when forwarding;
+    sending it verbatim dies with RemoteMethodNotFoundException on the host.
     """
 
     def test_builtin_action_forwarded_to_host_and_original_request_acked(self):
@@ -453,7 +458,8 @@ class TestV2BuiltinActions:
 
         asyncio.run(_inner())
 
-        forwarded = next(r for r in responses if r.get('method') == 'Flow.Launcher.OpenAppUri')
+        assert not any(r.get('method') == 'Flow.Launcher.OpenAppUri' for r in responses)
+        forwarded = next(r for r in responses if r.get('method') == 'OpenAppUri')
         assert forwarded['params'] == ['playnite://playnite/start/abc']
 
         original = query_response(responses, 10)
