@@ -201,22 +201,44 @@ class FlowLauncherV2(Launcher):
                 'result': [], 'debugMessage': 'Internal error', 'settingsChange': None,
             })
             return
+        if isinstance(result, dict) and 'Method' in result:
+            # An action method returned an api Command (or the raw request
+            # dict older releases produced). V1 hosts execute a request the
+            # action writes to stdout, but a V2 host only reads the result as
+            # JsonRPCExecuteResponse, so the command must be sent as our own
+            # request instead of being dropped.
+            try:
+                await self._forward_to_host(result['Method'], list(result.get('Parameters', [])))
+            except asyncio.CancelledError:
+                self._client.send({'id': request_id, 'result': None, 'error': {
+                    'code': -32800, 'message': 'Request cancelled',
+                }})
+                raise
+            self._respond(request_id, {'hide': True})
+            return
         self._send_response(request_id, method, result)
 
     async def _handle_builtin_action(self, request_id: Any, method: str, params: list) -> None:
-        # The host registers JsonRPCPublicAPI under bare CLR method names
-        # (OpenAppUri, not Flow.Launcher.OpenAppUri), so strip the namespace.
-        host_method = method[len(NAME_SPACE) + 1:]
         try:
-            await self._client.request(host_method, params)
+            await self._forward_to_host(method, params)
         except asyncio.CancelledError:
             self._client.send({'id': request_id, 'result': None, 'error': {
                 'code': -32800, 'message': 'Request cancelled',
             }})
             raise
-        except Exception:
-            self.logger.exception("Failed to forward built-in action %r to the host", method)
         self._respond(request_id, {'hide': True})
+
+    async def _forward_to_host(self, method: str, params: list) -> None:
+        # The host registers JsonRPCPublicAPI under bare CLR method names
+        # (OpenAppUri, not Flow.Launcher.OpenAppUri), so strip the namespace.
+        prefix = f'{NAME_SPACE}.'
+        host_method = method[len(prefix):] if method.startswith(prefix) else method
+        try:
+            await self._client.request(host_method, params)
+        except asyncio.CancelledError:
+            raise
+        except Exception:
+            self.logger.exception("Failed to forward action %r to the host", method)
 
     def _respond(self, request_id: Any, result: Any) -> None:
         """Send a response in the uniform {id, result, error} envelope."""

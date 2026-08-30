@@ -17,7 +17,7 @@ from io import StringIO
 from typing import Any
 from unittest.mock import patch
 
-from pyflowlauncher import Plugin, Result
+from pyflowlauncher import Plugin, Result, api
 from pyflowlauncher.launcher import FlowLauncherV2
 
 
@@ -497,6 +497,51 @@ class TestV2BuiltinActions:
         assert 'Flow.Launcher.ChangeQuery' not in dispatched
         resp = query_response(responses, 5)
         assert resp.get('result', {}).get('debugMessage') != 'Internal error'
+
+
+class TestV2ReturnedCommands:
+    """A registered action method that returns an api Command (issue #41).
+
+    Result.add_action(method) wires the result to a custom method; when Flow
+    invokes it and the method returns api.change_query(...), the command must
+    be forwarded to the host, not swallowed by the JsonRPCExecuteResponse
+    envelope."""
+
+    def _plugin(self, handler) -> Plugin:
+        plugin = Plugin(launcher=FlowLauncherV2())
+        plugin.add_method(handler, name='change_query')
+        return plugin
+
+    def _run_action(self, plugin: Plugin) -> list:
+        return run(plugin, [
+            {'id': 7, 'method': 'change_query', 'params': [[]]},
+            {'id': 1, 'result': None},
+            {'id': 8, 'method': 'close', 'params': []},
+        ])
+
+    def test_returned_command_forwarded_to_host(self):
+        responses = self._run_action(self._plugin(
+            lambda: api.change_query("new query!")))
+        forwarded = next(r for r in responses if r.get('method') == 'ChangeQuery')
+        assert forwarded['params'] == ['new query!', False]
+        assert query_response(responses, 7)['result'] == {'hide': True}
+        assert query_response(responses, 7).get('error') is None
+
+    def test_yielded_command_forwarded_to_host(self):
+        def handler():
+            yield api.change_query("new query!")
+        responses = self._run_action(self._plugin(handler))
+        forwarded = next(r for r in responses if r.get('method') == 'ChangeQuery')
+        assert forwarded['params'] == ['new query!', False]
+
+    def test_returned_plain_request_dict_forwarded_to_host(self):
+        """Plugins written against older releases return the raw
+        {'Method': 'Flow.Launcher.X', 'Parameters': [...]} dict."""
+        responses = self._run_action(self._plugin(
+            lambda: {'Method': 'Flow.Launcher.ChangeQuery',
+                     'Parameters': ['new query!', False]}))
+        forwarded = next(r for r in responses if r.get('method') == 'ChangeQuery')
+        assert forwarded['params'] == ['new query!', False]
 
 
 class TestV2BuiltInContextMenu:
