@@ -192,8 +192,11 @@ class FlowLauncherV2(Launcher):
         self._send_response(request_id, method, result)
 
     async def _handle_builtin_action(self, request_id: Any, method: str, params: list) -> None:
+        # The host registers JsonRPCPublicAPI under bare CLR method names
+        # (OpenAppUri, not Flow.Launcher.OpenAppUri), so strip the namespace.
+        host_method = method[len(NAME_SPACE) + 1:]
         try:
-            await self._client.request(method, params)
+            await self._client.request(host_method, params)
         except asyncio.CancelledError:
             self._client.send({'id': request_id, 'result': None, 'error': {
                 'code': -32800, 'message': 'Request cancelled',
