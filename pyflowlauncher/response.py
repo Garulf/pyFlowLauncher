@@ -34,7 +34,7 @@ def _collect_item(item: Any) -> list[Result]:
     return []
 
 
-def _collect_generator(gen: Generator) -> Union[JsonRPCResponse, Command]:
+def _collect_generator(gen: Generator[Any, Any, Any]) -> Union[JsonRPCResponse, Command]:
     results = []
     command: Optional[Command] = None
     for item in gen:
