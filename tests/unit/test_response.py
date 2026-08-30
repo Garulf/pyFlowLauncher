@@ -1,4 +1,8 @@
-from pyflowlauncher import Result, handle_response
+import asyncio
+
+from pyflowlauncher import Result, api, handle_response
+from pyflowlauncher.command import Command
+from pyflowlauncher.event import EventHandler
 from pyflowlauncher.result import send_results
 
 
@@ -61,3 +65,28 @@ def test_jsonrpc_response_passthrough():
 def test_list_with_non_result_items_filtered():
     results = [Result(title="a"), "not a result", 42]
     assert handle_response(results) == send_results([Result(title="a")])
+
+
+def test_returned_command_passes_through():
+    assert handle_response(api.change_query("g ")) == {
+        "Method": "Flow.Launcher.ChangeQuery", "Parameters": ["g ", False]
+    }
+
+
+def test_yielded_command_becomes_response():
+    def gen():
+        yield api.hide_app()
+    out = handle_response(gen())
+    assert isinstance(out, Command)
+    assert out == {"Method": "Flow.Launcher.HideApp", "Parameters": []}
+
+
+def test_async_yielded_command_becomes_response():
+    handler = EventHandler()
+
+    async def gen():
+        yield api.show_app()
+
+    out = asyncio.run(handler._await_maybe(gen()))
+    assert isinstance(out, Command)
+    assert out == {"Method": "Flow.Launcher.ShowApp", "Parameters": []}

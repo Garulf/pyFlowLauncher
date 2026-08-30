@@ -17,7 +17,7 @@ from io import StringIO
 from typing import Any
 from unittest.mock import patch
 
-from pyflowlauncher import Plugin, Result
+from pyflowlauncher import Plugin, Result, api
 from pyflowlauncher.launcher import FlowLauncherV2
 
 
@@ -499,6 +499,93 @@ class TestV2BuiltinActions:
         assert resp.get('result', {}).get('debugMessage') != 'Internal error'
 
 
+class TestV2ReturnedCommands:
+    """A registered action method that returns an api Command (issue #41).
+
+    Result.add_action(method) wires the result to a custom method; when Flow
+    invokes it and the method returns api.change_query(...), the command must
+    be forwarded to the host, not swallowed by the JsonRPCExecuteResponse
+    envelope."""
+
+    def _plugin(self, handler) -> Plugin:
+        plugin = Plugin(launcher=FlowLauncherV2())
+        plugin.add_method(handler, name='change_query')
+        return plugin
+
+    def _run_action(self, plugin: Plugin) -> list:
+        return run(plugin, [
+            {'id': 7, 'method': 'change_query', 'params': [[]]},
+            {'id': 1, 'result': None},
+            {'id': 8, 'method': 'close', 'params': []},
+        ])
+
+    def test_returned_command_forwarded_to_host(self):
+        responses = self._run_action(self._plugin(
+            lambda: api.change_query("new query!")))
+        forwarded = next(r for r in responses if r.get('method') == 'ChangeQuery')
+        assert forwarded['params'] == ['new query!', False]
+        assert query_response(responses, 7)['result'] == {'hide': True}
+        assert query_response(responses, 7).get('error') is None
+
+    def test_yielded_command_forwarded_to_host(self):
+        def handler():
+            yield api.change_query("new query!")
+        responses = self._run_action(self._plugin(handler))
+        forwarded = next(r for r in responses if r.get('method') == 'ChangeQuery')
+        assert forwarded['params'] == ['new query!', False]
+
+    def test_returned_plain_request_dict_forwarded_to_host(self):
+        """Plugins written against older releases return the raw
+        {'Method': 'Flow.Launcher.X', 'Parameters': [...]} dict."""
+        responses = self._run_action(self._plugin(
+            lambda: {'Method': 'Flow.Launcher.ChangeQuery',
+                     'Parameters': ['new query!', False]}))
+        forwarded = next(r for r in responses if r.get('method') == 'ChangeQuery')
+        assert forwarded['params'] == ['new query!', False]
+
+
+class TestV2BuiltInContextMenu:
+
+    def test_context_data_results_round_trip_without_user_handler(self):
+        """Results front-loaded into context_data serialize out with the query
+        response, and the built-in context_menu rebuilds them when Flow sends
+        the stored ContextData back — no user-defined handler required."""
+        plugin = Plugin(launcher=FlowLauncherV2())
+
+        @plugin.on_method
+        def query(q: str):
+            yield Result(title="parent", context_data=[
+                Result(title="ctx item", subtitle="ctx sub"),
+            ])
+
+        responses = run(plugin, [
+            {'id': 1, 'method': 'query', 'params': [{'search': 'x'}, {}]},
+            {'id': 2, 'method': 'close', 'params': []},
+        ])
+        context_data = query_response(responses, 1)['result']['result'][0]['ContextData']
+        assert context_data[0]['Title'] == 'ctx item'
+
+        responses = run(plugin, [
+            {'id': 3, 'method': 'context_menu', 'params': [context_data]},
+            {'id': 4, 'method': 'close', 'params': []},
+        ])
+        menu = query_response(responses, 3)['result']['result']
+        assert menu[0]['Title'] == 'ctx item'
+        assert menu[0]['SubTitle'] == 'ctx sub'
+
+    def test_built_in_context_menu_with_plain_context_data(self):
+        """Legacy plugins store plain tokens in context_data; the built-in
+        handler must return an empty menu, not crash."""
+        plugin = Plugin(launcher=FlowLauncherV2())
+        responses = run(plugin, [
+            {'id': 1, 'method': 'context_menu', 'params': [['ctx1', 'ctx2']]},
+            {'id': 2, 'method': 'close', 'params': []},
+        ])
+        result = query_response(responses, 1)['result']
+        assert result['result'] == []
+        assert result.get('debugMessage') != 'Internal error'
+
+
 class TestV2Settings:
 
     def test_settings_stored_from_query_params(self):
@@ -546,6 +633,48 @@ class TestV2Settings:
             {'id': 2, 'method': 'close', 'params': []},
         ])
         assert plugin._launcher.settings == {'key': 'val'}
+
+
+class TestV2Invoke:
+
+    def test_invoke_sends_bare_method_name_on_the_wire(self):
+        """api.invoke must strip the Flow.Launcher. namespace like the action
+        loopback does; the host only knows the bare CLR name."""
+        plugin = Plugin(launcher=FlowLauncherV2())
+        invoke_results = []
+
+        @plugin.on_method
+        async def query(q: str):
+            invoke_results.append(
+                await plugin.launcher.api.invoke(api.show_msg("hi", "there")))
+            yield Result(title="done")
+
+        stdin_text = (
+            json.dumps({'id': 10, 'method': 'query',
+                        'params': [{'search': 'x'}]}) + '\n'
+            + json.dumps({'id': 1, 'result': None}) + '\n'
+            + json.dumps({'id': 11, 'method': 'close', 'params': []}) + '\n'
+        )
+        responses = []
+
+        async def dispatch(method: str, params: list) -> Any:
+            return await plugin._event_handler.trigger_event(method, *params)
+
+        async def _inner():
+            with patch('sys.stdin', StringIO(stdin_text)), \
+                 patch('sys.stdout', StringIO()) as out:
+                await plugin._launcher.run(dispatch)
+                out.seek(0)
+                for line in out.read().splitlines():
+                    if line.strip():
+                        responses.append(json.loads(line))
+
+        asyncio.run(_inner())
+
+        outbound = next(r for r in responses if 'method' in r and r.get('id') == 1)
+        assert outbound['method'] == 'ShowMsg'
+        assert outbound['params'] == ['hi', 'there', '']
+        assert invoke_results == [None]
 
 
 class TestV2FuzzySearch:

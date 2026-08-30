@@ -1,3 +1,4 @@
+from pyflowlauncher import api
 from pyflowlauncher.result import Result
 
 
@@ -52,6 +53,16 @@ def test_asdict():
     }
 
 
+def test_from_json_round_trips_minimal_result():
+    original = Result(title="Test")
+    assert Result.from_json(original.to_json()) == original
+
+
+def test_from_json_handles_null_title_highlight_data():
+    restored = Result.from_json({"Title": "Test", "TitleHighlightData": None})
+    assert restored.title_highlight_data is None
+
+
 def test_add_action():
     r = Result(title="Test")
     method = lambda: None
@@ -69,3 +80,18 @@ def test_add_action_return():
     method._is_registered_method = True
     r = Result(title="Test").add_action(method)
     assert isinstance(r, Result)
+
+
+def test_add_action_accepts_command():
+    r = Result(title="Test").add_action(api.change_query("g "))
+    assert r.json_rpc_action == {
+        "Method": "Flow.Launcher.ChangeQuery",
+        "Parameters": ["g ", False],
+        "DontHideAfterAction": False,
+    }
+
+
+def test_add_action_command_honors_dont_hide():
+    r = Result(title="Test").add_action(api.copy_to_clipboard("x"), dont_hide_after_action=True)
+    assert r.json_rpc_action["DontHideAfterAction"] is True
+    assert r.json_rpc_action["Method"] == "Flow.Launcher.CopyToClipboard"

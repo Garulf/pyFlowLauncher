@@ -83,6 +83,36 @@ class TestV1Query:
         assert response is None
 
 
+class TestV1ReturnedCommands:
+
+    def test_returned_command_sent_as_raw_request(self):
+        """V1 executes a Flow.Launcher.* request the action writes to stdout,
+        so a returned api Command must go out unwrapped (issue #41)."""
+        from pyflowlauncher import api
+        plugin = Plugin(launcher=FlowLauncherV1())
+
+        @plugin.on_method
+        def change_query():
+            return api.change_query("new query!")
+
+        response = run(plugin, {'method': 'change_query', 'parameters': []})
+        assert response == {'Method': 'Flow.Launcher.ChangeQuery',
+                            'Parameters': ['new query!', False]}
+
+
+class TestV1BuiltInContextMenu:
+
+    def test_built_in_context_menu_rebuilds_stored_results(self):
+        """V1 restarts the process per call, so the built-in context_menu must
+        rebuild menu Results purely from the ContextData Flow sends back."""
+        plugin = Plugin(launcher=FlowLauncherV1())
+        context_data = [Result(title="ctx item", subtitle="ctx sub").to_json()]
+        response = run(plugin, {'method': 'context_menu', 'parameters': [context_data]})
+        assert response is not None
+        assert response['Result'][0]['Title'] == 'ctx item'
+        assert response['Result'][0]['SubTitle'] == 'ctx sub'
+
+
 class TestV1Settings:
 
     def test_settings_available_after_run(self):

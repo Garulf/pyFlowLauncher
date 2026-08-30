@@ -1,4 +1,5 @@
 import asyncio
+import json
 import logging
 import sys
 from io import StringIO
@@ -7,6 +8,7 @@ from unittest.mock import patch
 import pytest
 
 from pyflowlauncher.jsonrpc import JsonRPCClient, JsonRPCV2Client
+from pyflowlauncher.result import Result
 
 
 @pytest.fixture
@@ -30,6 +32,22 @@ def test_send(capture_stdout):
     jsonrpc.send({"method": "Test", "parameters": []})
 
     assert capture_stdout["stdout"] == '{"method": "Test", "parameters": []}'
+
+
+def test_send_serializes_result_in_context_data(capture_stdout):
+    jsonrpc = JsonRPCClient()
+    result = Result(title="outer", context_data=[Result(title="menu item")])
+    jsonrpc.send({"Result": [result.to_json()], "SettingsChange": None})
+
+    payload = json.loads(capture_stdout["stdout"])
+    assert payload["Result"][0]["ContextData"][0]["Title"] == "menu item"
+
+
+def test_send_unserializable_object_raises_type_error():
+    jsonrpc = JsonRPCClient()
+    with patch('sys.stdout', StringIO()):
+        with pytest.raises(TypeError):
+            jsonrpc.send({"Result": object()})
 
 
 def test_recieve(monkeypatch):
@@ -61,6 +79,22 @@ def test_v2_send_newline_delimited(capture_stdout):
     client = JsonRPCV2Client()
     client.send({"id": 1, "result": {}})
     assert capture_stdout["stdout"] == '{"id": 1, "result": {}}\n'
+
+
+def test_v2_send_serializes_result_in_context_data(capture_stdout):
+    client = JsonRPCV2Client()
+    result = Result(title="outer", context_data=[Result(title="menu item")])
+    client.send({"id": 1, "result": {"result": [result.to_json()]}})
+
+    payload = json.loads(capture_stdout["stdout"])
+    assert payload["result"]["result"][0]["ContextData"][0]["Title"] == "menu item"
+
+
+def test_v2_send_unserializable_object_raises_type_error():
+    client = JsonRPCV2Client()
+    with patch('sys.stdout', StringIO()):
+        with pytest.raises(TypeError):
+            client.send({"id": 1, "result": object()})
 
 
 def test_v2_messages_yields_parsed_dicts():

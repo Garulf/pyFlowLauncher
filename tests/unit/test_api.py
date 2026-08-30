@@ -1,9 +1,19 @@
 import asyncio
-import inspect
 
 import pytest
 
 from pyflowlauncher import api
+from pyflowlauncher.command import Command
+
+
+def test_builder_returns_command_equal_to_plain_dict():
+    cmd = api.change_query("Test", False)
+    assert isinstance(cmd, Command)
+    assert cmd == {"Method": "Flow.Launcher.ChangeQuery", "Parameters": ["Test", False]}
+
+
+def test_api_instance_builder_matches_module_builder():
+    assert api.Api().change_query("Test") == api.change_query("Test")
 
 
 def test_send_action():
@@ -72,13 +82,19 @@ def test_fuzzy_search_without_backend_raises_clear_error():
         asyncio.run(bare_api.fuzzy_search("query", "text"))
 
 
-def test_api_class_exposes_every_module_level_action():
-    """Guard: each public module-level API function must exist on Api."""
-    module_functions = [
-        name for name, obj in vars(api).items()
-        if inspect.isfunction(obj)
-        and not name.startswith('_')
-        and obj.__module__ == api.__name__
+def test_command_exported_from_package_root():
+    import pyflowlauncher
+    from pyflowlauncher.command import Command as _Command
+    assert pyflowlauncher.Command is _Command
+
+
+def test_module_level_builders_resolve_to_api_methods():
+    """Guard: every BC module-level builder is the Api method of the same name."""
+    names = [
+        "change_query", "shell_run", "close_app", "hide_app", "show_app",
+        "show_msg", "open_setting_dialog", "start_loading_bar", "stop_loading_bar",
+        "reload_plugins", "copy_to_clipboard", "open_directory", "open_url", "open_uri",
     ]
-    missing = [name for name in module_functions if not hasattr(api.Api, name)]
-    assert not missing, f"Api class is missing module-level actions: {missing}"
+    for name in names:
+        assert hasattr(api.Api, name), f"Api is missing builder: {name}"
+        assert getattr(api, name).__func__ is getattr(api.Api, name)
