@@ -635,6 +635,48 @@ class TestV2Settings:
         assert plugin._launcher.settings == {'key': 'val'}
 
 
+class TestV2Invoke:
+
+    def test_invoke_sends_bare_method_name_on_the_wire(self):
+        """api.invoke must strip the Flow.Launcher. namespace like the action
+        loopback does; the host only knows the bare CLR name."""
+        plugin = Plugin(launcher=FlowLauncherV2())
+        invoke_results = []
+
+        @plugin.on_method
+        async def query(q: str):
+            invoke_results.append(
+                await plugin.launcher.api.invoke(api.show_msg("hi", "there")))
+            yield Result(title="done")
+
+        stdin_text = (
+            json.dumps({'id': 10, 'method': 'query',
+                        'params': [{'search': 'x'}]}) + '\n'
+            + json.dumps({'id': 1, 'result': None}) + '\n'
+            + json.dumps({'id': 11, 'method': 'close', 'params': []}) + '\n'
+        )
+        responses = []
+
+        async def dispatch(method: str, params: list) -> Any:
+            return await plugin._event_handler.trigger_event(method, *params)
+
+        async def _inner():
+            with patch('sys.stdin', StringIO(stdin_text)), \
+                 patch('sys.stdout', StringIO()) as out:
+                await plugin._launcher.run(dispatch)
+                out.seek(0)
+                for line in out.read().splitlines():
+                    if line.strip():
+                        responses.append(json.loads(line))
+
+        asyncio.run(_inner())
+
+        outbound = next(r for r in responses if 'method' in r and r.get('id') == 1)
+        assert outbound['method'] == 'ShowMsg'
+        assert outbound['params'] == ['hi', 'there', '']
+        assert invoke_results == [None]
+
+
 class TestV2FuzzySearch:
 
     def test_fuzzy_search_round_trip(self):

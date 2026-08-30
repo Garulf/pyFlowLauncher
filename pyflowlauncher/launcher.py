@@ -15,6 +15,13 @@ from .models.json_rpc import MatchResult
 from .string_matcher import MatchData, string_matcher as _local_string_matcher
 
 
+def _host_method(method: str) -> str:
+    # The host registers JsonRPCPublicAPI under bare CLR method names
+    # (OpenAppUri, not Flow.Launcher.OpenAppUri), so strip the namespace.
+    prefix = f'{NAME_SPACE}.'
+    return method[len(prefix):] if method.startswith(prefix) else method
+
+
 class Launcher(pyFlowLauncherObject, ABC):
 
     def __init__(self) -> None:
@@ -103,7 +110,8 @@ class FlowLauncherV2(Launcher):
 
     async def _invoke(self, command: Command) -> Any:
         """Send the command over JSON-RPC and return Flow Launcher's response."""
-        return await self._client.request(command['Method'], command['Parameters'])
+        return await self._client.request(
+            _host_method(command['Method']), command['Parameters'])
 
     async def run(self, dispatch: Callable[[str, list], Awaitable[Any]]) -> None:
         tasks: set = set()
@@ -229,12 +237,8 @@ class FlowLauncherV2(Launcher):
         self._respond(request_id, {'hide': True})
 
     async def _forward_to_host(self, method: str, params: list) -> None:
-        # The host registers JsonRPCPublicAPI under bare CLR method names
-        # (OpenAppUri, not Flow.Launcher.OpenAppUri), so strip the namespace.
-        prefix = f'{NAME_SPACE}.'
-        host_method = method[len(prefix):] if method.startswith(prefix) else method
         try:
-            await self._client.request(host_method, params)
+            await self._client.request(_host_method(method), params)
         except asyncio.CancelledError:
             raise
         except Exception:

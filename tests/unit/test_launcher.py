@@ -21,6 +21,8 @@ def test_v1_invoke_raises_not_supported():
 
 
 def test_v2_invoke_sends_over_client_and_returns_response():
+    """The host registers its API under bare CLR names (ChangeQuery, not
+    Flow.Launcher.ChangeQuery), so invoke must strip the namespace."""
     launcher = FlowLauncherV2()
 
     class FakeClient:
@@ -34,7 +36,7 @@ def test_v2_invoke_sends_over_client_and_returns_response():
     launcher._client = FakeClient()
     result = asyncio.run(launcher.api.invoke(api.change_query("g ")))
     assert result == {"ok": True}
-    assert launcher._client.calls == [("Flow.Launcher.ChangeQuery", ["g ", False])]
+    assert launcher._client.calls == [("ChangeQuery", ["g ", False])]
 
 
 # ---------------------------------------------------------------------------
