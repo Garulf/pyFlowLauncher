@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.2.1](https://github.com/Garulf/pyFlowLauncher/compare/v1.2.0...v1.2.1) (2026-09-04)
+
+
+### Bug Fixes
+
+* match exception handlers by MRO, not exact class ([ae44644](https://github.com/Garulf/pyFlowLauncher/commit/ae4464446f6bc00a660c279d8291f04f33acaec4)), closes [#46](https://github.com/Garulf/pyFlowLauncher/issues/46)
+
 ## [1.2.0](https://github.com/Garulf/pyFlowLauncher/compare/v1.1.2...v1.2.0) (2026-08-30)
 
 
