@@ -15,6 +15,9 @@ from .models.json_rpc import MatchResult
 from .string_matcher import MatchData, string_matcher as _local_string_matcher
 
 
+MAX_PROGRAM_DIR_SEARCH_DEPTH = 5
+
+
 def _host_method(method: str) -> str:
     # The host registers JsonRPCPublicAPI under bare CLR method names
     # (OpenAppUri, not Flow.Launcher.OpenAppUri), so strip the namespace.
@@ -65,7 +68,7 @@ class Launcher(pyFlowLauncherObject, ABC):
             if candidate.exists():
                 return candidate
         current = Path.cwd()
-        for _ in range(5):
+        for _ in range(MAX_PROGRAM_DIR_SEARCH_DEPTH):
             if (current / "Flow.Launcher.exe").exists():
                 return current
             current = current.parent
@@ -83,7 +86,7 @@ class FlowLauncherV1(Launcher):
         self._client = JsonRPCClient()
 
     async def run(self, dispatch: Callable[[str, list], Awaitable[Any]]) -> None:
-        request = self._client.recieve()
+        request = self._client.receive()
         self._settings = request.get('settings', {})
         result = await dispatch(request['method'], request.get('parameters', []))
         if result:
