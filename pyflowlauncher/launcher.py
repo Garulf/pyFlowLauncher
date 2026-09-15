@@ -216,33 +216,36 @@ class FlowLauncherV2(Launcher):
             # JsonRPCExecuteResponse, so the command must be sent as our own
             # request instead of being dropped.
             try:
-                await self._forward_to_host(result['Method'], list(result.get('Parameters', [])))
+                succeeded = await self._forward_to_host(
+                    result['Method'], list(result.get('Parameters', [])))
             except asyncio.CancelledError:
                 self._client.send({'id': request_id, 'result': None, 'error': {
                     'code': -32800, 'message': 'Request cancelled',
                 }})
                 raise
-            self._respond(request_id, {'hide': True})
+            self._respond(request_id, {'hide': succeeded})
             return
         self._send_response(request_id, method, result)
 
     async def _handle_builtin_action(self, request_id: Any, method: str, params: list) -> None:
         try:
-            await self._forward_to_host(method, params)
+            succeeded = await self._forward_to_host(method, params)
         except asyncio.CancelledError:
             self._client.send({'id': request_id, 'result': None, 'error': {
                 'code': -32800, 'message': 'Request cancelled',
             }})
             raise
-        self._respond(request_id, {'hide': True})
+        self._respond(request_id, {'hide': succeeded})
 
-    async def _forward_to_host(self, method: str, params: list) -> None:
+    async def _forward_to_host(self, method: str, params: list) -> bool:
         try:
             await self._client.request(_host_method(method), params)
+            return True
         except asyncio.CancelledError:
             raise
         except Exception:
             self.logger.exception("Failed to forward action %r to the host", method)
+            return False
 
     def _respond(self, request_id: Any, result: Any) -> None:
         """Send a response in the uniform {id, result, error} envelope."""

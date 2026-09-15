@@ -75,7 +75,10 @@ class JsonRPCV2Client:
                     _logger.warning(
                         "Discarding JSON-RPC response with unknown id: %r", req_id)
                 elif not fut.done():
-                    fut.set_result(msg.get('result'))
+                    if 'error' in msg and msg['error'] is not None:
+                        fut.set_exception(RuntimeError(msg['error']))
+                    else:
+                        fut.set_result(msg.get('result'))
                 continue
             yield msg
 

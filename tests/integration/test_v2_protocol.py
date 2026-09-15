@@ -498,6 +498,68 @@ class TestV2BuiltinActions:
         resp = query_response(responses, 5)
         assert resp.get('result', {}).get('debugMessage') != 'Internal error'
 
+    def test_builtin_action_error_reply_does_not_hide_window(self):
+        """Regression: a host-side JSON-RPC error forwarding a built-in action
+        must not be reported as {'hide': True} — the window should stay open
+        so the user can see something went wrong."""
+        plugin = make_plugin()
+
+        async def dispatch(method: str, params: list) -> Any:
+            return await plugin._event_handler.trigger_event(method, *params)
+
+        stdin_text = (
+            json.dumps({'id': 10, 'method': 'Flow.Launcher.OpenAppUri',
+                        'params': [['playnite://playnite/start/abc']]}) + '\n'
+            + json.dumps({'id': 1, 'error': {'code': -32601, 'message': 'not found'}}) + '\n'
+            + json.dumps({'id': 11, 'method': 'close', 'params': []}) + '\n'
+        )
+        responses = []
+
+        async def _inner():
+            with patch('sys.stdin', StringIO(stdin_text)), \
+                 patch('sys.stdout', StringIO()) as out:
+                await plugin._launcher.run(dispatch)
+                out.seek(0)
+                for line in out.read().splitlines():
+                    if line.strip():
+                        responses.append(json.loads(line))
+
+        asyncio.run(_inner())
+
+        original = query_response(responses, 10)
+        assert original['result'] == {'hide': False}
+        assert original.get('error') is None
+
+    def test_builtin_action_stream_closed_does_not_hide_window(self):
+        """Regression: if the stream closes before the host replies to a
+        forwarded action, the original request must not be reported as
+        {'hide': True}."""
+        plugin = make_plugin()
+
+        async def dispatch(method: str, params: list) -> Any:
+            return await plugin._event_handler.trigger_event(method, *params)
+
+        stdin_text = (
+            json.dumps({'id': 10, 'method': 'Flow.Launcher.OpenAppUri',
+                        'params': [['playnite://playnite/start/abc']]}) + '\n'
+        )
+        responses = []
+
+        async def _inner():
+            with patch('sys.stdin', StringIO(stdin_text)), \
+                 patch('sys.stdout', StringIO()) as out:
+                await plugin._launcher.run(dispatch)
+                out.seek(0)
+                for line in out.read().splitlines():
+                    if line.strip():
+                        responses.append(json.loads(line))
+
+        asyncio.run(_inner())
+
+        original = query_response(responses, 10)
+        assert original['result'] == {'hide': False}
+        assert original.get('error') is None
+
 
 class TestV2ReturnedCommands:
     """A registered action method that returns an api Command (issue #41).
