@@ -1,11 +1,24 @@
 from __future__ import annotations
 
 import inspect
+import logging
 from typing import Any, Generator, Optional, Union
 
 from .command import Command
 from .result import Result, send_results
 from .models.json_rpc import JsonRPCRequest, JsonRPCResponse
+
+_logger = logging.getLogger(__name__)
+
+
+def _filter_results(items: list) -> list[Result]:
+    results = []
+    for item in items:
+        if isinstance(item, Result):
+            results.append(item)
+        else:
+            _logger.warning("Dropping non-Result item from response list: %r", item)
+    return results
 
 
 def handle_response(result: Any) -> Union[JsonRPCResponse, JsonRPCRequest, Command, None]:
@@ -20,7 +33,7 @@ def handle_response(result: Any) -> Union[JsonRPCResponse, JsonRPCRequest, Comma
     if isinstance(result, Result):
         return send_results([result])
     if isinstance(result, list):
-        return send_results([r for r in result if isinstance(r, Result)])
+        return send_results(_filter_results(result))
     if inspect.isgenerator(result):
         return _collect_generator(result)
     return result
@@ -30,7 +43,8 @@ def _collect_item(item: Any) -> list[Result]:
     if isinstance(item, Result):
         return [item]
     if isinstance(item, list):
-        return [r for r in item if isinstance(r, Result)]
+        return _filter_results(item)
+    _logger.warning("Dropping non-Result item yielded from a generator: %r", item)
     return []
 
 
