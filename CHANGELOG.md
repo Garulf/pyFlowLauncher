@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.2.2](https://github.com/Garulf/pyFlowLauncher/compare/v1.2.1...v1.2.2) (2026-10-09)
+
+
+### Bug Fixes
+
+* omit result from V2 cancel error replies ([#53](https://github.com/Garulf/pyFlowLauncher/issues/53)) ([43eea8d](https://github.com/Garulf/pyFlowLauncher/commit/43eea8dc723654e4a198939643350eb1c25f8f5c)), closes [#52](https://github.com/Garulf/pyFlowLauncher/issues/52)
+
 ## [1.2.1](https://github.com/Garulf/pyFlowLauncher/compare/v1.2.0...v1.2.1) (2026-09-04)
 
 
