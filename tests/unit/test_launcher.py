@@ -325,8 +325,10 @@ class TestFlowLauncherV2:
         asyncio.run(_run())
         # StreamJsonRpc reads the 'result' member of the response, so 'hide'
         # must be nested inside it (deserialized as JsonRPCExecuteResponse).
+        # The host never replies to the forwarded action here, so the forward
+        # times out and 'hide' must be False (don't hide on a failed forward).
         action_resp = next(r for r in output if r.get('id') == 5)
-        assert action_resp == {'id': 5, 'result': {'hide': True}, 'error': None}
+        assert action_resp == {'id': 5, 'result': {'hide': False}, 'error': None}
 
     def test_query_response_includes_error_key(self):
         """All responses must carry the same {id, result, error} envelope."""
