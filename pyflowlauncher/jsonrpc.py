@@ -32,11 +32,18 @@ class JsonRPCClient:
     def send(self, data: Mapping) -> None:
         json.dump(data, sys.stdout, default=_json_default)
 
-    def recieve(self) -> JsonRPCRequest:
+    def receive(self) -> JsonRPCRequest:
         try:
             return json.loads(sys.argv[1])
         except (IndexError, json.JSONDecodeError):
+            _logger.warning(
+                "Could not parse a JSON-RPC request from sys.argv[1]; "
+                "falling back to an empty query.")
             return {'method': 'query', 'parameters': ['']}
+
+    def recieve(self) -> JsonRPCRequest:
+        """Deprecated misspelled alias for receive(). Kept for backward compatibility."""
+        return self.receive()
 
 
 class JsonRPCV2Client:
