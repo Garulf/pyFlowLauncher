@@ -1,0 +1,12 @@
+{
+    "ID": "e2e-fixture-v1",
+    "Name": "E2E Fixture V1",
+    "Author": "pyFlowLauncher tests",
+    "Version": "0.0.1",
+    "Language": "python",
+    "Description": "Fixture plugin for subprocess e2e tests (V1 protocol).",
+    "Website": "https://github.com/Garulf/pyFlowLauncher",
+    "ExecuteFileName": "main.py",
+    "IcoPath": "icon.png",
+    "ActionKeyword": "e2e"
+}
