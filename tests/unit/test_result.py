@@ -58,6 +58,30 @@ def test_from_json_round_trips_minimal_result():
     assert Result.from_json(original.to_json()) == original
 
 
+def test_to_json_omits_preview_when_unset():
+    """GitHub issue #44: Flow Launcher's Result.Preview defaults to a non-null
+    object; sending an explicit 'Preview': null overwrites that default on
+    deserialization and crashes the host's preview panel with a
+    NullReferenceException. The key must be omitted, not sent as null."""
+    r = Result(title="Test")
+    assert "Preview" not in r.to_json()
+
+
+def test_to_json_includes_preview_when_set():
+    r = Result(title="Test", preview={
+        "PreviewImagePath": "Test.png",
+        "Description": "Test",
+        "IsMedia": True,
+        "PreviewDeligate": None
+    })
+    assert r.to_json()["Preview"] == {
+        "PreviewImagePath": "Test.png",
+        "Description": "Test",
+        "IsMedia": True,
+        "PreviewDeligate": None
+    }
+
+
 def test_from_json_handles_null_title_highlight_data():
     restored = Result.from_json({"Title": "Test", "TitleHighlightData": None})
     assert restored.title_highlight_data is None
