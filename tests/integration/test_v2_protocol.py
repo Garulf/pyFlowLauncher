@@ -223,7 +223,31 @@ class TestV2Cancellation:
         ])
         assert completed == []
         resp = query_response(responses, 1)
-        assert resp['result'] is None
+        assert 'result' not in resp
+        assert resp['error']['code'] == -32800
+
+    def test_cancel_while_forwarding_builtin_action_replies_without_result(self):
+        """StreamJsonRpc checks 'result' before 'error', so a cancel reply that
+        carries 'result': null is read as a successful null response."""
+        responses = run(make_plugin(), [
+            {'id': 10, 'method': 'Flow.Launcher.ChangeQuery', 'params': [['q ', False]]},
+            {'method': '$/cancelRequest', 'params': {'id': 10}},
+            {'id': 11, 'method': 'close', 'params': []},
+        ])
+        resp = query_response(responses, 10)
+        assert 'result' not in resp
+        assert resp['error']['code'] == -32800
+
+    def test_cancel_while_forwarding_returned_command_replies_without_result(self):
+        plugin = Plugin(launcher=FlowLauncherV2())
+        plugin.add_method(lambda: api.change_query("new query!"), name='change_query')
+        responses = run(plugin, [
+            {'id': 7, 'method': 'change_query', 'params': [[]]},
+            {'method': '$/cancelRequest', 'params': {'id': 7}},
+            {'id': 8, 'method': 'close', 'params': []},
+        ])
+        resp = query_response(responses, 7)
+        assert 'result' not in resp
         assert resp['error']['code'] == -32800
 
     def test_cancel_unknown_id_is_ignored(self):
