@@ -50,11 +50,25 @@ def test_send_unserializable_object_raises_type_error():
             jsonrpc.send({"Result": object()})
 
 
-def test_recieve(monkeypatch):
+def test_receive(monkeypatch):
     jsonrpc = JsonRPCClient()
 
     monkeypatch.setattr(sys, "argv", ["test.py", '{"method": "Test", "parameters": []}'])
-    assert jsonrpc.recieve() == {"method": "Test", "parameters": []}
+    assert jsonrpc.receive() == {"method": "Test", "parameters": []}
+
+
+def test_receive_falls_back_to_empty_query_on_bad_json(monkeypatch):
+    jsonrpc = JsonRPCClient()
+
+    monkeypatch.setattr(sys, "argv", ["test.py", "not json"])
+    assert jsonrpc.receive() == {"method": "query", "parameters": [""]}
+
+
+def test_recieve_is_a_deprecated_alias_for_receive(monkeypatch):
+    jsonrpc = JsonRPCClient()
+
+    monkeypatch.setattr(sys, "argv", ["test.py", '{"method": "Test", "parameters": []}'])
+    assert jsonrpc.recieve() == jsonrpc.receive()
 
 
 # ---------------------------------------------------------------------------

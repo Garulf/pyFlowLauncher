@@ -77,7 +77,7 @@ class TestFlowLauncherV1:
         launcher = FlowLauncherV1()
         request = {'method': 'query', 'parameters': ['hello'], 'settings': {}}
         sent = []
-        monkeypatch.setattr(launcher._client, 'recieve', lambda: request)
+        monkeypatch.setattr(launcher._client, 'receive', lambda: request)
         monkeypatch.setattr(launcher._client, 'send', lambda data: sent.append(data))
 
         result = send_results([Result(title='x')])
@@ -89,7 +89,7 @@ class TestFlowLauncherV1:
         launcher = FlowLauncherV1()
         request = {'method': 'query', 'parameters': ['hello'], 'settings': {}}
         sent = []
-        monkeypatch.setattr(launcher._client, 'recieve', lambda: request)
+        monkeypatch.setattr(launcher._client, 'receive', lambda: request)
         monkeypatch.setattr(launcher._client, 'send', lambda data: sent.append(data))
 
         asyncio.run(launcher.run(_make_dispatch(None)))
@@ -99,7 +99,7 @@ class TestFlowLauncherV1:
     def test_settings_cached_after_run(self, monkeypatch):
         launcher = FlowLauncherV1()
         request = {'method': 'query', 'parameters': [], 'settings': {'key': 'value'}}
-        monkeypatch.setattr(launcher._client, 'recieve', lambda: request)
+        monkeypatch.setattr(launcher._client, 'receive', lambda: request)
         monkeypatch.setattr(launcher._client, 'send', lambda data: None)
 
         asyncio.run(launcher.run(_make_dispatch(None)))

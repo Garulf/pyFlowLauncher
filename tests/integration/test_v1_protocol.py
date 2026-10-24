@@ -26,7 +26,7 @@ def run(plugin: Plugin, request: dict) -> dict | None:
     async def dispatch(method: str, params: list) -> Any:
         return await plugin._event_handler.trigger_event(method, *params)
 
-    with patch.object(plugin._launcher._client, 'recieve', return_value=request), \
+    with patch.object(plugin._launcher._client, 'receive', return_value=request), \
          patch.object(plugin._launcher._client, 'send', side_effect=sent.append):
         asyncio.run(plugin._launcher.run(dispatch))
 
