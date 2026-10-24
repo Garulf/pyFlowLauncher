@@ -94,7 +94,7 @@ class Result:
 
     def to_json(self) -> JsonRPCResult:
         """Converts the Result instance to a JsonRPCResult dictionary"""
-        return cast(JsonRPCResult, {
+        json_result = {
             'Title': self.title,
             'SubTitle': self.subtitle,
             'IcoPath': str(self.icon) if self.icon else None,
@@ -105,9 +105,14 @@ class Result:
             'CopyText': self.copy_text,
             'AutoCompleteText': self.auto_complete_text,
             'RoundedIcon': self.rounded_icon,
-            'Preview': self.preview,
             'TitleHighlightData': self.title_highlight_data,
-        })
+        }
+        if self.preview is not None:
+            # Flow Launcher's Result.Preview defaults to a non-null PreviewInfo;
+            # sending an explicit null overwrites that default on deserialization
+            # and crashes the host's preview panel (NullReferenceException).
+            json_result['Preview'] = self.preview
+        return cast(JsonRPCResult, json_result)
 
 
 def send_results(results: Iterable[Result], settings: Optional[Dict[str, Any]] = None) -> JsonRPCResponse:
