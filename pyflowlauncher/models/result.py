@@ -18,7 +18,6 @@ class PreviewInfo(TypedDict):
     PreviewImagePath: Optional[str]
     Description: Optional[str]
     IsMedia: bool
-    PreviewDeligate: Optional[str]
 
 
 class Result(TypedDict, total=False):

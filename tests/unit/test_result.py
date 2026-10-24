@@ -21,8 +21,7 @@ def test_asdict():
         preview={
             "PreviewImagePath": "Test.png",
             "Description": "Test",
-            "IsMedia": True,
-            "PreviewDeligate": None
+            "IsMedia": True
         }
     )
     assert r.as_dict() == {
@@ -47,8 +46,7 @@ def test_asdict():
         "preview": {
             "PreviewImagePath": "Test.png",
             "Description": "Test",
-            "IsMedia": True,
-            "PreviewDeligate": None
+            "IsMedia": True
         }
     }
 
