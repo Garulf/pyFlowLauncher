@@ -2,13 +2,15 @@ import asyncio
 import json
 import sys
 from io import StringIO
-from unittest.mock import MagicMock, patch
+from pathlib import Path
+from unittest.mock import patch
 
 import pytest
 
 from pyflowlauncher import api
 from pyflowlauncher.api import NotSupportedError
 from pyflowlauncher.launcher import FlowLauncherV1, FlowLauncherV2, Launcher
+from pyflowlauncher.manifest import Manifest
 from pyflowlauncher.plugin import Plugin
 from pyflowlauncher.result import Result, send_results
 from pyflowlauncher.string_matcher import MatchData
@@ -136,9 +138,8 @@ class TestFlowLauncherV1:
 class TestAutoDetect:
 
     def _plugin_with_language(self, language):
-        manifest = MagicMock()
-        manifest.language = language
-        with patch.object(Plugin, 'manifest', new_callable=lambda: property(lambda self: manifest)):
+        with patch.object(Plugin, 'manifest_path', Path('plugin.json')), \
+                patch.object(Manifest, 'read_language', return_value=language):
             return Plugin()
 
     def test_auto_detect_v1(self):
@@ -154,9 +155,8 @@ class TestAutoDetect:
         assert isinstance(plugin._launcher, FlowLauncherV2)
 
     def _plugin_with_manifest_error(self, exc):
-        with patch.object(Plugin, 'manifest', new_callable=lambda: property(
-            lambda self: (_ for _ in ()).throw(exc)
-        )):
+        with patch.object(Plugin, 'manifest_path', Path('plugin.json')), \
+                patch.object(Manifest, 'read_language', side_effect=exc):
             return Plugin()
 
     def test_invalid_json_manifest_falls_back_to_v1(self):
@@ -169,10 +169,9 @@ class TestAutoDetect:
         assert isinstance(plugin._launcher, FlowLauncherV1)
 
     def test_explicit_overrides_auto_detect(self):
-        manifest = MagicMock()
-        manifest.language = 'python_v2'
         v1 = FlowLauncherV1()
-        with patch.object(Plugin, 'manifest', new_callable=lambda: property(lambda self: manifest)):
+        with patch.object(Plugin, 'manifest_path', Path('plugin.json')), \
+                patch.object(Manifest, 'read_language', return_value='python_v2'):
             plugin = Plugin(launcher=v1)
         assert plugin._launcher is v1
 

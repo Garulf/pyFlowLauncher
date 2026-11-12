@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-import json
 import sys
 from collections.abc import Iterable as IterableABC
 from functools import cached_property, wraps
@@ -53,13 +52,15 @@ class Plugin(pyFlowLauncherObject):
 
     def _detect_launcher(self) -> Launcher:
         try:
-            if (self.manifest.language or '').lower() == 'python_v2':
-                return FlowLauncherV2()
+            language = Manifest.read_language(self.manifest_path)
         except FileNotFoundError:
             pass
-        except (json.JSONDecodeError, KeyError):
+        except (ValueError, KeyError, TypeError):
             self.logger.warning(
-                "Malformed plugin manifest; defaulting to V1 launcher.", exc_info=True)
+                "Plugin manifest has no readable Language; defaulting to V1 launcher.", exc_info=True)
+        else:
+            if language.lower() == 'python_v2':
+                return FlowLauncherV2()
         return FlowLauncherV1()
 
     def add_method(self, method: Method, *, name: Optional[str] = None) -> str:
