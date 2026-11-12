@@ -76,7 +76,7 @@ def test_generator_with_command_and_results_keeps_both():
 
     out = handle_response(gen())
     assert isinstance(out, Command)
-    assert out == {'Method': 'Flow.Launcher.HideApp', 'Parameters': []}
+    assert out == api.hide_app()
     assert out.results == [Result(title='a')]
 
 
