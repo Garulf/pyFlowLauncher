@@ -3,7 +3,8 @@ from pyflowlauncher import Plugin, Result
 plugin = Plugin()
 
 
-def action(params: list[str]):
+@plugin.on_method
+def action(item: str):
     pass
     # Do stuff here
     # ...

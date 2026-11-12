@@ -13,7 +13,7 @@ def query(query: str):
 
 
 @plugin.on_method
-def action(params: list[str]):
+def action():
     pass
     # Do stuff here
     # ...
