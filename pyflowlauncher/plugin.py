@@ -12,7 +12,7 @@ from .base import pyFlowLauncherObject
 
 from .event import EventHandler
 from .launcher import Launcher, FlowLauncherV1, FlowLauncherV2
-from .jsonrpc import JsonRPCRequest
+from .command import Command
 from .response import handle_response
 from .result import Result
 from .models.plugin_manifest import FILE_NAME
@@ -94,10 +94,10 @@ class Plugin(pyFlowLauncherObject):
             return handler
         return wrapper
 
-    def action(self, method: Method, parameters: Optional[List] = None) -> JsonRPCRequest:
-        """Register a method and return a JsonRPCRequest that calls it."""
+    def action(self, method: Method, parameters: Optional[List] = None) -> Command:
+        """Register a method and return a Command that calls it."""
         method_name = self.add_method(method)
-        return {"method": method_name, "parameters": parameters or []}
+        return Command({"Method": method_name, "Parameters": list(parameters or [])})
 
     @property
     def launcher(self) -> Launcher:

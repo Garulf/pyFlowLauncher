@@ -37,7 +37,13 @@ def query(query: str):
 --8<-- "docs/examples/guide/plugin_methods/example1.py"
 ```
 
-Alternatively you can register and add the Method to a Result in one line by using the `action` method.
+Alternatively you can build the action for a registered method with the `action` method and pass it straight to a Result.
+
+!!! warning
+
+    Register methods when your plugin starts, not inside `query`.
+
+    A V1 plugin runs as a new process for every request, so a method registered while handling a query no longer exists when the user selects the result.
 
 ## Example 2
 
