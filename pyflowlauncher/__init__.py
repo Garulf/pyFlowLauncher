@@ -6,6 +6,7 @@ from .method import Method
 from .command import Command
 from .response import handle_response
 from .launcher import FlowLauncherV1, FlowLauncherV2
+from .handler_thread import main_thread
 
 
 logger = logging.getLogger(__name__)
@@ -20,4 +21,5 @@ __all__ = [
     "handle_response",
     "FlowLauncherV1",
     "FlowLauncherV2",
+    "main_thread",
 ]

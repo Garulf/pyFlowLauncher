@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import asyncio
 import os
+from concurrent.futures import Executor, ThreadPoolExecutor
 from abc import ABC, abstractmethod
 from pathlib import Path
 from typing import Any, Awaitable, Callable, Dict, Optional
@@ -53,6 +54,11 @@ class Launcher(pyFlowLauncherObject, ABC):
     def program_dir(self) -> Optional[Path]:
         return self._program_dir
 
+    @property
+    def handler_executor(self) -> Optional[Executor]:
+        """Where sync handlers run; None runs them inline on the event loop."""
+        return None
+
     def _find_program_dir(self) -> Optional[Path]:
         env = os.getenv("FLOW_PROGRAM_DIRECTORY")
         if env:
@@ -100,6 +106,21 @@ class FlowLauncherV2(Launcher):
     def __init__(self) -> None:
         super().__init__()
         self._client = JsonRPCV2Client()
+        self._handler_executor: Optional[ThreadPoolExecutor] = None
+
+    @property
+    def handler_executor(self) -> Executor:
+        """One worker thread, so sync handlers never overlap each other while
+        the loop stays free to read $/cancelRequest."""
+        if self._handler_executor is None:
+            self._handler_executor = ThreadPoolExecutor(
+                max_workers=1, thread_name_prefix='pyflowlauncher-handler')
+        return self._handler_executor
+
+    def _release_handler_executor(self) -> None:
+        if self._handler_executor is not None:
+            self._handler_executor.shutdown(wait=False)
+            self._handler_executor = None
 
     async def _fuzzy_search(self, query: str, text: str) -> MatchData:
         """Delegate to Flow Launcher's FuzzySearch over JSON-RPC."""
@@ -142,7 +163,10 @@ class FlowLauncherV2(Launcher):
                 cancel_id = cancel_params.get('id') if isinstance(cancel_params, dict) else None
                 cancelled = in_flight.get(cancel_id)
                 if cancelled is not None:
-                    cancelled.cancel()
+                    # A task cancelled before its first step never runs, so it
+                    # would send no reply at all. call_soon queues the cancel
+                    # behind that pending step.
+                    asyncio.get_running_loop().call_soon(cancelled.cancel)
                 continue
 
             if method.startswith('$/'):
@@ -189,6 +213,7 @@ class FlowLauncherV2(Launcher):
 
         if tasks:
             await asyncio.gather(*tasks, return_exceptions=True)
+        self._release_handler_executor()
 
     async def _handle_request(
         self,
