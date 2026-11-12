@@ -1,3 +1,8 @@
+import os
+import subprocess
+import sys
+import textwrap
+
 import pytest
 
 import pyflowlauncher
@@ -11,28 +16,34 @@ class Query(Method):
         return self.return_results()
 
 
-class QueryWithInit(Query):
-    def __init__(self):
-        super().__init__()
-
-
 def test_constructing_a_method_warns():
     with pytest.warns(DeprecationWarning, match="on_method"):
         Query()
 
 
-def test_warning_points_at_the_constructing_code():
-    with pytest.warns(DeprecationWarning) as record:
+def test_warning_stays_off_stderr_in_a_plugin_script(tmp_path):
+    """A V1 host fails any request whose process wrote to stderr."""
+    script = tmp_path / "main.py"
+    script.write_text(textwrap.dedent("""
+        from pyflowlauncher import Method
+
+
+        class Query(Method):
+            def __call__(self, query):
+                return self.return_results()
+
+
         Query()
+    """))
+    env = {k: v for k, v in os.environ.items() if k != "PYTHONWARNINGS"}
 
-    assert record[0].filename == __file__
+    done = subprocess.run(
+        [sys.executable, str(script)], cwd=str(tmp_path), env=env,
+        stdout=subprocess.PIPE, stderr=subprocess.PIPE, universal_newlines=True,
+    )
 
-
-def test_warning_points_at_the_constructing_code_when_init_is_overridden():
-    with pytest.warns(DeprecationWarning) as record:
-        QueryWithInit()
-
-    assert record[0].filename == __file__
+    assert done.returncode == 0
+    assert done.stderr == ""
 
 
 def test_method_is_still_exported():
