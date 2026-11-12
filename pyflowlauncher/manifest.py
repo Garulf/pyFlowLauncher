@@ -27,9 +27,32 @@ class Manifest:
     action_keyword: str
     action_keywords: list[str] = field(default_factory=list)
 
+    @staticmethod
+    def read_language(path: Path) -> str:
+        """Read only the Language key of a plugin.json, without requiring any other key."""
+        with open(path, 'r', encoding='utf-8') as f:
+            language = json.load(f)['Language']
+        if not isinstance(language, str):
+            raise TypeError(f"Language must be a string, got {type(language).__name__}")
+        return language
+
     @classmethod
     def from_json(cls, json_data: PluginMetadata) -> Self:
-        """Create a Manifest instance from a JSON dictionary."""
+        """Create a Manifest instance from a JSON dictionary.
+
+        Flow Launcher accepts ActionKeyword or ActionKeywords alone, so either one fills the other.
+        """
+        if 'ActionKeywords' in json_data:
+            action_keywords = list(json_data['ActionKeywords'])
+            if 'ActionKeyword' in json_data:
+                action_keyword = json_data['ActionKeyword']
+            elif action_keywords:
+                action_keyword = action_keywords[0]
+            else:
+                raise KeyError('ActionKeyword')
+        else:
+            action_keyword = json_data['ActionKeyword']
+            action_keywords = [action_keyword]
         return cls(
             id=json_data['ID'],
             name=json_data['Name'],
@@ -40,8 +63,8 @@ class Manifest:
             website=json_data['Website'],
             execute_file_name=json_data['ExecuteFileName'],
             ico_path=json_data['IcoPath'],
-            action_keyword=json_data['ActionKeyword'],
-            action_keywords=json_data.get('ActionKeywords', []),
+            action_keyword=action_keyword,
+            action_keywords=action_keywords,
         )
 
     @classmethod
