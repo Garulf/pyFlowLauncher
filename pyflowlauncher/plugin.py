@@ -11,6 +11,7 @@ import asyncio
 from .base import pyFlowLauncherObject
 
 from .event import EventHandler
+from .method_names import derive_name, remember
 from .launcher import Launcher, FlowLauncherV1, FlowLauncherV2
 from .jsonrpc import JsonRPCRequest
 from .response import handle_response
@@ -64,12 +65,14 @@ class Plugin(pyFlowLauncherObject):
 
     def add_method(self, method: Method, *, name: Optional[str] = None) -> str:
         """Add a method to the event handler, optionally under an explicit RPC name."""
+        rpc_name = name or derive_name(method)
+
         @wraps(method)
         def wrapper(*args, **kwargs):
             return handle_response(method(*args, **kwargs))
-        setattr(wrapper, '_is_registered_method', True)
-        setattr(method, '_is_registered_method', True)
-        return self._event_handler.add_event(wrapper, name=name)
+        self._event_handler.add_event(wrapper, name=rpc_name)
+        remember(method, rpc_name)
+        return rpc_name
 
     def add_methods(self, methods: Iterable[Method]) -> None:
         for method in methods:

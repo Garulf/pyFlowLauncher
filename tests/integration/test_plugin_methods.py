@@ -120,24 +120,24 @@ async def test_async_return_list_of_results():
 # Method registration
 # ---------------------------------------------------------------------------
 
-def test_on_method_sets_registered_flag():
+def test_on_method_registers_for_actions():
     plugin = Plugin()
 
     @plugin.on_method
     def query(q: str):
         return Result(title="x")
 
-    assert getattr(query, '_is_registered_method', False) is True
+    assert Result(title="x").add_action(query).json_rpc_action["Method"] == "query"
 
 
-def test_add_method_sets_registered_flag():
+def test_add_method_registers_for_actions():
     plugin = Plugin()
 
     def query(q: str):
         return Result(title="x")
 
     plugin.add_method(query)
-    assert getattr(query, '_is_registered_method', False) is True
+    assert Result(title="x").add_action(query).json_rpc_action["Method"] == "query"
 
 
 def test_registered_method_can_be_used_as_action():

@@ -11,6 +11,7 @@ else:
     from typing import Self
 
 from .types import Method
+from .method_names import describe, registered_name
 from .command import Command
 from .models.result import Glyph, PreviewInfo
 from .models.json_rpc import JsonRPCResult, JsonRPCRequest, JsonRPCResponse
@@ -22,7 +23,7 @@ class MethodNotRegisteredError(Exception):
     def __init__(self, method: Callable[..., Any]):
         self.method = method
         super().__init__(
-            f"Method {method.__name__} is not registered as a plugin method. "
+            f"Method {describe(method)} is not registered as a plugin method. "
             "Please use the @plugin.on_method decorator to register it."
         )
 
@@ -59,10 +60,11 @@ class Result:
                 'DontHideAfterAction': dont_hide_after_action,
             }
             return self
-        if not getattr(action, '_is_registered_method', False):
+        method_name = registered_name(action)
+        if method_name is None:
             raise MethodNotRegisteredError(action)
         self.json_rpc_action = {
-            'Method': action.__name__,
+            'Method': method_name,
             'Parameters': list(parameters) if parameters else [],
             'DontHideAfterAction': dont_hide_after_action,
         }
