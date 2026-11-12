@@ -47,31 +47,6 @@ plugin.run()
 
 Methods decorated with `@plugin.on_method` can `yield` one or more `Result` objects, return a list of `Result` objects, or return a single `Result` — the framework normalizes all forms into the correct response automatically.
 
-### Advanced plugin
-
-A more advanced usage using a `Method` class as the query method.
-
-```py
-from pyflowlauncher import Plugin, Result, Method
-from .models.json_rpc import JsonRPCResponse
-
-plugin = Plugin()
-
-
-class Query(Method):
-
-    def __call__(self, query: str) -> JsonRPCResponse:
-        r = Result(
-            title="This is a title!",
-            subtitle="This is the subtitle!"
-        )
-        self.add_result(r)
-        return self.return_results()
-
-plugin.add_method(Query())
-plugin.run()
-```
-
 ### Context menus
 
 `Plugin` ships with a built-in `context_menu` method: put `Result` objects in a
