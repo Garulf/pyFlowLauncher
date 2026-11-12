@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import warnings
 from typing import TYPE_CHECKING, Any, Callable, Coroutine, Optional
 
 from .command import Command
@@ -45,16 +46,22 @@ class Api:
         return _send_action("ShellRun", command, filename)
 
     def close_app(self) -> Command:
-        """Close Flow Launcher."""
+        """Deprecated: Flow Launcher has no API method that closes the app."""
+        warnings.warn(
+            "close_app() does nothing: Flow Launcher's plugin API has no method "
+            "that closes the app. Use hide_app() to hide the window.",
+            DeprecationWarning,
+            stacklevel=2,
+        )
         return _send_action("CloseApp")
 
     def hide_app(self) -> Command:
         """Hide Flow Launcher."""
-        return _send_action("HideApp")
+        return _send_action("HideMainWindow")
 
     def show_app(self) -> Command:
         """Show Flow Launcher."""
-        return _send_action("ShowApp")
+        return _send_action("ShowMainWindow")
 
     def show_msg(self, title: str, sub_title: str, ico_path: str = "") -> Command:
         """Show a message in Flow Launcher."""
@@ -74,7 +81,9 @@ class Api:
 
     def reload_plugins(self) -> Command:
         """Reload the plugins in Flow Launcher."""
-        return _send_action("ReloadPlugins")
+        # The V2 host's method is ReloadAllPluginDataAsync; StreamJsonRpc also
+        # answers to it without the Async suffix, which is V1's name.
+        return _send_action("ReloadAllPluginData")
 
     def copy_to_clipboard(self, text: str, direct_copy: bool = False,
                           show_default_notification: bool = True) -> Command:

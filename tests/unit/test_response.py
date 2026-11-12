@@ -78,7 +78,7 @@ def test_yielded_command_becomes_response():
         yield api.hide_app()
     out = handle_response(gen())
     assert isinstance(out, Command)
-    assert out == {"Method": "Flow.Launcher.HideApp", "Parameters": []}
+    assert out == {"Method": "Flow.Launcher.HideMainWindow", "Parameters": []}
 
 
 def test_async_yielded_command_becomes_response():
@@ -89,4 +89,4 @@ def test_async_yielded_command_becomes_response():
 
     out = asyncio.run(handler._await_maybe(gen()))
     assert isinstance(out, Command)
-    assert out == {"Method": "Flow.Launcher.ShowApp", "Parameters": []}
+    assert out == {"Method": "Flow.Launcher.ShowMainWindow", "Parameters": []}
