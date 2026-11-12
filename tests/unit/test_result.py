@@ -1,4 +1,5 @@
-from pyflowlauncher import api
+from pyflowlauncher import Plugin, api
+from pyflowlauncher.launcher import FlowLauncherV1
 from pyflowlauncher.result import Result
 
 
@@ -66,7 +67,7 @@ def test_from_json_handles_null_title_highlight_data():
 def test_add_action():
     r = Result(title="Test")
     method = lambda: None
-    method._is_registered_method = True
+    Plugin(launcher=FlowLauncherV1()).add_method(method)
     r.add_action(method, ["Test"], dont_hide_after_action=True)
     assert r.json_rpc_action == {
         "Method": "<lambda>",
@@ -77,7 +78,7 @@ def test_add_action():
 
 def test_add_action_return():
     method = lambda: None
-    method._is_registered_method = True
+    Plugin(launcher=FlowLauncherV1()).add_method(method)
     r = Result(title="Test").add_action(method)
     assert isinstance(r, Result)
 

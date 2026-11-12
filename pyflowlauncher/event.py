@@ -3,6 +3,7 @@ import inspect
 from typing import Any, Callable, Iterable, Type, Union
 
 from .command import Command
+from .method_names import derive_name
 from .result import Result, send_results
 from .response import _collect_item
 
@@ -20,11 +21,8 @@ class EventHandler:
         self._events = {}
         self._handlers = {}
 
-    def _get_callable_name(self, method: Union[Callable[..., Any], Exception]):
-        return getattr(method, '__name__', method.__class__.__name__).lower()
-
     def add_event(self, event: Callable[..., Any], *, name=None) -> str:
-        key = name or self._get_callable_name(event)
+        key = name or derive_name(event)
         self._events[key] = event
         return key
 
