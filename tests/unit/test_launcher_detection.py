@@ -24,6 +24,9 @@ FULL_MANIFEST = {
 @pytest.fixture
 def plugin_dir(tmp_path, monkeypatch):
     monkeypatch.setattr('sys.argv', [str(tmp_path / 'main.py')])
+    # The package logger doesn't propagate (it writes to plugin.log);
+    # pytest < 9 caplog only sees propagated records.
+    monkeypatch.setattr(logging.getLogger('pyflowlauncher'), 'propagate', True)
     return tmp_path
 
 
