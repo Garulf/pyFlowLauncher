@@ -29,15 +29,17 @@ def test_shell_run():
 
 
 def test_close_app():
-    assert api.close_app() == {"Method": "Flow.Launcher.CloseApp", "Parameters": []}
+    with pytest.warns(DeprecationWarning):
+        command = api.close_app()
+    assert command == {"Method": "Flow.Launcher.CloseApp", "Parameters": []}
 
 
 def test_hide_app():
-    assert api.hide_app() == {"Method": "Flow.Launcher.HideApp", "Parameters": []}
+    assert api.hide_app() == {"Method": "Flow.Launcher.HideMainWindow", "Parameters": []}
 
 
 def test_show_app():
-    assert api.show_app() == {"Method": "Flow.Launcher.ShowApp", "Parameters": []}
+    assert api.show_app() == {"Method": "Flow.Launcher.ShowMainWindow", "Parameters": []}
 
 
 def test_show_msg():
@@ -57,7 +59,7 @@ def test_stop_loading_bar():
 
 
 def test_reload_plugins():
-    assert api.reload_plugins() == {"Method": "Flow.Launcher.ReloadPlugins", "Parameters": []}
+    assert api.reload_plugins() == {"Method": "Flow.Launcher.ReloadAllPluginData", "Parameters": []}
 
 
 def test_copy_to_clipboard():
