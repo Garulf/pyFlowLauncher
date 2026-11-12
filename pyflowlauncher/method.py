@@ -18,7 +18,8 @@ class Method(pyFlowLauncherObject, ABC):
         self._results.append(result)
 
     def return_results(self, settings: Optional[Dict[str, Any]] = None) -> JsonRPCResponse:
-        return send_results(self._results, settings)
+        results, self._results = self._results, []
+        return send_results(results, settings)
 
     @abstractmethod
     def __call__(self, *args, **kwargs) -> JsonRPCResponse | JsonRPCRequest:
