@@ -67,7 +67,7 @@ def test_root_dir_not_found(tmp_path, monkeypatch):
 def test_action():
     plugin = Plugin()
     action = plugin.action(query)
-    assert action == {'method': 'query', 'parameters': []}
+    assert action == {'Method': 'query', 'Parameters': []}
 
 
 def _trigger_context_menu(plugin, context_data):
