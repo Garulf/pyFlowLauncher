@@ -12,6 +12,7 @@ from .command import Command
 from .icons import Icons
 from .jsonrpc import JsonRPCClient, JsonRPCV2Client
 from .models.json_rpc import MatchResult
+from .response import CommandWithResults
 from .string_matcher import MatchData, string_matcher as _local_string_matcher
 
 
@@ -96,6 +97,7 @@ class FlowLauncherV1(Launcher):
 class FlowLauncherV2(Launcher):
 
     _LIFECYCLE_METHODS = {'initialize', 'reload_data'}
+    _QUERY_METHODS = {'query', 'context_menu'}
 
     def __init__(self) -> None:
         super().__init__()
@@ -204,9 +206,12 @@ class FlowLauncherV2(Launcher):
             raise
         except Exception:
             self.logger.exception("Unhandled error dispatching %r", method)
-            self._respond(request_id, {
-                'result': [], 'debugMessage': 'Internal error', 'settingsChange': None,
-            })
+            if method in self._QUERY_METHODS:
+                self._respond(request_id, {
+                    'result': [], 'debugMessage': 'Internal error', 'settingsChange': None,
+                })
+            else:
+                self._respond(request_id, self._action_reply(method, params, succeeded=False))
             return
         if isinstance(result, dict) and 'Method' in result:
             # An action method returned an api Command (or the raw request
@@ -219,9 +224,7 @@ class FlowLauncherV2(Launcher):
             except asyncio.CancelledError:
                 self._respond_cancelled(request_id)
                 raise
-            self._respond(request_id, {'hide': True})
-            return
-        self._send_response(request_id, method, result)
+        self._send_response(request_id, method, params, result)
 
     async def _handle_builtin_action(self, request_id: Any, method: str, params: list) -> None:
         try:
@@ -229,7 +232,7 @@ class FlowLauncherV2(Launcher):
         except asyncio.CancelledError:
             self._respond_cancelled(request_id)
             raise
-        self._respond(request_id, {'hide': True})
+        self._respond(request_id, self._action_reply(method, params))
 
     async def _forward_to_host(self, method: str, params: list) -> None:
         try:
@@ -252,16 +255,26 @@ class FlowLauncherV2(Launcher):
     def _respond_cancelled(self, request_id: Any) -> None:
         self._respond_error(request_id, -32800, 'Request cancelled')
 
-    def _send_response(self, request_id: Any, method: str, result: Any) -> None:
-        if result is None:
-            self._respond(request_id, {})
-        elif isinstance(result, dict) and 'Result' in result:
-            self._respond(request_id, {
-                'result': result['Result'],
-                'settingsChange': result.get('SettingsChange'),
-                'debugMessage': '',
-            })
+    def _send_response(self, request_id: Any, method: str, params: list, result: Any) -> None:
+        if method in self._QUERY_METHODS:
+            self._respond(request_id, self._query_reply(method, result))
         else:
-            # Actions: StreamJsonRpc deserializes the result member as
-            # JsonRPCExecuteResponse, whose 'hide' controls window hiding.
-            self._respond(request_id, {'hide': True})
+            self._respond(request_id, self._action_reply(method, params))
+
+    def _query_reply(self, method: str, result: Any) -> dict:
+        """Build the JsonRPCQueryResponseModel body for query and context_menu."""
+        settings_change = None
+        if isinstance(result, CommandWithResults):
+            results = [r.to_json() for r in result.results]
+        elif isinstance(result, dict) and 'Result' in result:
+            results = result['Result']
+            settings_change = result.get('SettingsChange')
+        else:
+            if result is not None and not isinstance(result, Command):
+                self.logger.warning("Dropping %r reply that is not results: %r", method, result)
+            results = []
+        return {'result': results, 'settingsChange': settings_change, 'debugMessage': ''}
+
+    def _action_reply(self, method: str, params: list, succeeded: bool = True) -> dict:
+        """Build the JsonRPCExecuteResponse body; 'hide' closes the window."""
+        return {'hide': succeeded}
