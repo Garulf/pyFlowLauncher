@@ -47,11 +47,13 @@ class Api:
 
     def close_app(self) -> Command:
         """Deprecated: Flow Launcher has no API method that closes the app."""
+        # No stacklevel: Python prints DeprecationWarnings attributed to
+        # __main__, and a V1 host fails any request whose process wrote to
+        # stderr, so pointing this at a single-file plugin would break it.
         warnings.warn(
             "close_app() does nothing: Flow Launcher's plugin API has no method "
             "that closes the app. Use hide_app() to hide the window.",
             DeprecationWarning,
-            stacklevel=2,
         )
         return _send_action("CloseApp")
 

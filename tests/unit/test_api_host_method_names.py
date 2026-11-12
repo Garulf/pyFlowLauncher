@@ -1,4 +1,7 @@
 import asyncio
+import os
+import subprocess
+import sys
 import warnings
 
 import pytest
@@ -85,10 +88,24 @@ def test_v2_forwards_reload_plugins_under_a_name_the_host_answers():
 
 
 def test_close_app_warns_that_the_host_has_no_such_method():
-    with pytest.warns(DeprecationWarning, match="no method") as record:
+    with pytest.warns(DeprecationWarning, match="no method"):
         command = api.close_app()
-    assert record[0].filename == __file__
     assert command == {"Method": "Flow.Launcher.CloseApp", "Parameters": []}
+
+
+def test_close_app_warning_stays_off_stderr_in_a_plugin_script(tmp_path):
+    """A V1 host fails any request whose process wrote to stderr."""
+    script = tmp_path / "main.py"
+    script.write_text("from pyflowlauncher import api\n\napi.close_app()\n")
+    env = {k: v for k, v in os.environ.items() if k != "PYTHONWARNINGS"}
+
+    done = subprocess.run(
+        [sys.executable, str(script)], cwd=str(tmp_path), env=env,
+        stdout=subprocess.PIPE, stderr=subprocess.PIPE, universal_newlines=True,
+    )
+
+    assert done.returncode == 0
+    assert done.stderr == ""
 
 
 def test_other_builders_do_not_warn():
