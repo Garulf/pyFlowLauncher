@@ -6,6 +6,8 @@ from .command import Command
 from .result import Result, send_results
 from .response import _collect_item
 
+from .handler_thread import OptionalExecutor, call_handler
+
 
 class EventNotFound(Exception):
 
@@ -15,6 +17,8 @@ class EventNotFound(Exception):
 
 
 class EventHandler:
+
+    executor: OptionalExecutor = None
 
     def __init__(self):
         self._events = {}
@@ -83,7 +87,7 @@ class EventHandler:
 
     async def trigger_event(self, event: str, *args, **kwargs) -> Any:
         try:
-            result = self.get_event(event)(*args, **kwargs)
+            result = await call_handler(self.get_event(event), self.executor, *args, **kwargs)
             return await self._await_maybe(result)
         except Exception as e:
             return await self.trigger_exception_handler(e)

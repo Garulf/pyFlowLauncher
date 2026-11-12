@@ -111,6 +111,7 @@ class Plugin(pyFlowLauncherObject):
         async def dispatch(method: str, parameters: list) -> Any:
             return await self._event_handler.trigger_event(method, *parameters)
 
+        self._event_handler.executor = self._launcher.handler_executor
         if sys.version_info >= (3, 10, 0):
             asyncio.run(self._launcher.run(dispatch))
         else:
