@@ -1,3 +1,5 @@
+import pytest
+
 from pyflowlauncher.method import Method
 from pyflowlauncher.result import Result
 
@@ -8,7 +10,8 @@ def test_add_results():
             result = Result("title", "subtitle", "icon.png")
             self.add_result(result)
 
-    method = TestMethod()
+    with pytest.warns(DeprecationWarning):
+        method = TestMethod()
     method()
     assert method._results == [Result("title", "subtitle", "icon.png")]
 
@@ -21,5 +24,6 @@ def test_return_results():
             self.add_result(result)
             return self.return_results()
 
-    method = TestMethod()
+    with pytest.warns(DeprecationWarning):
+        method = TestMethod()
     assert method() == {"Result": [result.to_json()], 'SettingsChange': None}
