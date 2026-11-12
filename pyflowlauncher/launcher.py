@@ -1,16 +1,18 @@
 from __future__ import annotations
 
 import asyncio
+import json
 import os
 from abc import ABC, abstractmethod
 from pathlib import Path
-from typing import Any, Awaitable, Callable, Dict, Optional
+from collections import OrderedDict
+from typing import Any, Awaitable, Callable, Dict, Iterable, Optional, Tuple
 
 from .api import NAME_SPACE, Api, NotSupportedError
 from .base import pyFlowLauncherObject
 from .command import Command
 from .icons import Icons
-from .jsonrpc import JsonRPCClient, JsonRPCV2Client
+from .jsonrpc import JsonRPCClient, JsonRPCV2Client, _json_default
 from .models.json_rpc import MatchResult
 from .response import CommandWithResults
 from .string_matcher import MatchData, string_matcher as _local_string_matcher
@@ -99,9 +101,12 @@ class FlowLauncherV2(Launcher):
     _LIFECYCLE_METHODS = {'initialize', 'reload_data'}
     _QUERY_METHODS = {'query', 'context_menu'}
 
+    _DONT_HIDE_MEMORY = 1024
+
     def __init__(self) -> None:
         super().__init__()
         self._client = JsonRPCV2Client()
+        self._dont_hide: OrderedDict[Tuple[str, str], bool] = OrderedDict()
 
     async def _fuzzy_search(self, query: str, text: str) -> MatchData:
         """Delegate to Flow Launcher's FuzzySearch over JSON-RPC."""
@@ -273,8 +278,52 @@ class FlowLauncherV2(Launcher):
             if result is not None and not isinstance(result, Command):
                 self.logger.warning("Dropping %r reply that is not results: %r", method, result)
             results = []
+        self._remember_dont_hide(results)
         return {'result': results, 'settingsChange': settings_change, 'debugMessage': ''}
 
     def _action_reply(self, method: str, params: list, succeeded: bool = True) -> dict:
         """Build the JsonRPCExecuteResponse body; 'hide' closes the window."""
-        return {'hide': succeeded}
+        key = _action_key(method, params)
+        dont_hide = key is not None and self._dont_hide.get(key, False)
+        return {'hide': succeeded and not dont_hide}
+
+    def _remember_dont_hide(self, results: Iterable[Any]) -> None:
+        # The V2 host decides hiding from our action reply alone and does not
+        # send DontHideAfterAction back with the action, so remember it here.
+        for result in results:
+            action = _get_ci(result, 'JsonRPCAction')
+            method = _get_ci(action, 'Method')
+            if not isinstance(method, str):
+                continue
+            key = _action_key(method, _sent_params(_get_ci(action, 'Parameters')))
+            if key is None:
+                continue
+            self._dont_hide.pop(key, None)
+            self._dont_hide[key] = bool(_get_ci(action, 'DontHideAfterAction'))
+            if len(self._dont_hide) > self._DONT_HIDE_MEMORY:
+                self._dont_hide.popitem(last=False)
+
+
+def _get_ci(mapping: Any, name: str) -> Any:
+    # The host parses property names case-insensitively, and so must we for
+    # dicts plugins build by hand.
+    if not isinstance(mapping, dict):
+        return None
+    if name in mapping:
+        return mapping[name]
+    lowered = name.lower()
+    return next((v for k, v in mapping.items() if isinstance(k, str) and k.lower() == lowered), None)
+
+
+def _sent_params(parameters: Any) -> list:
+    """The params ``run`` will hand to the action for these Parameters."""
+    if parameters is None:
+        return [None]
+    return list(parameters) if isinstance(parameters, (list, tuple)) else [parameters]
+
+
+def _action_key(method: str, params: list) -> Optional[Tuple[str, str]]:
+    try:
+        return method, json.dumps(params, sort_keys=True, default=_json_default)
+    except (TypeError, ValueError):
+        return None
